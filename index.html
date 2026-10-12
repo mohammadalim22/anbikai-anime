@@ -59,9 +59,12 @@
   .section-title { font-size: 0.95rem; margin: 18px 0 10px; color: var(--accent); border-bottom: 1px solid var(--border); padding-bottom: 6px; }
   .video-player { aspect-ratio: 16/9; width: 100%; border-radius: 12px; overflow: hidden; background: black; margin-bottom: 12px; }
   .video-player iframe { width: 100%; height: 100%; border: none; }
-  .video-buttons { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
-  .video-btn { padding: 10px 16px; border-radius: 999px; border: none; background: var(--accent); color: white; font-weight: bold; cursor: pointer; font-size: 0.85rem; }
+  .video-row { display: flex; align-items: stretch; gap: 8px; margin-bottom: 8px; }
+  .video-btn { flex: 1; padding: 11px 16px; border-radius: 999px; border: none; background: var(--accent); color: white; font-weight: bold; cursor: pointer; font-size: 0.85rem; text-align: left; }
   .video-btn.active { background: #22c55e; }
+  .dl-btn { padding: 11px 16px; border-radius: 999px; border: 1px solid #3b82f6; background: transparent; color: #3b82f6; font-weight: bold; cursor: pointer; font-size: 0.82rem; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+  .dl-btn:hover { background: #3b82f6; color: white; }
+  .video-buttons-wrap { margin-bottom: 12px; }
   .no-video { text-align: center; padding: 30px 20px; background: var(--input-bg); border-radius: 12px; color: var(--muted); font-size: 0.85rem; }
   .watch-links { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
   .watch-link-btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 16px; border-radius: 999px; text-decoration: none; color: white; font-weight: bold; font-size: 0.85rem; border: none; }
@@ -187,15 +190,30 @@ var ANILIST_URL = 'https://graphql.anilist.co';
 var QUERY = 'query ($search: String, $genre: String, $sort: [MediaSort], $perPage: Int) { Page(page: 1, perPage: $perPage) { media(type: ANIME, search: $search, genre: $genre, sort: $sort, isAdult: false) { id title { romaji english } description(asHtml: false) coverImage { extraLarge large } bannerImage episodes nextAiringEpisode { episode } averageScore format startDate { year } genres trailer { id site } } } }';
 
 /* ============================================================
-   ⭐⭐ VIDEO_DATA — প্রতিটা ভিডিওতে lang ও quality ⭐⭐
+   ⭐⭐ VIDEO_DATA — এখানে ভিডিও যোগ করবে ⭐⭐
    
-   উদাহরণ:
-   { label: "Episode 1", lang: "Hindi", quality: "1080p", embed: "https://..." }
+   প্রতিটা ভিডিওর জন্য:
+   - label: "Episode 1" (বাটনে যা দেখাবে)
+   - lang: "Hindi" / "English" / "Japanese" / "Bangla"
+   - embed: Streamtape-এর /e/ লিংক (প্লে করার জন্য)
+   - download: Streamtape-এর /v/ লিংক (ডাউনলোডের জন্য)
+   
+   ⚠️ download না দিলে অটো embed লিংক থেকে /v/ বানাবে
    ============================================================ */
 var VIDEO_DATA = {
   97940: [
-    { label: "Episode 1", lang: "Hindi", quality: "1080p", embed: "https://streamtape.com/e/JKKxw2xeQ0sj0R0/" },
-    { label: "Episode 1", lang: "English", quality: "720p", embed: "https://streamtape.com/e/PDyGxboGa3u03pq/" }
+    {
+      label: "Episode 1",
+      lang: "Hindi",
+      embed: "https://streamtape.com/e/JKKxw2xeQ0sj0R0/",
+      download: "https://streamtape.com/v/JKKxw2xeQ0sj0R0/"
+    },
+    {
+      label: "Episode 1",
+      lang: "English",
+      embed: "https://streamtape.com/e/PDyGxboGa3u03pq/",
+      download: "https://streamtape.com/v/PDyGxboGa3u03pq/"
+    }
   ]
 };
 
@@ -229,6 +247,15 @@ function platformLabel(p) {
 function platformIcon(p) {
   var map = { crunchyroll: "🟠", netflix: "🔴", hulu: "🟢", prime: "🔵", youtube: "▶️", muse: "🟣" };
   return map[p] || "▶";
+}
+
+/* Auto-derive download link from embed if missing */
+function getDownloadLink(video) {
+  if (video.download) return video.download;
+  if (video.embed && video.embed.indexOf('streamtape.com/e/') >= 0) {
+    return video.embed.replace('/e/', '/v/');
+  }
+  return video.embed;
 }
 
 var fallbackAnime = [
@@ -503,6 +530,8 @@ function fetchSuggestions(q) {
   });
 }
 
+var _currentVideos = [];
+
 function openDetails(id) {
   var modal = document.getElementById('modal');
   modal.classList.add('active');
@@ -512,6 +541,7 @@ function openDetails(id) {
   if (!anime) for (var j = 0; j < fallbackAnime.length; j++) if (fallbackAnime[j].mal_id === id) { anime = fallbackAnime[j]; break; }
   if (!anime) return;
   document.getElementById('mImg').src = anime.img;
+  _currentVideos = VIDEO_DATA[a.mal_id] || [];
   renderModal(anime);
 }
 
@@ -520,6 +550,7 @@ function renderModal(a) {
   var reviews = getReviews(a.mal_id);
   var body = document.getElementById('modalBody');
   var videos = VIDEO_DATA[a.mal_id] || [];
+  _currentVideos = videos;
   var watchLinks = WATCH_LINKS[a.mal_id] || [];
   var ytSearch = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(a.title + ' trailer');
   
@@ -549,14 +580,15 @@ function renderModal(a) {
 
   if (videos.length > 0) {
     html += '<h3 class="section-title">▶ Watch Online</h3>';
-    
-    html += '<div class="video-buttons" id="videoButtons">';
+    html += '<div class="video-buttons-wrap" id="videoButtons">';
     for (var v = 0; v < videos.length; v++) {
-      var parts = [videos[v].label];
-      if (videos[v].lang) parts.push(videos[v].lang);
-      if (videos[v].quality) parts.push(videos[v].quality);
-      var label = parts.join(' • ');
+      var label = videos[v].label;
+      if (videos[v].lang) label += ' • ' + videos[v].lang;
+      var dlLink = getDownloadLink(videos[v]);
+      html += '<div class="video-row">';
       html += '<button class="video-btn ' + (v === 0 ? 'active' : '') + '" onclick="playVideo(' + v + ')">' + label + '</button>';
+      html += '<a class="dl-btn" href="' + dlLink + '" target="_blank">⬇ Download</a>';
+      html += '</div>';
     }
     html += '</div>';
     html += '<div class="video-player" id="videoPlayer"></div>';
@@ -600,14 +632,8 @@ function renderModal(a) {
 }
 
 function playVideo(index) {
-  var modalBody = document.getElementById('modalBody');
-  // Find current anime from currentList by looking at modal contents — simpler: use a global
-  var currentAnimeId = null;
-  // Walk currentList and detect which has VIDEO_DATA matching
-  // We'll store it in a global
-  var videos = window._currentVideos || [];
-  if (!videos[index]) return;
-  var embed = videos[index].embed;
+  if (!_currentVideos[index]) return;
+  var embed = _currentVideos[index].embed;
   if (!disclaimerAccepted) {
     showDisclaimer(embed);
   } else {
@@ -618,13 +644,6 @@ function playVideo(index) {
   for (var i = 0; i < buttons.length; i++) buttons[i].classList.remove('active');
   if (buttons[index]) buttons[index].classList.add('active');
 }
-
-/* Store videos for current modal in a global so playVideo can access */
-var _origRenderModal = renderModal;
-renderModal = function(a) {
-  window._currentVideos = VIDEO_DATA[a.mal_id] || [];
-  _origRenderModal(a);
-};
 
 function toggleWlFromModal(id) {
   var anime = null;
