@@ -13,7 +13,7 @@
   header { padding: 14px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; position: sticky; top: 0; background: var(--bg); z-index: 50; }
   .logo { font-size: 1.4rem; color: var(--accent); font-weight: bold; }
   .logo small { display: block; color: var(--muted); font-size: 0.7rem; font-weight: normal; margin-top: 2px; }
-  .header-buttons { display: flex; gap: 6px; }
+  .header-buttons { display: flex; gap: 6px; flex-wrap: wrap; }
   .icon-btn { background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 8px 12px; border-radius: 999px; cursor: pointer; font-size: 0.8rem; font-weight: 600; }
   .icon-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
   .controls { max-width: 900px; margin: 16px auto; padding: 0 16px; display: flex; gap: 8px; flex-wrap: wrap; }
@@ -33,7 +33,9 @@
   .sug-item-info p { font-size: 0.68rem; color: var(--muted); }
   .sug-loading { padding: 12px; text-align: center; color: var(--muted); font-size: 0.8rem; }
   #status { text-align: center; color: var(--muted); margin: 20px; font-size: 0.9rem; }
-  .section-header { max-width: 1200px; margin: 24px auto 0; padding: 0 16px; font-size: 1rem; color: var(--accent); font-weight: bold; }
+  .section-header { max-width: 1200px; margin: 24px auto 0; padding: 0 16px; font-size: 1rem; color: var(--accent); font-weight: bold; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .clear-btn { background: transparent; border: 1px solid #ef4444; color: #ef4444; padding: 6px 14px; border-radius: 999px; cursor: pointer; font-size: 0.75rem; font-weight: bold; }
+  .clear-btn:hover { background: #ef4444; color: white; }
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; padding: 16px; max-width: 1200px; margin: 0 auto; }
   .card { background: var(--card); border-radius: 12px; overflow: hidden; cursor: pointer; border: 1px solid var(--border); position: relative; }
   .card img { width: 100%; height: 220px; object-fit: cover; display: block; background: var(--input-bg); }
@@ -42,6 +44,7 @@
   .card p { font-size: 0.72rem; color: var(--muted); }
   .score { color: var(--score); font-weight: bold; }
   .play-badge { position: absolute; top: 8px; left: 8px; background: #22c55e; color: white; padding: 4px 10px; border-radius: 999px; font-size: 0.7rem; font-weight: bold; }
+  .hist-badge { position: absolute; top: 8px; right: 8px; background: #f59e0b; color: white; padding: 4px 10px; border-radius: 999px; font-size: 0.65rem; font-weight: bold; }
   .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 100; padding: 16px; overflow-y: auto; }
   .modal-overlay.active { display: block; }
   .modal { background: var(--card); border-radius: 16px; max-width: 900px; margin: 10px auto; overflow: hidden; }
@@ -103,6 +106,7 @@
   <div class="logo">🌸 AnbiKai Anime<small>Free anime catalog</small></div>
   <div class="header-buttons">
     <button class="icon-btn" id="watchlistBtn" onclick="showWatchlist()">⭐ My List (<span id="wlCount">0</span>)</button>
+    <button class="icon-btn" id="historyBtn" onclick="showHistory()">🕐 History (<span id="histCount">0</span>)</button>
     <button class="icon-btn" id="themeBtn" onclick="toggleTheme()">🌙</button>
   </div>
 </header>
@@ -136,7 +140,7 @@
 </div>
 
 <div id="status"></div>
-<div class="section-header" id="trendingHeader">🔥 Trending Now</div>
+<div class="section-header" id="trendingHeader"><span id="trendingText">🔥 Trending Now</span></div>
 <div class="grid" id="animeGrid"></div>
 
 <footer>
@@ -176,6 +180,7 @@
 <script>
 var grid = document.getElementById('animeGrid');
 var trendingHeader = document.getElementById('trendingHeader');
+var trendingText = document.getElementById('trendingText');
 var statusEl = document.getElementById('status');
 var input = document.getElementById('searchInput');
 var suggestionsEl = document.getElementById('suggestions');
@@ -351,6 +356,7 @@ function sortSearchResults(list, query) {
   return list;
 }
 
+/* ===== WATCHLIST ===== */
 function getWatchlist() { try { return JSON.parse(localStorage.getItem('anbikai_watchlist') || '[]'); } catch(e) { return []; } }
 function saveWatchlist(list) { localStorage.setItem('anbikai_watchlist', JSON.stringify(list)); updateWlCount(); }
 function updateWlCount() { document.getElementById('wlCount').textContent = getWatchlist().length; }
@@ -360,6 +366,55 @@ function toggleWatchlist(anime) {
   if (list.some(function(a){ return a.mal_id === anime.mal_id; })) list = list.filter(function(a){ return a.mal_id !== anime.mal_id; });
   else list.push(anime);
   saveWatchlist(list);
+}
+
+/* ===== WATCH HISTORY ===== */
+function getHistory() { try { return JSON.parse(localStorage.getItem('anbikai_history') || '[]'); } catch(e) { return []; } }
+function saveHistory(list) { localStorage.setItem('anbikai_history', JSON.stringify(list)); updateHistCount(); }
+function updateHistCount() { document.getElementById('histCount').textContent = getHistory().length; }
+
+function addToHistory(anime, episodeLabel) {
+  var list = getHistory();
+  // Remove existing entry for same anime + episode
+  list = list.filter(function(h){ return !(h.mal_id === anime.mal_id && h.episode === episodeLabel); });
+  // Add new entry at top
+  list.unshift({
+    mal_id: anime.mal_id,
+    title: anime.title,
+    img: anime.img,
+    score: anime.score,
+    type: anime.type,
+    episodes: anime.episodes,
+    year: anime.year,
+    genres: anime.genres,
+    synopsis: anime.synopsis,
+    trailer: anime.trailer,
+    episode: episodeLabel,
+    watchedAt: Date.now()
+  });
+  // Keep max 100 entries
+  if (list.length > 100) list = list.slice(0, 100);
+  saveHistory(list);
+}
+
+function clearHistory() {
+  if (!confirm('Watch history muke felbe?')) return;
+  localStorage.removeItem('anbikai_history');
+  updateHistCount();
+  showHistory();
+}
+
+function timeAgo(ts) {
+  var diff = Date.now() - ts;
+  var mins = Math.floor(diff / 60000);
+  if (mins < 1) return 'just now';
+  if (mins < 60) return mins + ' min ago';
+  var hrs = Math.floor(mins / 60);
+  if (hrs < 24) return hrs + ' hr ago';
+  var days = Math.floor(hrs / 24);
+  if (days < 30) return days + ' day ago';
+  var months = Math.floor(days / 30);
+  return months + ' month ago';
 }
 
 function toggleTheme() {
@@ -407,6 +462,17 @@ function makeCard(a) {
     '</div></div>';
 }
 
+function makeHistoryCard(h) {
+  return '<div class="card" onclick="openDetails(' + h.mal_id + ')">' +
+    '<div class="hist-badge">🕐 ' + timeAgo(h.watchedAt) + '</div>' +
+    '<img src="' + h.img + '" alt="" loading="lazy" onerror="this.style.opacity=0.2">' +
+    '<div class="card-content">' +
+      '<h3>' + h.title + '</h3>' +
+      '<p style="color:var(--accent);font-weight:bold;">▶ ' + h.episode + '</p>' +
+      '<p>⭐ ' + h.score + ' • ' + (h.type || '') + '</p>' +
+    '</div></div>';
+}
+
 function renderAnime(list) {
   currentList = list;
   if (!list || list.length === 0) { statusEl.textContent = 'Kono anime paoa gelo na.'; grid.innerHTML = ''; return; }
@@ -417,7 +483,11 @@ function renderAnime(list) {
 }
 
 function loadTop() {
-  trendingHeader.style.display = 'block';
+  trendingHeader.style.display = 'flex';
+  trendingText.textContent = '🔥 Trending Now';
+  // Remove clear button if exists
+  var cb = trendingHeader.querySelector('.clear-btn');
+  if (cb) cb.remove();
   statusEl.textContent = '';
   grid.innerHTML = '';
   anilistFetch({ sort: ['TRENDING_DESC'], perPage: 30 }).then(function(res) {
@@ -456,7 +526,9 @@ function filterGenre() {
 
 function showWatchlist() {
   var btn = document.getElementById('watchlistBtn');
+  var hbtn = document.getElementById('historyBtn');
   trendingHeader.style.display = 'none';
+  hbtn.classList.remove('active');
   if (currentView === 'watchlist') { currentView = 'browse'; btn.classList.remove('active'); loadTop(); return; }
   currentView = 'watchlist';
   btn.classList.add('active');
@@ -464,6 +536,37 @@ function showWatchlist() {
   if (list.length === 0) { statusEl.textContent = 'Watchlist khali.'; grid.innerHTML = ''; return; }
   statusEl.textContent = '⭐ Watchlist (' + list.length + ')';
   renderAnime(list);
+}
+
+function showHistory() {
+  var btn = document.getElementById('historyBtn');
+  var wbtn = document.getElementById('watchlistBtn');
+  wbtn.classList.remove('active');
+  if (currentView === 'history') { currentView = 'browse'; btn.classList.remove('active'); loadTop(); return; }
+  currentView = 'history';
+  btn.classList.add('active');
+  var list = getHistory();
+  trendingHeader.style.display = 'flex';
+  trendingText.textContent = '🕐 Watch History (' + list.length + ')';
+  // Add clear button
+  var cb = trendingHeader.querySelector('.clear-btn');
+  if (cb) cb.remove();
+  if (list.length > 0) {
+    var clearBtn = document.createElement('button');
+    clearBtn.className = 'clear-btn';
+    clearBtn.textContent = '🗑 Clear All';
+    clearBtn.onclick = clearHistory;
+    trendingHeader.appendChild(clearBtn);
+  }
+  if (list.length === 0) {
+    statusEl.textContent = 'Watch history khali. Kono video play koro.';
+    grid.innerHTML = '';
+    return;
+  }
+  statusEl.textContent = '';
+  var html = '';
+  for (var i = 0; i < list.length; i++) html += makeHistoryCard(list[i]);
+  grid.innerHTML = html;
 }
 
 function hideSuggestions() { suggestionsEl.classList.remove('active'); suggestionsEl.innerHTML = ''; }
@@ -514,6 +617,10 @@ function openDetails(id) {
   var anime = null;
   for (var i = 0; i < currentList.length; i++) if (currentList[i].mal_id === id) { anime = currentList[i]; break; }
   if (!anime) for (var j = 0; j < fallbackAnime.length; j++) if (fallbackAnime[j].mal_id === id) { anime = fallbackAnime[j]; break; }
+  if (!anime) {
+    var hist = getHistory();
+    for (var k = 0; k < hist.length; k++) if (hist[k].mal_id === id) { anime = hist[k]; break; }
+  }
   if (!anime) return;
   
   var modal = document.getElementById('modal');
@@ -611,6 +718,14 @@ function playVideo(index) {
   var videos = VIDEO_DATA[currentAnimeId] || [];
   if (!videos[index]) return;
   var embed = videos[index].embed;
+  var label = videos[index].label;
+  
+  // Save to watch history
+  var anime = null;
+  for (var i = 0; i < currentList.length; i++) if (currentList[i].mal_id === currentAnimeId) { anime = currentList[i]; break; }
+  if (!anime) for (var j = 0; j < fallbackAnime.length; j++) if (fallbackAnime[j].mal_id === currentAnimeId) { anime = fallbackAnime[j]; break; }
+  if (anime) addToHistory(anime, label);
+  
   if (!disclaimerAccepted) {
     showDisclaimer(embed);
   } else {
@@ -618,7 +733,7 @@ function playVideo(index) {
     if (player) player.innerHTML = '<iframe src="' + embed + '" allowfullscreen allow="autoplay; encrypted-media" scrolling="no" frameborder="0"></iframe>';
   }
   var buttons = document.querySelectorAll('#videoButtons .video-btn');
-  for (var i = 0; i < buttons.length; i++) buttons[i].classList.remove('active');
+  for (var k = 0; k < buttons.length; k++) buttons[k].classList.remove('active');
   if (buttons[index]) buttons[index].classList.add('active');
 }
 
@@ -671,7 +786,8 @@ document.addEventListener('click', function(e) {
 });
 
 updateWlCount();
+updateHistCount();
 loadTop();
 </script>
 </body>
-      </html>
+  </html>
