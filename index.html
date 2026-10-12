@@ -25,28 +25,28 @@
   .suggestions { position: absolute; top: 100%; left: 0; right: 0; background: var(--card); border: 1px solid var(--border); border-radius: 12px; margin-top: 6px; max-height: 350px; overflow-y: auto; display: none; z-index: 60; box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
   .suggestions.active { display: block; }
   .sug-item { display: flex; gap: 10px; padding: 8px 12px; cursor: pointer; align-items: center; border-bottom: 1px solid var(--border); }
-  .sug-item:last-child { border-bottom: none; }
-  .sug-item:hover, .sug-item.selected { background: var(--input-bg); }
+  .sug-item:hover { background: var(--input-bg); }
   .sug-item img { width: 40px; height: 55px; object-fit: cover; border-radius: 6px; flex-shrink: 0; }
   .sug-item-info { flex: 1; min-width: 0; }
   .sug-item-info h4 { font-size: 0.82rem; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .sug-item-info p { font-size: 0.68rem; color: var(--muted); }
   .sug-loading { padding: 12px; text-align: center; color: var(--muted); font-size: 0.8rem; }
   #status { text-align: center; color: var(--muted); margin: 20px; font-size: 0.9rem; }
-  .section-header { max-width: 1200px; margin: 24px auto 0; padding: 0 16px; font-size: 1rem; color: var(--accent); font-weight: bold; display: flex; align-items: center; gap: 8px; }
+  .section-header { max-width: 1200px; margin: 24px auto 0; padding: 0 16px; font-size: 1rem; color: var(--accent); font-weight: bold; }
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; padding: 16px; max-width: 1200px; margin: 0 auto; }
-  .card { background: var(--card); border-radius: 12px; overflow: hidden; cursor: pointer; border: 1px solid var(--border); }
+  .card { background: var(--card); border-radius: 12px; overflow: hidden; cursor: pointer; border: 1px solid var(--border); position: relative; }
   .card img { width: 100%; height: 220px; object-fit: cover; display: block; background: var(--input-bg); }
   .card-content { padding: 10px; }
   .card h3 { font-size: 0.88rem; margin-bottom: 6px; }
   .card p { font-size: 0.72rem; color: var(--muted); }
   .score { color: var(--score); font-weight: bold; }
-  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 100; padding: 16px; overflow-y: auto; }
+  .play-badge { position: absolute; top: 8px; left: 8px; background: #22c55e; color: white; padding: 4px 10px; border-radius: 999px; font-size: 0.7rem; font-weight: bold; }
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 100; padding: 16px; overflow-y: auto; }
   .modal-overlay.active { display: block; }
-  .modal { background: var(--card); border-radius: 16px; max-width: 700px; margin: 10px auto; overflow: hidden; }
+  .modal { background: var(--card); border-radius: 16px; max-width: 900px; margin: 10px auto; overflow: hidden; }
   .modal-header { position: relative; }
   .modal-header img { width: 100%; height: 200px; object-fit: cover; }
-  .modal-close { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; border: none; width: 34px; height: 34px; border-radius: 50%; font-size: 1.1rem; cursor: pointer; }
+  .modal-close { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.8); color: white; border: none; width: 36px; height: 36px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; z-index: 5; }
   .modal-body { padding: 18px; }
   .modal-body h2 { font-size: 1.2rem; margin-bottom: 10px; }
   .modal-info { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; font-size: 0.78rem; color: var(--muted); }
@@ -55,10 +55,12 @@
   .genre-tag { background: var(--accent); color: white; padding: 3px 10px; border-radius: 999px; font-size: 0.72rem; }
   .synopsis { font-size: 0.87rem; line-height: 1.5; margin-bottom: 16px; }
   .section-title { font-size: 0.95rem; margin: 18px 0 10px; color: var(--accent); border-bottom: 1px solid var(--border); padding-bottom: 6px; }
-  .trailer { aspect-ratio: 16/9; width: 100%; border-radius: 10px; overflow: hidden; margin-bottom: 8px; }
-  .trailer iframe { width: 100%; height: 100%; border: none; }
-  .no-trailer { text-align: center; color: var(--muted); font-size: 0.85rem; padding: 20px; background: var(--input-bg); border-radius: 10px; }
-  .no-trailer a { color: var(--accent); text-decoration: none; font-weight: bold; display: inline-block; margin-top: 8px; }
+  .video-player { aspect-ratio: 16/9; width: 100%; border-radius: 12px; overflow: hidden; background: black; margin-bottom: 12px; }
+  .video-player iframe { width: 100%; height: 100%; border: none; }
+  .video-buttons { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  .video-btn { padding: 10px 16px; border-radius: 999px; border: none; background: var(--accent); color: white; font-weight: bold; cursor: pointer; font-size: 0.85rem; }
+  .video-btn.active { background: #22c55e; }
+  .no-video { text-align: center; padding: 30px 20px; background: var(--input-bg); border-radius: 12px; color: var(--muted); font-size: 0.85rem; }
   .watchlist-btn { padding: 11px 16px; border-radius: 999px; border: 1px solid var(--accent); background: transparent; color: var(--accent); font-weight: bold; cursor: pointer; width: 100%; font-size: 0.9rem; margin-bottom: 8px; }
   .watchlist-btn.in-list { background: var(--accent); color: white; }
   .review-form { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
@@ -138,9 +140,29 @@ var suggestTimer = null;
 var ANILIST_URL = 'https://graphql.anilist.co';
 var QUERY = 'query ($search: String, $genre: String, $sort: [MediaSort], $perPage: Int) { Page(page: 1, perPage: $perPage) { media(type: ANIME, search: $search, genre: $genre, sort: $sort, isAdult: false) { id title { romaji english } description(asHtml: false) coverImage { extraLarge large } bannerImage episodes nextAiringEpisode { episode } averageScore format startDate { year } genres trailer { id site } } } }';
 
-/* ============================================
-   Fallback anime — API fail hole ei list dekhano hobe
-   ============================================ */
+/* ============================================================
+   ⭐⭐ VIDEO PLAYLIST — এখানে ভিডিও লিংক যোগ করবে ⭐⭐
+   
+   - mal_id (AniList ID): key
+   - প্রতিটা ভিডিও: { label, embed }
+   
+   উদাহরণ:
+   var VIDEO_DATA = {
+     21: [
+       { label: "Part 1", embed: "https://streamtape.com/e/XXXXX/" },
+       { label: "Part 2", embed: "https://streamtape.com/e/YYYYY/" }
+     ],
+     20: [
+       { label: "Episode 1", embed: "https://streamtape.com/e/ABCDE/" }
+     ]
+   };
+   ============================================================ */
+var VIDEO_DATA = {
+  21: [
+    { label: "Part 1", embed: "https://streamtape.com/e/IgVR4jbe9PS7GDo/" }
+  ]
+};
+
 var fallbackAnime = [
   { mal_id: 21, title: "One Piece", score: 8.7, type: "TV", episodes: "1100+",
     img: "https://cdn.myanimelist.net/images/anime/6/73245.jpg",
@@ -157,37 +179,18 @@ var fallbackAnime = [
   { mal_id: 16498, title: "Attack on Titan", score: 8.5, type: "TV", episodes: 87,
     img: "https://cdn.myanimelist.net/images/anime/10/47347.jpg",
     synopsis: "Humanity fights for survival against giant man-eating Titans behind enormous walls.",
-    genres: ["Action","Drama"], trailer: "https://www.youtube.com/embed/LHtdKWJdif4", year: 2013 },
-  { mal_id: 40748, title: "Jujutsu Kaisen", score: 8.6, type: "TV", episodes: 47,
-    img: "https://cdn.myanimelist.net/images/anime/1171/109222.jpg",
-    synopsis: "Yuji Itadori swallows a cursed finger and joins a secret school of Jujutsu sorcerers.",
-    genres: ["Action","Supernatural"], trailer: "https://www.youtube.com/embed/4A_X-Dvl0ws", year: 2020 },
-  { mal_id: 1535, title: "Death Note", score: 8.6, type: "TV", episodes: 37,
-    img: "https://cdn.myanimelist.net/images/anime/9/9453.jpg",
-    synopsis: "A genius student finds a notebook that kills anyone whose name is written in it.",
-    genres: ["Mystery","Supernatural"], trailer: "https://www.youtube.com/embed/NlJZ-YgAt-c", year: 2006 },
-  { mal_id: 5114, title: "Fullmetal Alchemist Brotherhood", score: 9.1, type: "TV", episodes: 64,
-    img: "https://cdn.myanimelist.net/images/anime/1223/96541.jpg",
-    synopsis: "Two brothers search for the Philosopher's Stone to restore their bodies.",
-    genres: ["Action","Adventure","Drama"], trailer: "https://www.youtube.com/embed/--IvhX5I7W0", year: 2009 },
-  { mal_id: 31964, title: "My Hero Academia", score: 7.9, type: "TV", episodes: 158,
-    img: "https://cdn.myanimelist.net/images/anime/10/78745.jpg",
-    synopsis: "In a world of superheroes, a powerless boy inherits the power of the world's greatest hero.",
-    genres: ["Action","Comedy"], trailer: "https://www.youtube.com/embed/EP_OZ8p4LJ4", year: 2016 }
+    genres: ["Action","Drama"], trailer: "https://www.youtube.com/embed/LHtdKWJdif4", year: 2013 }
 ];
 
-/* ===== Fetch with timeout ===== */
 function fetchWithTimeout(url, options, ms) {
-  options = options || {};
-  ms = ms || 8000;
+  options = options || {}; ms = ms || 8000;
   return new Promise(function(resolve, reject) {
     var controller = new AbortController();
     options.signal = controller.signal;
     var timer = setTimeout(function() { controller.abort(); reject(new Error('timeout')); }, ms);
     fetch(url, options).then(function(res) {
       clearTimeout(timer);
-      if (!res.ok) reject(new Error('fail'));
-      else resolve(res);
+      if (!res.ok) reject(new Error('fail')); else resolve(res);
     }).catch(function(e) { clearTimeout(timer); reject(e); });
   });
 }
@@ -278,9 +281,14 @@ if (localStorage.getItem('anbikai_theme') === 'light') {
   document.getElementById('themeBtn').textContent = '☀️';
 }
 
+function hasVideo(id) {
+  return VIDEO_DATA[id] && VIDEO_DATA[id].length > 0;
+}
+
 function makeCard(a) {
-  return '<div class="card" onclick="openDetails(' + a.mal_id + ')">' +
-    '<img src="' + a.img + '" alt="" loading="lazy" onerror="this.src=\'data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22220%22><rect fill=%22%2323232c%22 width=%22200%22 height=%22220%22/><text x=%22100%22 y=%22110%22 fill=%22%23a1a1aa%22 font-size=%2214%22 text-anchor=%22middle%22>No Image</text></svg>\'">' +
+  var playBadge = hasVideo(a.mal_id) ? '<div class="play-badge">▶ WATCH</div>' : '';
+  return '<div class="card" onclick="openDetails(' + a.mal_id + ')">' + playBadge +
+    '<img src="' + a.img + '" alt="" loading="lazy" onerror="this.style.opacity=0.2">' +
     '<div class="card-content">' +
       '<h3>' + a.title + '</h3>' +
       '<p><span class="score">⭐ ' + a.score + '</span></p>' +
@@ -302,8 +310,7 @@ function renderAnime(list) {
 }
 
 function loadTop() {
-  trendingHeader.style.display = 'flex';
-  trendingHeader.textContent = '🔥 Trending Now';
+  trendingHeader.style.display = 'block';
   statusEl.textContent = '';
   grid.innerHTML = '';
   anilistFetch({ sort: ['TRENDING_DESC'], perPage: 30 }).then(function(res) {
@@ -331,11 +338,9 @@ function searchAnime() {
       renderAnime(list);
     } else {
       statusEl.textContent = 'Kichu paoa gelo na.';
-      grid.innerHTML = '';
     }
   }).catch(function() {
     statusEl.textContent = 'Search fail. Try again.';
-    grid.innerHTML = '';
   });
 }
 
@@ -367,7 +372,7 @@ function showWatchlist() {
   btn.classList.add('active');
   var list = getWatchlist();
   if (list.length === 0) {
-    statusEl.textContent = 'Watchlist khali. Card e tap kore "Add to Watchlist" koro.';
+    statusEl.textContent = 'Watchlist khali.';
     grid.innerHTML = '';
     return;
   }
@@ -433,11 +438,16 @@ function openDetails(id) {
   renderModal(anime);
 }
 
+var activeVideoIndex = 0;
+
 function renderModal(a) {
   var inList = isInWatchlist(a.mal_id);
   var reviews = getReviews(a.mal_id);
   var body = document.getElementById('modalBody');
+  var videos = VIDEO_DATA[a.mal_id] || [];
   var ytSearch = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(a.title + ' trailer');
+  
+  activeVideoIndex = 0;
   var html = '<h2>' + a.title + '</h2>';
   html += '<div class="modal-info">';
   html += '<span>⭐ ' + a.score + '</span>';
@@ -451,15 +461,30 @@ function renderModal(a) {
     html += '</div>';
   }
   html += '<p class="synopsis">' + (a.synopsis || 'No description available.') + '</p>';
+
+  if (videos.length > 0) {
+    html += '<h3 class="section-title">▶ Watch Online</h3>';
+    html += '<div class="video-buttons" id="videoButtons">';
+    for (var v = 0; v < videos.length; v++) {
+      html += '<button class="video-btn ' + (v === 0 ? 'active' : '') + '" onclick="switchVideo(' + a.mal_id + ', ' + v + ')">' + videos[v].label + '</button>';
+    }
+    html += '</div>';
+    html += '<div class="video-player" id="videoPlayer"><iframe src="' + videos[0].embed + '" allowfullscreen allow="autoplay; encrypted-media" scrolling="no" frameborder="0"></iframe></div>';
+  } else {
+    html += '<div class="no-video">😔 Ei anime er video ekhono upload kora hoyni.</div>';
+  }
+
   html += '<button class="watchlist-btn ' + (inList ? 'in-list' : '') + '" onclick="toggleWlFromModal(' + a.mal_id + ')">';
   html += inList ? '✓ In Watchlist — Remove' : '+ Add to Watchlist';
   html += '</button>';
+
   html += '<h3 class="section-title">📺 Trailer</h3>';
   if (a.trailer) {
-    html += '<div class="trailer"><iframe src="' + a.trailer + '" allowfullscreen allow="autoplay; encrypted-media"></iframe></div>';
+    html += '<div class="trailer" style="aspect-ratio:16/9;border-radius:10px;overflow:hidden;margin-bottom:8px;"><iframe src="' + a.trailer + '" style="width:100%;height:100%;border:none;" allowfullscreen></iframe></div>';
   } else {
-    html += '<div class="no-trailer">Ei anime er trailer paoa gelo na.<br><a href="' + ytSearch + '" target="_blank">▶ YouTube e dekho</a></div>';
+    html += '<div class="no-video">Trailer paoa gelo na. <a href="' + ytSearch + '" target="_blank" style="color:var(--accent);">YouTube e dekho</a></div>';
   }
+
   html += '<h3 class="section-title">📝 Reviews (' + reviews.length + ')</h3>';
   html += '<div class="review-form">';
   html += '<input id="revName" type="text" placeholder="Tomar naam...">';
@@ -472,6 +497,19 @@ function renderModal(a) {
     html += '<span class="date">' + reviews[k].date + '</span></div>';
   }
   body.innerHTML = html;
+}
+
+function switchVideo(animeId, index) {
+  var videos = VIDEO_DATA[animeId] || [];
+  if (!videos[index]) return;
+  activeVideoIndex = index;
+  var player = document.getElementById('videoPlayer');
+  if (player) {
+    player.innerHTML = '<iframe src="' + videos[index].embed + '" allowfullscreen allow="autoplay; encrypted-media" scrolling="no" frameborder="0"></iframe>';
+  }
+  var buttons = document.querySelectorAll('#videoButtons .video-btn');
+  for (var i = 0; i < buttons.length; i++) buttons[i].classList.remove('active');
+  if (buttons[index]) buttons[index].classList.add('active');
 }
 
 function toggleWlFromModal(id) {
@@ -507,6 +545,8 @@ function escapeHtml(s) {
 function closeModal() {
   document.getElementById('modal').classList.remove('active');
   document.body.style.overflow = '';
+  var player = document.getElementById('videoPlayer');
+  if (player) player.innerHTML = '';
 }
 
 input.addEventListener('input', function() {
