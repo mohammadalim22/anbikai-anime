@@ -110,9 +110,7 @@
 </div>
 
 <div id="status"></div>
-<div class="section-header">🌟 Featured Anime</div>
-<div class="grid" id="featuredGrid"></div>
-<div class="section-header" id="trendingHeader" style="display:none;">🔥 Trending Now</div>
+<div class="section-header" id="trendingHeader">🔥 Trending Now</div>
 <div class="grid" id="animeGrid"></div>
 
 <footer>AnbiKai Anime • Data: AniList API</footer>
@@ -129,7 +127,6 @@
 
 <script>
 var grid = document.getElementById('animeGrid');
-var featuredGrid = document.getElementById('featuredGrid');
 var trendingHeader = document.getElementById('trendingHeader');
 var statusEl = document.getElementById('status');
 var input = document.getElementById('searchInput');
@@ -142,62 +139,42 @@ var ANILIST_URL = 'https://graphql.anilist.co';
 var QUERY = 'query ($search: String, $genre: String, $sort: [MediaSort], $perPage: Int) { Page(page: 1, perPage: $perPage) { media(type: ANIME, search: $search, genre: $genre, sort: $sort, isAdult: false) { id title { romaji english } description(asHtml: false) coverImage { extraLarge large } bannerImage episodes nextAiringEpisode { episode } averageScore format startDate { year } genres trailer { id site } } } }';
 
 /* ============================================
-   ⭐ CUSTOM ANIME — এখানে তুমি নিজের পছন্দের অ্যানিমে যোগ করবে
-   mal_id: যেকোনো unique number দাও (আগের সাথে মিল যাবে না)
-   title, score, type, episodes, img (cover image URL), synopsis, genres, trailer
+   Fallback anime — API fail hole ei list dekhano hobe
    ============================================ */
-var customAnime = [
-  {
-    mal_id: 90001,
-    title: "One Piece",
-    score: 8.7,
-    type: "TV",
-    episodes: "1100+",
-    img: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21-ELSYx3QCDY2S.jpg",
+var fallbackAnime = [
+  { mal_id: 21, title: "One Piece", score: 8.7, type: "TV", episodes: "1100+",
+    img: "https://cdn.myanimelist.net/images/anime/6/73245.jpg",
     synopsis: "Monkey D. Luffy sets off on an adventure to find the legendary One Piece treasure and become Pirate King.",
-    genres: ["Action","Adventure","Fantasy"],
-    trailer: "https://www.youtube.com/embed/MCb13lbVGE0",
-    year: 1999
-  },
-  {
-    mal_id: 90002,
-    title: "Naruto",
-    score: 8.0,
-    type: "TV",
-    episodes: 220,
-    img: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx20-ELSYx3QCDY2S.jpg",
+    genres: ["Action","Adventure","Fantasy"], trailer: "https://www.youtube.com/embed/MCb13lbVGE0", year: 1999 },
+  { mal_id: 20, title: "Naruto", score: 8.0, type: "TV", episodes: 220,
+    img: "https://cdn.myanimelist.net/images/anime/13/17405.jpg",
     synopsis: "Naruto Uzumaki, a young ninja with a sealed demon fox inside him, seeks recognition and dreams of becoming Hokage.",
-    genres: ["Action","Adventure"],
-    trailer: "https://www.youtube.com/embed/QczGoCmX-pI",
-    year: 2002
-  },
-  {
-    mal_id: 90003,
-    title: "Demon Slayer",
-    score: 8.5,
-    type: "TV",
-    episodes: 55,
-    img: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx101922-PEn1CTc93blC.jpg",
+    genres: ["Action","Adventure"], trailer: "https://www.youtube.com/embed/QczGoCmX-pI", year: 2002 },
+  { mal_id: 38000, title: "Demon Slayer", score: 8.5, type: "TV", episodes: 55,
+    img: "https://cdn.myanimelist.net/images/anime/1286/99889.jpg",
     synopsis: "Tanjiro becomes a demon slayer to avenge his family and cure his sister.",
-    genres: ["Action","Supernatural"],
-    trailer: "https://www.youtube.com/embed/VQGCKyvzIM4",
-    year: 2019
-  },
-  {
-    mal_id: 90004,
-    title: "Attack on Titan",
-    score: 8.5,
-    type: "TV",
-    episodes: 87,
-    img: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx16498-C6FPmWm59CyP.jpg",
+    genres: ["Action","Supernatural"], trailer: "https://www.youtube.com/embed/VQGCKyvzIM4", year: 2019 },
+  { mal_id: 16498, title: "Attack on Titan", score: 8.5, type: "TV", episodes: 87,
+    img: "https://cdn.myanimelist.net/images/anime/10/47347.jpg",
     synopsis: "Humanity fights for survival against giant man-eating Titans behind enormous walls.",
-    genres: ["Action","Drama"],
-    trailer: "https://www.youtube.com/embed/LHtdKWJdif4",
-    year: 2013
-  }
+    genres: ["Action","Drama"], trailer: "https://www.youtube.com/embed/LHtdKWJdif4", year: 2013 },
+  { mal_id: 40748, title: "Jujutsu Kaisen", score: 8.6, type: "TV", episodes: 47,
+    img: "https://cdn.myanimelist.net/images/anime/1171/109222.jpg",
+    synopsis: "Yuji Itadori swallows a cursed finger and joins a secret school of Jujutsu sorcerers.",
+    genres: ["Action","Supernatural"], trailer: "https://www.youtube.com/embed/4A_X-Dvl0ws", year: 2020 },
+  { mal_id: 1535, title: "Death Note", score: 8.6, type: "TV", episodes: 37,
+    img: "https://cdn.myanimelist.net/images/anime/9/9453.jpg",
+    synopsis: "A genius student finds a notebook that kills anyone whose name is written in it.",
+    genres: ["Mystery","Supernatural"], trailer: "https://www.youtube.com/embed/NlJZ-YgAt-c", year: 2006 },
+  { mal_id: 5114, title: "Fullmetal Alchemist Brotherhood", score: 9.1, type: "TV", episodes: 64,
+    img: "https://cdn.myanimelist.net/images/anime/1223/96541.jpg",
+    synopsis: "Two brothers search for the Philosopher's Stone to restore their bodies.",
+    genres: ["Action","Adventure","Drama"], trailer: "https://www.youtube.com/embed/--IvhX5I7W0", year: 2009 },
+  { mal_id: 31964, title: "My Hero Academia", score: 7.9, type: "TV", episodes: 158,
+    img: "https://cdn.myanimelist.net/images/anime/10/78745.jpg",
+    synopsis: "In a world of superheroes, a powerless boy inherits the power of the world's greatest hero.",
+    genres: ["Action","Comedy"], trailer: "https://www.youtube.com/embed/EP_OZ8p4LJ4", year: 2016 }
 ];
-
-var fallbackAnime = customAnime.slice();
 
 /* ===== Fetch with timeout ===== */
 function fetchWithTimeout(url, options, ms) {
@@ -254,7 +231,6 @@ function mapAniList(a) {
   };
 }
 
-/* ===== Sorting for search ===== */
 function sortSearchResults(list, query) {
   var q = String(query).toLowerCase().trim();
   function titleScore(a) {
@@ -280,7 +256,6 @@ function sortSearchResults(list, query) {
   return list;
 }
 
-/* ===== Watchlist ===== */
 function getWatchlist() { try { return JSON.parse(localStorage.getItem('anbikai_watchlist') || '[]'); } catch(e) { return []; } }
 function saveWatchlist(list) { localStorage.setItem('anbikai_watchlist', JSON.stringify(list)); updateWlCount(); }
 function updateWlCount() { document.getElementById('wlCount').textContent = getWatchlist().length; }
@@ -292,7 +267,6 @@ function toggleWatchlist(anime) {
   saveWatchlist(list);
 }
 
-/* ===== Theme ===== */
 function toggleTheme() {
   document.body.classList.toggle('light');
   var isLight = document.body.classList.contains('light');
@@ -304,7 +278,6 @@ if (localStorage.getItem('anbikai_theme') === 'light') {
   document.getElementById('themeBtn').textContent = '☀️';
 }
 
-/* ===== Render ===== */
 function makeCard(a) {
   return '<div class="card" onclick="openDetails(' + a.mal_id + ')">' +
     '<img src="' + a.img + '" alt="" loading="lazy" onerror="this.src=\'data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22220%22><rect fill=%22%2323232c%22 width=%22200%22 height=%22220%22/><text x=%22100%22 y=%22110%22 fill=%22%23a1a1aa%22 font-size=%2214%22 text-anchor=%22middle%22>No Image</text></svg>\'">' +
@@ -328,21 +301,16 @@ function renderAnime(list) {
   grid.innerHTML = html;
 }
 
-function renderFeatured() {
-  var html = '';
-  for (var i = 0; i < customAnime.length; i++) html += makeCard(customAnime[i]);
-  featuredGrid.innerHTML = html;
-}
-
-/* ===== Load ===== */
 function loadTop() {
-  trendingHeader.style.display = 'block';
+  trendingHeader.style.display = 'flex';
+  trendingHeader.textContent = '🔥 Trending Now';
   statusEl.textContent = '';
-  renderFeatured();
   grid.innerHTML = '';
   anilistFetch({ sort: ['TRENDING_DESC'], perPage: 30 }).then(function(res) {
-    if (res && res.data && res.data.Page && res.data.Page.media) {
+    if (res && res.data && res.data.Page && res.data.Page.media && res.data.Page.media.length > 0) {
       renderAnime(res.data.Page.media.map(mapAniList));
+    } else {
+      renderAnime(fallbackAnime);
     }
   }).catch(function() {
     renderAnime(fallbackAnime);
@@ -353,8 +321,8 @@ function searchAnime() {
   var q = input.value.trim();
   hideSuggestions();
   if (!q) { loadTop(); return; }
-  statusEl.textContent = 'Searching...';
   trendingHeader.style.display = 'none';
+  statusEl.textContent = 'Searching...';
   grid.innerHTML = '';
   anilistFetch({ search: q, perPage: 30 }).then(function(res) {
     if (res && res.data && res.data.Page && res.data.Page.media && res.data.Page.media.length > 0) {
@@ -367,6 +335,7 @@ function searchAnime() {
     }
   }).catch(function() {
     statusEl.textContent = 'Search fail. Try again.';
+    grid.innerHTML = '';
   });
 }
 
@@ -406,7 +375,6 @@ function showWatchlist() {
   renderAnime(list);
 }
 
-/* ===== SUGGESTIONS ===== */
 function hideSuggestions() { suggestionsEl.classList.remove('active'); suggestionsEl.innerHTML = ''; }
 
 function showSuggestions(items) {
@@ -428,7 +396,7 @@ function showSuggestions(items) {
 function pickSuggestion(id) {
   var anime = null;
   for (var i = 0; i < currentList.length; i++) if (currentList[i].mal_id === id) { anime = currentList[i]; break; }
-  if (!anime) for (var j = 0; j < customAnime.length; j++) if (customAnime[j].mal_id === id) { anime = customAnime[j]; break; }
+  if (!anime) for (var j = 0; j < fallbackAnime.length; j++) if (fallbackAnime[j].mal_id === id) { anime = fallbackAnime[j]; break; }
   hideSuggestions();
   if (anime) openDetails(anime.mal_id);
 }
@@ -438,7 +406,7 @@ function fetchSuggestions(q) {
   suggestionsEl.classList.add('active');
   suggestionsEl.innerHTML = '<div class="sug-loading">Loading...</div>';
   anilistFetch({ search: q, perPage: 8 }).then(function(res) {
-    if (res && res.data && res.data.Page && res.data.Page.media) {
+    if (res && res.data && res.data.Page && res.data.Page.media && res.data.Page.media.length > 0) {
       var list = res.data.Page.media.map(mapAniList);
       list = sortSearchResults(list, q);
       showSuggestions(list);
@@ -446,22 +414,20 @@ function fetchSuggestions(q) {
       hideSuggestions();
     }
   }).catch(function() {
-    // Offline fallback: filter custom anime
     var ql = q.toLowerCase();
-    var matches = customAnime.filter(function(a){ return a.title.toLowerCase().indexOf(ql) >= 0; });
+    var matches = fallbackAnime.filter(function(a){ return a.title.toLowerCase().indexOf(ql) >= 0; });
     if (matches.length > 0) showSuggestions(matches);
     else hideSuggestions();
   });
 }
 
-/* ===== Details Modal ===== */
 function openDetails(id) {
   var modal = document.getElementById('modal');
   modal.classList.add('active');
   document.body.style.overflow = 'hidden';
   var anime = null;
   for (var i = 0; i < currentList.length; i++) if (currentList[i].mal_id === id) { anime = currentList[i]; break; }
-  if (!anime) for (var j = 0; j < customAnime.length; j++) if (customAnime[j].mal_id === id) { anime = customAnime[j]; break; }
+  if (!anime) for (var j = 0; j < fallbackAnime.length; j++) if (fallbackAnime[j].mal_id === id) { anime = fallbackAnime[j]; break; }
   if (!anime) return;
   document.getElementById('mImg').src = anime.img;
   renderModal(anime);
@@ -511,7 +477,7 @@ function renderModal(a) {
 function toggleWlFromModal(id) {
   var anime = null;
   for (var i = 0; i < currentList.length; i++) if (currentList[i].mal_id === id) { anime = currentList[i]; break; }
-  if (!anime) for (var j = 0; j < customAnime.length; j++) if (customAnime[j].mal_id === id) { anime = customAnime[j]; break; }
+  if (!anime) for (var j = 0; j < fallbackAnime.length; j++) if (fallbackAnime[j].mal_id === id) { anime = fallbackAnime[j]; break; }
   if (!anime) return;
   toggleWatchlist(anime);
   renderModal(anime);
@@ -528,7 +494,7 @@ function submitReview(id) {
   saveReviews(id, list);
   var anime = null;
   for (var i = 0; i < currentList.length; i++) if (currentList[i].mal_id === id) { anime = currentList[i]; break; }
-  if (!anime) for (var j = 0; j < customAnime.length; j++) if (customAnime[j].mal_id === id) { anime = customAnime[j]; break; }
+  if (!anime) for (var j = 0; j < fallbackAnime.length; j++) if (fallbackAnime[j].mal_id === id) { anime = fallbackAnime[j]; break; }
   if (anime) renderModal(anime);
 }
 
@@ -543,7 +509,6 @@ function closeModal() {
   document.body.style.overflow = '';
 }
 
-/* ===== Init ===== */
 input.addEventListener('input', function() {
   var q = input.value.trim();
   clearTimeout(suggestTimer);
