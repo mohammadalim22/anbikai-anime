@@ -61,6 +61,14 @@
   .video-btn { padding: 10px 16px; border-radius: 999px; border: none; background: var(--accent); color: white; font-weight: bold; cursor: pointer; font-size: 0.85rem; }
   .video-btn.active { background: #22c55e; }
   .no-video { text-align: center; padding: 30px 20px; background: var(--input-bg); border-radius: 12px; color: var(--muted); font-size: 0.85rem; }
+  .watch-links { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  .watch-link-btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 16px; border-radius: 999px; text-decoration: none; color: white; font-weight: bold; font-size: 0.85rem; border: none; }
+  .wl-crunchyroll { background: #f47521; }
+  .wl-netflix { background: #e50914; }
+  .wl-hulu { background: #1ce783; color: #000; }
+  .wl-prime { background: #00a8e1; }
+  .wl-youtube { background: #ff0000; }
+  .wl-muse { background: #ff0050; }
   .watchlist-btn { padding: 11px 16px; border-radius: 999px; border: 1px solid var(--accent); background: transparent; color: var(--accent); font-weight: bold; cursor: pointer; width: 100%; font-size: 0.9rem; margin-bottom: 8px; }
   .watchlist-btn.in-list { background: var(--accent); color: white; }
   .review-form { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
@@ -141,25 +149,53 @@ var ANILIST_URL = 'https://graphql.anilist.co';
 var QUERY = 'query ($search: String, $genre: String, $sort: [MediaSort], $perPage: Int) { Page(page: 1, perPage: $perPage) { media(type: ANIME, search: $search, genre: $genre, sort: $sort, isAdult: false) { id title { romaji english } description(asHtml: false) coverImage { extraLarge large } bannerImage episodes nextAiringEpisode { episode } averageScore format startDate { year } genres trailer { id site } } } }';
 
 /* ============================================================
-   ⭐⭐ VIDEO PLAYLIST — এখানে নতুন ভিডিও যোগ করবে ⭐⭐
-   
-   - mal_id (AniList ID): key
-   - প্রতিটা ভিডিও: { label, embed }
-   
-   উদাহরণ:
-   var VIDEO_DATA = {
-     21: [ { label: "Watch Now", embed: "https://streamtape.com/e/XXXXX/" } ],
-     97940: [ { label: "Trailer", embed: "https://streamtape.com/e/YYYYY/" } ]
-   };
+   ⭐ VIDEO_DATA — নিজের আপলোড করা ভিডিওর লিংক
    ============================================================ */
 var VIDEO_DATA = {
-  21: [
-    { label: "Watch Now", embed: "https://streamtape.com/e/Qex8L8KwY2UyDJ/" }
-  ],
   97940: [
+    { label: "Episode 1 (Hindi)", embed: "https://streamtape.com/e/JKKxw2xeQ0sj0R0/" },
     { label: "Trailer", embed: "https://streamtape.com/e/PDyGxboGa3u03pq/" }
   ]
 };
+
+/* ============================================================
+   ⭐ WATCH_LINKS — অফিশিয়াল স্ট্রিমিং সাইটের লিংক
+   
+   প্রতিটা অ্যানিমের জন্য multiple লিংক দিতে পারবে।
+   platform: crunchyroll / netflix / hulu / prime / youtube / muse
+   ============================================================ */
+var WATCH_LINKS = {
+  97940: [
+    { platform: "crunchyroll", url: "https://www.crunchyroll.com/series/GRE50VZWR/black-clover" },
+    { platform: "netflix", url: "https://www.netflix.com/title/80238012" }
+  ],
+  21: [
+    { platform: "crunchyroll", url: "https://www.crunchyroll.com/one-piece" },
+    { platform: "netflix", url: "https://www.netflix.com/title/80107103" }
+  ],
+  20: [
+    { platform: "crunchyroll", url: "https://www.crunchyroll.com/naruto" },
+    { platform: "netflix", url: "https://www.netflix.com/title/70205012" }
+  ],
+  38000: [
+    { platform: "crunchyroll", url: "https://www.crunchyroll.com/demon-slayer-kimetsu-no-yaiba" },
+    { platform: "netflix", url: "https://www.netflix.com/title/81091393" }
+  ],
+  16498: [
+    { platform: "crunchyroll", url: "https://www.crunchyroll.com/attack-on-titan" },
+    { platform: "hulu", url: "https://www.hulu.com/series/attack-on-titan" }
+  ]
+};
+
+function platformLabel(p) {
+  var map = { crunchyroll: "Crunchyroll", netflix: "Netflix", hulu: "Hulu", prime: "Prime Video", youtube: "YouTube", muse: "Muse Asia" };
+  return map[p] || p;
+}
+
+function platformIcon(p) {
+  var map = { crunchyroll: "🟠", netflix: "🔴", hulu: "🟢", prime: "🔵", youtube: "▶️", muse: "🟣" };
+  return map[p] || "▶";
+}
 
 var fallbackAnime = [
   { mal_id: 21, title: "One Piece", score: 8.7, type: "TV", episodes: "1100+",
@@ -177,7 +213,7 @@ var fallbackAnime = [
   { mal_id: 97940, title: "Black Clover", score: 8.1, type: "TV", episodes: 170,
     img: "https://cdn.myanimelist.net/images/anime/2/88336.jpg",
     synopsis: "Asta, a boy born without magic in a world where magic is everything, aims to become the Wizard King.",
-    genres: ["Action","Adventure","Fantasy"], trailer: "https://www.youtube.com/embed/PDyGxboGa3u", year: 2017 }
+    genres: ["Action","Adventure","Comedy","Fantasy"], trailer: "https://www.youtube.com/embed/PDyGxboGa3u", year: 2017 }
 ];
 
 function fetchWithTimeout(url, options, ms) {
@@ -279,9 +315,7 @@ if (localStorage.getItem('anbikai_theme') === 'light') {
   document.getElementById('themeBtn').textContent = '☀️';
 }
 
-function hasVideo(id) {
-  return VIDEO_DATA[id] && VIDEO_DATA[id].length > 0;
-}
+function hasVideo(id) { return VIDEO_DATA[id] && VIDEO_DATA[id].length > 0; }
 
 function makeCard(a) {
   var playBadge = hasVideo(a.mal_id) ? '<div class="play-badge">▶ WATCH</div>' : '';
@@ -296,11 +330,7 @@ function makeCard(a) {
 
 function renderAnime(list) {
   currentList = list;
-  if (!list || list.length === 0) {
-    statusEl.textContent = 'Kono anime paoa gelo na.';
-    grid.innerHTML = '';
-    return;
-  }
+  if (!list || list.length === 0) { statusEl.textContent = 'Kono anime paoa gelo na.'; grid.innerHTML = ''; return; }
   statusEl.textContent = '';
   var html = '';
   for (var i = 0; i < list.length; i++) html += makeCard(list[i]);
@@ -314,12 +344,8 @@ function loadTop() {
   anilistFetch({ sort: ['TRENDING_DESC'], perPage: 30 }).then(function(res) {
     if (res && res.data && res.data.Page && res.data.Page.media && res.data.Page.media.length > 0) {
       renderAnime(res.data.Page.media.map(mapAniList));
-    } else {
-      renderAnime(fallbackAnime);
-    }
-  }).catch(function() {
-    renderAnime(fallbackAnime);
-  });
+    } else { renderAnime(fallbackAnime); }
+  }).catch(function() { renderAnime(fallbackAnime); });
 }
 
 function searchAnime() {
@@ -334,12 +360,8 @@ function searchAnime() {
       var list = res.data.Page.media.map(mapAniList);
       list = sortSearchResults(list, q);
       renderAnime(list);
-    } else {
-      statusEl.textContent = 'Kichu paoa gelo na.';
-    }
-  }).catch(function() {
-    statusEl.textContent = 'Search fail. Try again.';
-  });
+    } else { statusEl.textContent = 'Kichu paoa gelo na.'; }
+  }).catch(function() { statusEl.textContent = 'Search fail. Try again.'; });
 }
 
 function filterGenre() {
@@ -349,31 +371,18 @@ function filterGenre() {
   statusEl.textContent = 'Filtering ' + genre + '...';
   grid.innerHTML = '';
   anilistFetch({ genre: genre, sort: ['POPULARITY_DESC'], perPage: 30 }).then(function(res) {
-    if (res && res.data && res.data.Page && res.data.Page.media) {
-      renderAnime(res.data.Page.media.map(mapAniList));
-    }
-  }).catch(function() {
-    statusEl.textContent = 'Filter fail.';
-  });
+    if (res && res.data && res.data.Page && res.data.Page.media) renderAnime(res.data.Page.media.map(mapAniList));
+  }).catch(function() { statusEl.textContent = 'Filter fail.'; });
 }
 
 function showWatchlist() {
   var btn = document.getElementById('watchlistBtn');
   trendingHeader.style.display = 'none';
-  if (currentView === 'watchlist') {
-    currentView = 'browse';
-    btn.classList.remove('active');
-    loadTop();
-    return;
-  }
+  if (currentView === 'watchlist') { currentView = 'browse'; btn.classList.remove('active'); loadTop(); return; }
   currentView = 'watchlist';
   btn.classList.add('active');
   var list = getWatchlist();
-  if (list.length === 0) {
-    statusEl.textContent = 'Watchlist khali.';
-    grid.innerHTML = '';
-    return;
-  }
+  if (list.length === 0) { statusEl.textContent = 'Watchlist khali.'; grid.innerHTML = ''; return; }
   statusEl.textContent = '⭐ Watchlist (' + list.length + ')';
   renderAnime(list);
 }
@@ -413,14 +422,11 @@ function fetchSuggestions(q) {
       var list = res.data.Page.media.map(mapAniList);
       list = sortSearchResults(list, q);
       showSuggestions(list);
-    } else {
-      hideSuggestions();
-    }
+    } else { hideSuggestions(); }
   }).catch(function() {
     var ql = q.toLowerCase();
     var matches = fallbackAnime.filter(function(a){ return a.title.toLowerCase().indexOf(ql) >= 0; });
-    if (matches.length > 0) showSuggestions(matches);
-    else hideSuggestions();
+    if (matches.length > 0) showSuggestions(matches); else hideSuggestions();
   });
 }
 
@@ -443,6 +449,7 @@ function renderModal(a) {
   var reviews = getReviews(a.mal_id);
   var body = document.getElementById('modalBody');
   var videos = VIDEO_DATA[a.mal_id] || [];
+  var watchLinks = WATCH_LINKS[a.mal_id] || [];
   var ytSearch = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(a.title + ' trailer');
   
   activeVideoIndex = 0;
@@ -460,6 +467,7 @@ function renderModal(a) {
   }
   html += '<p class="synopsis">' + (a.synopsis || 'No description available.') + '</p>';
 
+  /* ===== VIDEO SECTION ===== */
   if (videos.length > 0) {
     html += '<h3 class="section-title">▶ Watch Online</h3>';
     html += '<div class="video-buttons" id="videoButtons">';
@@ -469,7 +477,18 @@ function renderModal(a) {
     html += '</div>';
     html += '<div class="video-player" id="videoPlayer"><iframe src="' + videos[0].embed + '" allowfullscreen allow="autoplay; encrypted-media" scrolling="no" frameborder="0"></iframe></div>';
   } else {
-    html += '<div class="no-video">😔 Ei anime er video ekhono upload kora hoyni.</div>';
+    html += '<div class="no-video">😔 Ei anime er video ekhono upload kora hoyni. Niche official link theke dekho.</div>';
+  }
+
+  /* ===== OFFICIAL WATCH LINKS ===== */
+  if (watchLinks.length > 0) {
+    html += '<h3 class="section-title">🌐 Official Streaming</h3>';
+    html += '<div class="watch-links">';
+    for (var w = 0; w < watchLinks.length; w++) {
+      var wl = watchLinks[w];
+      html += '<a class="watch-link-btn wl-' + wl.platform + '" href="' + wl.url + '" target="_blank">' + platformIcon(wl.platform) + ' ' + platformLabel(wl.platform) + '</a>';
+    }
+    html += '</div>';
   }
 
   html += '<button class="watchlist-btn ' + (inList ? 'in-list' : '') + '" onclick="toggleWlFromModal(' + a.mal_id + ')">';
