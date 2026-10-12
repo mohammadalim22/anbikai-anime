@@ -27,7 +27,7 @@
 <body>
 <header>
   <h1>🌸 AnbiKai Anime</h1>
-  <p>Free anime catalog — Jikan API</p>
+  <p>Free anime catalog</p>
 </header>
 
 <div class="search-box">
@@ -35,11 +35,11 @@
   <button onclick="searchAnime()">Search</button>
 </div>
 
-<div id="status">Loading top anime...</div>
+<div id="status">Loading...</div>
 <div class="grid" id="animeGrid"></div>
 
 <footer>
-  Data: Jikan API (MyAnimeList) • AnbiKai Anime
+  AnbiKai Anime
 </footer>
 
 <script>
@@ -47,17 +47,20 @@ const grid = document.getElementById('animeGrid');
 const status = document.getElementById('status');
 const input = document.getElementById('searchInput');
 
-async function fetchAnime(url) {
-  status.textContent = 'Loading...';
-  grid.innerHTML = '';
-  try {
-    const res = await fetch(url);
-    const data = await res.json();
-    renderAnime(data.data);
-  } catch (err) {
-    status.textContent = 'Kichu bhul holo. Abar try koro.';
-  }
-}
+const fallbackAnime = [
+  { title:"Naruto", score:8.0, type:"TV", episodes:220, img:"https://cdn.myanimelist.net/images/anime/13/17405.jpg" },
+  { title:"One Piece", score:8.7, type:"TV", episodes:1000, img:"https://cdn.myanimelist.net/images/anime/6/73245.jpg" },
+  { title:"Attack on Titan", score:8.5, type:"TV", episodes:25, img:"https://cdn.myanimelist.net/images/anime/10/47347.jpg" },
+  { title:"Demon Slayer", score:8.5, type:"TV", episodes:26, img:"https://cdn.myanimelist.net/images/anime/1286/99889.jpg" },
+  { title:"Jujutsu Kaisen", score:8.6, type:"TV", episodes:24, img:"https://cdn.myanimelist.net/images/anime/1171/109222.jpg" },
+  { title:"Death Note", score:8.6, type:"TV", episodes:37, img:"https://cdn.myanimelist.net/images/anime/9/9453.jpg" },
+  { title:"Fullmetal Alchemist", score:9.1, type:"TV", episodes:64, img:"https://cdn.myanimelist.net/images/anime/1223/96541.jpg" },
+  { title:"My Hero Academia", score:7.9, type:"TV", episodes:13, img:"https://cdn.myanimelist.net/images/anime/10/78745.jpg" },
+  { title:"Tokyo Ghoul", score:7.8, type:"TV", episodes:12, img:"https://cdn.myanimelist.net/images/anime/5/64449.jpg" },
+  { title:"Sword Art Online", score:7.2, type:"TV", episodes:25, img:"https://cdn.myanimelist.net/images/anime/11/39717.jpg" },
+  { title:"Chainsaw Man", score:8.5, type:"TV", episodes:12, img:"https://cdn.myanimelist.net/images/anime/1806/126216.jpg" },
+  { title:"Spy x Family", score:8.5, type:"TV", episodes:12, img:"https://cdn.myanimelist.net/images/anime/1441/122795.jpg" }
+];
 
 function renderAnime(list) {
   if (!list || list.length === 0) {
@@ -67,24 +70,58 @@ function renderAnime(list) {
   status.textContent = '';
   grid.innerHTML = list.map(a => `
     <div class="card">
-      <img src="${a.images?.jpg?.image_url || ''}" alt="${a.title}">
+      <img src="${a.img}" alt="${a.title}" onerror="this.style.display='none'">
       <div class="card-content">
-        <h3>${a.title_english || a.title}</h3>
-        <p><span class="score">⭐ ${a.score || 'N/A'}</span></p>
-        <p>${a.type || ''} • ${a.episodes || '?'} eps</p>
+        <h3>${a.title}</h3>
+        <p><span class="score">⭐ ${a.score}</span></p>
+        <p>${a.type} • ${a.episodes} eps</p>
       </div>
     </div>
   `).join('');
 }
 
-function searchAnime() {
+async function searchAnime() {
   const q = input.value.trim();
   if (!q) { loadTop(); return; }
-  fetchAnime('https://api.jikan.moe/v4/anime?q=' + encodeURIComponent(q) + '&limit=12&sfw=true');
+  status.textContent = 'Loading...';
+  grid.innerHTML = '';
+  try {
+    const res = await fetch('https://api.jikan.moe/v4/anime?q=' + encodeURIComponent(q) + '&limit=12&sfw=true');
+    if (!res.ok) throw new Error('API fail');
+    const data = await res.json();
+    const list = data.data.map(a => ({
+      title: a.title_english || a.title,
+      score: a.score || 'N/A',
+      type: a.type || '',
+      episodes: a.episodes || '?',
+      img: a.images?.jpg?.image_url || ''
+    }));
+    renderAnime(list);
+  } catch (err) {
+    status.textContent = 'API kaj korche na, popular anime dekhacchi:';
+    renderAnime(fallbackAnime);
+  }
 }
 
-function loadTop() {
-  fetchAnime('https://api.jikan.moe/v4/top/anime?limit=12');
+async function loadTop() {
+  status.textContent = 'Loading...';
+  grid.innerHTML = '';
+  try {
+    const res = await fetch('https://api.jikan.moe/v4/top/anime?limit=12');
+    if (!res.ok) throw new Error('API fail');
+    const data = await res.json();
+    const list = data.data.map(a => ({
+      title: a.title_english || a.title,
+      score: a.score || 'N/A',
+      type: a.type || '',
+      episodes: a.episodes || '?',
+      img: a.images?.jpg?.image_url || ''
+    }));
+    renderAnime(list);
+  } catch (err) {
+    status.textContent = 'Popular anime:';
+    renderAnime(fallbackAnime);
+  }
 }
 
 input.addEventListener('keypress', e => { if (e.key === 'Enter') searchAnime(); });
@@ -92,4 +129,4 @@ input.addEventListener('keypress', e => { if (e.key === 'Enter') searchAnime(); 
 loadTop();
 </script>
 </body>
-  </html>
+</html>
