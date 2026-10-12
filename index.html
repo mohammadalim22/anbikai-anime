@@ -141,16 +141,13 @@ var ANILIST_URL = 'https://graphql.anilist.co';
 var QUERY = 'query ($search: String, $genre: String, $sort: [MediaSort], $perPage: Int) { Page(page: 1, perPage: $perPage) { media(type: ANIME, search: $search, genre: $genre, sort: $sort, isAdult: false) { id title { romaji english } description(asHtml: false) coverImage { extraLarge large } bannerImage episodes nextAiringEpisode { episode } averageScore format startDate { year } genres trailer { id site } } } }';
 
 /* ============================================================
-   ⭐⭐ VIDEO PLAYLIST — এখানে ভিডিও লিংক যোগ করবে ⭐⭐
-   
-   - mal_id (AniList ID): key
-   - প্রতিটা ভিডিও: { label, embed }
+   ⭐⭐ VIDEO PLAYLIST — এখানে নতুন ভিডিও যোগ করবে ⭐⭐
    
    উদাহরণ:
    var VIDEO_DATA = {
      21: [
-       { label: "Part 1", embed: "https://streamtape.com/e/XXXXX/" },
-       { label: "Part 2", embed: "https://streamtape.com/e/YYYYY/" }
+       { label: "Episode 1", embed: "https://streamtape.com/e/XXXXX/" },
+       { label: "Episode 2", embed: "https://streamtape.com/e/YYYYY/" }
      ],
      20: [
        { label: "Episode 1", embed: "https://streamtape.com/e/ABCDE/" }
@@ -159,7 +156,7 @@ var QUERY = 'query ($search: String, $genre: String, $sort: [MediaSort], $perPag
    ============================================================ */
 var VIDEO_DATA = {
   21: [
-    { label: "Part 1", embed: "https://streamtape.com/e/IgVR4jbe9PS7GDo/" }
+    { label: "Watch Now", embed: "https://streamtape.com/e/IgVR4jbe9PS7GDo/" }
   ]
 };
 
