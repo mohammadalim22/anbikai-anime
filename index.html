@@ -40,9 +40,7 @@
   .card h3 { font-size: 0.88rem; margin-bottom: 6px; line-height: 1.3; }
   .card p { font-size: 0.72rem; color: var(--muted); }
   .score { color: var(--score); font-weight: bold; }
-  .star-badge { position: absolute; top: 8px; right: 8px; background: var(--accent); color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; }
 
-  /* Modal */
   .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 100; padding: 16px; overflow-y: auto; }
   .modal-overlay.active { display: block; }
   .modal { background: var(--card); border-radius: 16px; max-width: 700px; margin: 10px auto; overflow: hidden; }
@@ -70,7 +68,6 @@
   .review-item { background: var(--input-bg); padding: 10px 14px; border-radius: 10px; margin-bottom: 8px; font-size: 0.85rem; border: 1px solid var(--border); }
   .review-item strong { color: var(--accent); }
   .review-item .date { color: var(--muted); font-size: 0.7rem; display: block; margin-top: 4px; }
-
   footer { text-align: center; padding: 20px; color: var(--muted); font-size: 0.78rem; border-top: 1px solid var(--border); margin-top: 40px; }
 </style>
 </head>
@@ -143,7 +140,6 @@ const fallbackAnime = [
   { mal_id:50265, title:"Spy x Family", score:8.5, type:"TV", episodes:12, img:"https://cdn.myanimelist.net/images/anime/1441/122795.jpg", synopsis:"A spy forms a fake family, unaware his wife is an assassin and daughter a telepath.", genres:["Action","Comedy"] }
 ];
 
-/* ===== Watchlist ===== */
 function getWatchlist() { return JSON.parse(localStorage.getItem('anbikai_watchlist') || '[]'); }
 function saveWatchlist(list) { localStorage.setItem('anbikai_watchlist', JSON.stringify(list)); updateWlCount(); }
 function updateWlCount() { document.getElementById('wlCount').textContent = getWatchlist().length; }
@@ -159,7 +155,6 @@ function toggleWatchlist(anime) {
   return isInWatchlist(anime.mal_id);
 }
 
-/* ===== Theme ===== */
 function toggleTheme() {
   document.body.classList.toggle('light');
   const isLight = document.body.classList.contains('light');
@@ -171,7 +166,6 @@ if (localStorage.getItem('anbikai_theme') === 'light') {
   document.getElementById('themeBtn').textContent = '☀️';
 }
 
-/* ===== Render ===== */
 function renderAnime(list) {
   currentList = list;
   if (!list || list.length === 0) {
@@ -192,7 +186,6 @@ function renderAnime(list) {
   `).join('');
 }
 
-/* ===== API ===== */
 async function apiFetch(url) {
   const res = await fetch(url);
   if (!res.ok) throw new Error('API fail');
@@ -214,15 +207,21 @@ function mapAnime(a) {
   };
 }
 
+/* ===== FIXED LOAD TOP ===== */
 async function loadTop() {
-  status.textContent = 'Loading...';
+  status.textContent = 'Popular anime:';
   grid.innerHTML = '';
+  
+  // Step 1: Show fallback immediately
+  renderAnime(fallbackAnime);
+  
+  // Step 2: Try to fetch API in background
   try {
     const data = await apiFetch('https://api.jikan.moe/v4/top/anime?limit=24');
+    status.textContent = '';
     renderAnime(data.data.map(mapAnime));
   } catch (err) {
-    status.textContent = 'Popular anime:';
-    renderAnime(fallbackAnime);
+    // Fallback already showing, so do nothing
   }
 }
 
@@ -235,7 +234,7 @@ async function searchAnime() {
     const data = await apiFetch('https://api.jikan.moe/v4/anime?q=' + encodeURIComponent(q) + '&limit=24&sfw=true');
     renderAnime(data.data.map(mapAnime));
   } catch (err) {
-    status.textContent = 'Search failed. Try again.';
+    status.textContent = 'Search failed. API kaj korche na.';
     grid.innerHTML = '';
   }
 }
@@ -273,7 +272,6 @@ function showWatchlist() {
   renderAnime(list);
 }
 
-/* ===== Modal / Details ===== */
 async function openDetails(id) {
   const modal = document.getElementById('modal');
   const body = document.getElementById('modalBody');
@@ -341,7 +339,6 @@ function toggleWlFromModal(anime) {
   renderModal(anime);
 }
 
-/* ===== Reviews ===== */
 function getReviews(id) { return JSON.parse(localStorage.getItem('anbikai_reviews_' + id) || '[]'); }
 function saveReviews(id, list) { localStorage.setItem('anbikai_reviews_' + id, JSON.stringify(list)); }
 function submitReview(id) {
@@ -364,10 +361,9 @@ function closeModal() {
   document.body.style.overflow = '';
 }
 
-/* ===== Init ===== */
 input.addEventListener('keypress', e => { if (e.key === 'Enter') searchAnime(); });
 updateWlCount();
 loadTop();
 </script>
 </body>
-</html>
+  </html>
