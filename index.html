@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AnbiKai Anime</title>
 <style>
-  :root { --bg:#0f0f13; --card:#1b1b22; --card-hover:#23232c; --text:#f5f5f5; --muted:#a1a1aa; --accent:#ff4d6d; --border:#2a2a35; --input-bg:#15151c; --score:#f5c518; }
-  body.light { --bg:#f7f7fa; --card:#ffffff; --card-hover:#f0f0f5; --text:#1a1a1a; --muted:#6b6b76; --border:#e0e0e8; --input-bg:#f2f2f7; --score:#d4a017; }
+  :root { --bg:#0f0f13; --card:#1b1b22; --text:#f5f5f5; --muted:#a1a1aa; --accent:#ff4d6d; --border:#2a2a35; --input-bg:#15151c; --score:#f5c518; }
+  body.light { --bg:#f7f7fa; --card:#fff; --text:#1a1a1a; --muted:#6b6b76; --border:#e0e0e8; --input-bg:#f2f2f7; --score:#d4a017; }
   * { box-sizing: border-box; margin:0; padding:0; }
   body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--text); }
   header { padding: 14px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; position: sticky; top: 0; background: var(--bg); z-index: 50; }
@@ -16,14 +16,27 @@
   .icon-btn { background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 8px 12px; border-radius: 999px; cursor: pointer; font-size: 0.8rem; font-weight: 600; }
   .icon-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
   .controls { max-width: 900px; margin: 16px auto; padding: 0 16px; display: flex; gap: 8px; flex-wrap: wrap; }
-  .search-box { display: flex; gap: 8px; flex: 1; min-width: 220px; }
+  .search-wrap { flex: 1; min-width: 220px; position: relative; }
+  .search-box { display: flex; gap: 8px; }
   input, select { padding: 11px 16px; border-radius: 999px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); outline: none; font-size: 0.85rem; font-family: inherit; }
-  input { flex: 1; }
+  input { flex: 1; width: 100%; }
+  select { cursor: pointer; }
   .search-btn { padding: 11px 20px; border-radius: 999px; border: none; background: var(--accent); color: white; font-weight: bold; cursor: pointer; font-size: 0.85rem; }
+  .suggestions { position: absolute; top: 100%; left: 0; right: 0; background: var(--card); border: 1px solid var(--border); border-radius: 12px; margin-top: 6px; max-height: 350px; overflow-y: auto; display: none; z-index: 60; box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+  .suggestions.active { display: block; }
+  .sug-item { display: flex; gap: 10px; padding: 8px 12px; cursor: pointer; align-items: center; border-bottom: 1px solid var(--border); }
+  .sug-item:last-child { border-bottom: none; }
+  .sug-item:hover, .sug-item.selected { background: var(--input-bg); }
+  .sug-item img { width: 40px; height: 55px; object-fit: cover; border-radius: 6px; flex-shrink: 0; }
+  .sug-item-info { flex: 1; min-width: 0; }
+  .sug-item-info h4 { font-size: 0.82rem; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sug-item-info p { font-size: 0.68rem; color: var(--muted); }
+  .sug-loading { padding: 12px; text-align: center; color: var(--muted); font-size: 0.8rem; }
   #status { text-align: center; color: var(--muted); margin: 20px; font-size: 0.9rem; }
+  .section-header { max-width: 1200px; margin: 24px auto 0; padding: 0 16px; font-size: 1rem; color: var(--accent); font-weight: bold; display: flex; align-items: center; gap: 8px; }
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; padding: 16px; max-width: 1200px; margin: 0 auto; }
   .card { background: var(--card); border-radius: 12px; overflow: hidden; cursor: pointer; border: 1px solid var(--border); }
-  .card img { width: 100%; height: 220px; object-fit: cover; display: block; }
+  .card img { width: 100%; height: 220px; object-fit: cover; display: block; background: var(--input-bg); }
   .card-content { padding: 10px; }
   .card h3 { font-size: 0.88rem; margin-bottom: 6px; }
   .card p { font-size: 0.72rem; color: var(--muted); }
@@ -45,6 +58,7 @@
   .trailer { aspect-ratio: 16/9; width: 100%; border-radius: 10px; overflow: hidden; margin-bottom: 8px; }
   .trailer iframe { width: 100%; height: 100%; border: none; }
   .no-trailer { text-align: center; color: var(--muted); font-size: 0.85rem; padding: 20px; background: var(--input-bg); border-radius: 10px; }
+  .no-trailer a { color: var(--accent); text-decoration: none; font-weight: bold; display: inline-block; margin-top: 8px; }
   .watchlist-btn { padding: 11px 16px; border-radius: 999px; border: 1px solid var(--accent); background: transparent; color: var(--accent); font-weight: bold; cursor: pointer; width: 100%; font-size: 0.9rem; margin-bottom: 8px; }
   .watchlist-btn.in-list { background: var(--accent); color: white; }
   .review-form { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
@@ -68,9 +82,12 @@
 </header>
 
 <div class="controls">
-  <div class="search-box">
-    <input id="searchInput" type="text" placeholder="Anime search koro...">
-    <button class="search-btn" onclick="searchAnime()">Search</button>
+  <div class="search-wrap">
+    <div class="search-box">
+      <input id="searchInput" type="text" placeholder="Anime search koro..." autocomplete="off">
+      <button class="search-btn" onclick="searchAnime()">Search</button>
+    </div>
+    <div class="suggestions" id="suggestions"></div>
   </div>
   <select id="genreSelect" onchange="filterGenre()">
     <option value="">All Genres</option>
@@ -93,6 +110,9 @@
 </div>
 
 <div id="status"></div>
+<div class="section-header">🌟 Featured Anime</div>
+<div class="grid" id="featuredGrid"></div>
+<div class="section-header" id="trendingHeader" style="display:none;">🔥 Trending Now</div>
 <div class="grid" id="animeGrid"></div>
 
 <footer>AnbiKai Anime • Data: AniList API</footer>
@@ -109,29 +129,77 @@
 
 <script>
 var grid = document.getElementById('animeGrid');
+var featuredGrid = document.getElementById('featuredGrid');
+var trendingHeader = document.getElementById('trendingHeader');
 var statusEl = document.getElementById('status');
 var input = document.getElementById('searchInput');
+var suggestionsEl = document.getElementById('suggestions');
 var currentList = [];
 var currentView = 'browse';
+var suggestTimer = null;
 
 var ANILIST_URL = 'https://graphql.anilist.co';
-var QUERY = 'query ($search: String, $genre: String, $sort: [MediaSort]) { Page(page: 1, perPage: 30) { media(type: ANIME, search: $search, genre: $genre, sort: $sort, isAdult: false) { id title { romaji english } description(asHtml: false) coverImage { large } bannerImage episodes nextAiringEpisode { episode } averageScore format startDate { year } genres trailer { id site } } } }';
+var QUERY = 'query ($search: String, $genre: String, $sort: [MediaSort], $perPage: Int) { Page(page: 1, perPage: $perPage) { media(type: ANIME, search: $search, genre: $genre, sort: $sort, isAdult: false) { id title { romaji english } description(asHtml: false) coverImage { extraLarge large } bannerImage episodes nextAiringEpisode { episode } averageScore format startDate { year } genres trailer { id site } } } }';
 
-var fallbackAnime = [
-  { mal_id:20, title:"Naruto", score:8.0, type:"TV", episodes:220, img:"https://cdn.myanimelist.net/images/anime/13/17405.jpg", synopsis:"Naruto Uzumaki, a young ninja with a sealed demon fox inside him, seeks recognition and dreams of becoming Hokage.", genres:["Action","Adventure"], trailer:"https://www.youtube.com/embed/QczGoCmX-pI", year:2002 },
-  { mal_id:21, title:"One Piece", score:8.7, type:"TV", episodes:"1100+", img:"https://cdn.myanimelist.net/images/anime/6/73245.jpg", synopsis:"Monkey D. Luffy sets off on an adventure to find the legendary One Piece treasure and become Pirate King.", genres:["Action","Adventure","Fantasy"], trailer:"https://www.youtube.com/embed/MCb13lbVGE0", year:1999 },
-  { mal_id:16498, title:"Attack on Titan", score:8.5, type:"TV", episodes:87, img:"https://cdn.myanimelist.net/images/anime/10/47347.jpg", synopsis:"Humanity fights for survival against giant man-eating Titans behind enormous walls.", genres:["Action","Drama"], trailer:"https://www.youtube.com/embed/LHtdKWJdif4", year:2013 },
-  { mal_id:38000, title:"Demon Slayer", score:8.5, type:"TV", episodes:55, img:"https://cdn.myanimelist.net/images/anime/1286/99889.jpg", synopsis:"Tanjiro becomes a demon slayer to avenge his family and cure his sister.", genres:["Action","Supernatural"], trailer:"https://www.youtube.com/embed/VQGCKyvzIM4", year:2019 },
-  { mal_id:40748, title:"Jujutsu Kaisen", score:8.6, type:"TV", episodes:47, img:"https://cdn.myanimelist.net/images/anime/1171/109222.jpg", synopsis:"Yuji Itadori swallows a cursed finger and joins a secret school of Jujutsu sorcerers.", genres:["Action","Supernatural"], trailer:"https://www.youtube.com/embed/4A_X-Dvl0ws", year:2020 },
-  { mal_id:1535, title:"Death Note", score:8.6, type:"TV", episodes:37, img:"https://cdn.myanimelist.net/images/anime/9/9453.jpg", synopsis:"A genius student finds a notebook that kills anyone whose name is written in it.", genres:["Mystery","Supernatural"], trailer:"https://www.youtube.com/embed/NlJZ-YgAt-c", year:2006 },
-  { mal_id:5114, title:"Fullmetal Alchemist Brotherhood", score:9.1, type:"TV", episodes:64, img:"https://cdn.myanimelist.net/images/anime/1223/96541.jpg", synopsis:"Two brothers search for the Philosopher's Stone to restore their bodies.", genres:["Action","Adventure","Drama"], trailer:"https://www.youtube.com/embed/--IvhX5I7W0", year:2009 },
-  { mal_id:31964, title:"My Hero Academia", score:7.9, type:"TV", episodes:158, img:"https://cdn.myanimelist.net/images/anime/10/78745.jpg", synopsis:"In a world of superheroes, a powerless boy inherits the power of the world's greatest hero.", genres:["Action","Comedy"], trailer:"https://www.youtube.com/embed/EP_OZ8p4LJ4", year:2016 },
-  { mal_id:22319, title:"Tokyo Ghoul", score:7.8, type:"TV", episodes:12, img:"https://cdn.myanimelist.net/images/anime/5/64449.jpg", synopsis:"A college student becomes half-ghoul and must survive between two worlds.", genres:["Action","Horror"], trailer:"https://www.youtube.com/embed/vGuQeQsoRgU", year:2014 },
-  { mal_id:11757, title:"Sword Art Online", score:7.2, type:"TV", episodes:96, img:"https://cdn.myanimelist.net/images/anime/11/39717.jpg", synopsis:"Players are trapped inside a VRMMORPG where death in game means death in real life.", genres:["Action","Adventure","Fantasy"], trailer:"https://www.youtube.com/embed/6ohYYtxfDCg", year:2012 },
-  { mal_id:44511, title:"Chainsaw Man", score:8.5, type:"TV", episodes:12, img:"https://cdn.myanimelist.net/images/anime/1806/126216.jpg", synopsis:"A young man merges with his chainsaw devil dog to become Chainsaw Man.", genres:["Action","Supernatural"], trailer:"https://www.youtube.com/embed/dFlDRhvM4L0", year:2022 },
-  { mal_id:50265, title:"Spy x Family", score:8.5, type:"TV", episodes:37, img:"https://cdn.myanimelist.net/images/anime/1441/122795.jpg", synopsis:"A spy forms a fake family, unaware his wife is an assassin and daughter a telepath.", genres:["Action","Comedy"], trailer:"https://www.youtube.com/embed/ofXigq9aIpo", year:2022 }
+/* ============================================
+   ⭐ CUSTOM ANIME — এখানে তুমি নিজের পছন্দের অ্যানিমে যোগ করবে
+   mal_id: যেকোনো unique number দাও (আগের সাথে মিল যাবে না)
+   title, score, type, episodes, img (cover image URL), synopsis, genres, trailer
+   ============================================ */
+var customAnime = [
+  {
+    mal_id: 90001,
+    title: "One Piece",
+    score: 8.7,
+    type: "TV",
+    episodes: "1100+",
+    img: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21-ELSYx3QCDY2S.jpg",
+    synopsis: "Monkey D. Luffy sets off on an adventure to find the legendary One Piece treasure and become Pirate King.",
+    genres: ["Action","Adventure","Fantasy"],
+    trailer: "https://www.youtube.com/embed/MCb13lbVGE0",
+    year: 1999
+  },
+  {
+    mal_id: 90002,
+    title: "Naruto",
+    score: 8.0,
+    type: "TV",
+    episodes: 220,
+    img: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx20-ELSYx3QCDY2S.jpg",
+    synopsis: "Naruto Uzumaki, a young ninja with a sealed demon fox inside him, seeks recognition and dreams of becoming Hokage.",
+    genres: ["Action","Adventure"],
+    trailer: "https://www.youtube.com/embed/QczGoCmX-pI",
+    year: 2002
+  },
+  {
+    mal_id: 90003,
+    title: "Demon Slayer",
+    score: 8.5,
+    type: "TV",
+    episodes: 55,
+    img: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx101922-PEn1CTc93blC.jpg",
+    synopsis: "Tanjiro becomes a demon slayer to avenge his family and cure his sister.",
+    genres: ["Action","Supernatural"],
+    trailer: "https://www.youtube.com/embed/VQGCKyvzIM4",
+    year: 2019
+  },
+  {
+    mal_id: 90004,
+    title: "Attack on Titan",
+    score: 8.5,
+    type: "TV",
+    episodes: 87,
+    img: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx16498-C6FPmWm59CyP.jpg",
+    synopsis: "Humanity fights for survival against giant man-eating Titans behind enormous walls.",
+    genres: ["Action","Drama"],
+    trailer: "https://www.youtube.com/embed/LHtdKWJdif4",
+    year: 2013
+  }
 ];
 
+var fallbackAnime = customAnime.slice();
+
+/* ===== Fetch with timeout ===== */
 function fetchWithTimeout(url, options, ms) {
   options = options || {};
   ms = ms || 8000;
@@ -177,7 +245,7 @@ function mapAniList(a) {
     score: a.averageScore ? (a.averageScore / 10).toFixed(1) : 'N/A',
     type: (a.format || '').replace('_', ' '),
     episodes: eps,
-    img: (a.coverImage && a.coverImage.large) || '',
+    img: (a.coverImage && (a.coverImage.extraLarge || a.coverImage.large)) || '',
     banner: a.bannerImage || null,
     synopsis: cleanText(a.description),
     genres: a.genres || [],
@@ -186,6 +254,7 @@ function mapAniList(a) {
   };
 }
 
+/* ===== Sorting for search ===== */
 function sortSearchResults(list, query) {
   var q = String(query).toLowerCase().trim();
   function titleScore(a) {
@@ -211,23 +280,19 @@ function sortSearchResults(list, query) {
   return list;
 }
 
-function getWatchlist() {
-  try { return JSON.parse(localStorage.getItem('anbikai_watchlist') || '[]'); }
-  catch(e) { return []; }
-}
+/* ===== Watchlist ===== */
+function getWatchlist() { try { return JSON.parse(localStorage.getItem('anbikai_watchlist') || '[]'); } catch(e) { return []; } }
 function saveWatchlist(list) { localStorage.setItem('anbikai_watchlist', JSON.stringify(list)); updateWlCount(); }
 function updateWlCount() { document.getElementById('wlCount').textContent = getWatchlist().length; }
 function isInWatchlist(id) { return getWatchlist().some(function(a){ return a.mal_id === id; }); }
 function toggleWatchlist(anime) {
   var list = getWatchlist();
-  if (list.some(function(a){ return a.mal_id === anime.mal_id; })) {
-    list = list.filter(function(a){ return a.mal_id !== anime.mal_id; });
-  } else {
-    list.push(anime);
-  }
+  if (list.some(function(a){ return a.mal_id === anime.mal_id; })) list = list.filter(function(a){ return a.mal_id !== anime.mal_id; });
+  else list.push(anime);
   saveWatchlist(list);
 }
 
+/* ===== Theme ===== */
 function toggleTheme() {
   document.body.classList.toggle('light');
   var isLight = document.body.classList.contains('light');
@@ -239,6 +304,17 @@ if (localStorage.getItem('anbikai_theme') === 'light') {
   document.getElementById('themeBtn').textContent = '☀️';
 }
 
+/* ===== Render ===== */
+function makeCard(a) {
+  return '<div class="card" onclick="openDetails(' + a.mal_id + ')">' +
+    '<img src="' + a.img + '" alt="" loading="lazy" onerror="this.src=\'data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22220%22><rect fill=%22%2323232c%22 width=%22200%22 height=%22220%22/><text x=%22100%22 y=%22110%22 fill=%22%23a1a1aa%22 font-size=%2214%22 text-anchor=%22middle%22>No Image</text></svg>\'">' +
+    '<div class="card-content">' +
+      '<h3>' + a.title + '</h3>' +
+      '<p><span class="score">⭐ ' + a.score + '</span></p>' +
+      '<p>' + (a.type || '') + ' • ' + (a.episodes || '?') + ' eps</p>' +
+    '</div></div>';
+}
+
 function renderAnime(list) {
   currentList = list;
   if (!list || list.length === 0) {
@@ -248,66 +324,70 @@ function renderAnime(list) {
   }
   statusEl.textContent = '';
   var html = '';
-  for (var i = 0; i < list.length; i++) {
-    var a = list[i];
-    html += '<div class="card" onclick="openDetails(' + a.mal_id + ')">';
-    html += '<img src="' + a.img + '" alt="" onerror="this.style.opacity=0.2">';
-    html += '<div class="card-content">';
-    html += '<h3>' + a.title + '</h3>';
-    html += '<p><span class="score">⭐ ' + a.score + '</span></p>';
-    html += '<p>' + (a.type || '') + ' • ' + (a.episodes || '?') + ' eps</p>';
-    html += '</div></div>';
-  }
+  for (var i = 0; i < list.length; i++) html += makeCard(list[i]);
   grid.innerHTML = html;
 }
 
+function renderFeatured() {
+  var html = '';
+  for (var i = 0; i < customAnime.length; i++) html += makeCard(customAnime[i]);
+  featuredGrid.innerHTML = html;
+}
+
+/* ===== Load ===== */
 function loadTop() {
+  trendingHeader.style.display = 'block';
   statusEl.textContent = '';
-  renderAnime(fallbackAnime);
-  anilistFetch({ sort: ['TRENDING_DESC'] }).then(function(res) {
+  renderFeatured();
+  grid.innerHTML = '';
+  anilistFetch({ sort: ['TRENDING_DESC'], perPage: 30 }).then(function(res) {
     if (res && res.data && res.data.Page && res.data.Page.media) {
       renderAnime(res.data.Page.media.map(mapAniList));
     }
-  }).catch(function() {});
+  }).catch(function() {
+    renderAnime(fallbackAnime);
+  });
 }
 
 function searchAnime() {
   var q = input.value.trim();
+  hideSuggestions();
   if (!q) { loadTop(); return; }
   statusEl.textContent = 'Searching...';
+  trendingHeader.style.display = 'none';
   grid.innerHTML = '';
-  anilistFetch({ search: q }).then(function(res) {
+  anilistFetch({ search: q, perPage: 30 }).then(function(res) {
     if (res && res.data && res.data.Page && res.data.Page.media && res.data.Page.media.length > 0) {
       var list = res.data.Page.media.map(mapAniList);
       list = sortSearchResults(list, q);
       renderAnime(list);
     } else {
-      statusEl.textContent = 'Kichu paoa gelo na. Popular dekhacchi:';
-      renderAnime(fallbackAnime);
+      statusEl.textContent = 'Kichu paoa gelo na.';
+      grid.innerHTML = '';
     }
   }).catch(function() {
-    statusEl.textContent = 'Search fail. Popular dekhacchi:';
-    renderAnime(fallbackAnime);
+    statusEl.textContent = 'Search fail. Try again.';
   });
 }
 
 function filterGenre() {
   var genre = document.getElementById('genreSelect').value;
+  trendingHeader.style.display = 'none';
   if (!genre) { loadTop(); return; }
   statusEl.textContent = 'Filtering ' + genre + '...';
   grid.innerHTML = '';
-  anilistFetch({ genre: genre, sort: ['POPULARITY_DESC'] }).then(function(res) {
+  anilistFetch({ genre: genre, sort: ['POPULARITY_DESC'], perPage: 30 }).then(function(res) {
     if (res && res.data && res.data.Page && res.data.Page.media) {
       renderAnime(res.data.Page.media.map(mapAniList));
     }
   }).catch(function() {
     statusEl.textContent = 'Filter fail.';
-    renderAnime(fallbackAnime);
   });
 }
 
 function showWatchlist() {
   var btn = document.getElementById('watchlistBtn');
+  trendingHeader.style.display = 'none';
   if (currentView === 'watchlist') {
     currentView = 'browse';
     btn.classList.remove('active');
@@ -326,13 +406,62 @@ function showWatchlist() {
   renderAnime(list);
 }
 
+/* ===== SUGGESTIONS ===== */
+function hideSuggestions() { suggestionsEl.classList.remove('active'); suggestionsEl.innerHTML = ''; }
+
+function showSuggestions(items) {
+  if (!items || items.length === 0) { hideSuggestions(); return; }
+  var html = '';
+  for (var i = 0; i < items.length; i++) {
+    var a = items[i];
+    html += '<div class="sug-item" onclick="pickSuggestion(' + a.mal_id + ')">' +
+      '<img src="' + a.img + '" alt="" onerror="this.style.visibility=\'hidden\'">' +
+      '<div class="sug-item-info">' +
+        '<h4>' + a.title + '</h4>' +
+        '<p>⭐ ' + a.score + ' • ' + (a.type || '') + ' • ' + (a.episodes || '?') + ' eps' + (a.year ? ' • ' + a.year : '') + '</p>' +
+      '</div></div>';
+  }
+  suggestionsEl.innerHTML = html;
+  suggestionsEl.classList.add('active');
+}
+
+function pickSuggestion(id) {
+  var anime = null;
+  for (var i = 0; i < currentList.length; i++) if (currentList[i].mal_id === id) { anime = currentList[i]; break; }
+  if (!anime) for (var j = 0; j < customAnime.length; j++) if (customAnime[j].mal_id === id) { anime = customAnime[j]; break; }
+  hideSuggestions();
+  if (anime) openDetails(anime.mal_id);
+}
+
+function fetchSuggestions(q) {
+  if (!q || q.length < 1) { hideSuggestions(); return; }
+  suggestionsEl.classList.add('active');
+  suggestionsEl.innerHTML = '<div class="sug-loading">Loading...</div>';
+  anilistFetch({ search: q, perPage: 8 }).then(function(res) {
+    if (res && res.data && res.data.Page && res.data.Page.media) {
+      var list = res.data.Page.media.map(mapAniList);
+      list = sortSearchResults(list, q);
+      showSuggestions(list);
+    } else {
+      hideSuggestions();
+    }
+  }).catch(function() {
+    // Offline fallback: filter custom anime
+    var ql = q.toLowerCase();
+    var matches = customAnime.filter(function(a){ return a.title.toLowerCase().indexOf(ql) >= 0; });
+    if (matches.length > 0) showSuggestions(matches);
+    else hideSuggestions();
+  });
+}
+
+/* ===== Details Modal ===== */
 function openDetails(id) {
   var modal = document.getElementById('modal');
   modal.classList.add('active');
   document.body.style.overflow = 'hidden';
   var anime = null;
   for (var i = 0; i < currentList.length; i++) if (currentList[i].mal_id === id) { anime = currentList[i]; break; }
-  if (!anime) for (var j = 0; j < fallbackAnime.length; j++) if (fallbackAnime[j].mal_id === id) { anime = fallbackAnime[j]; break; }
+  if (!anime) for (var j = 0; j < customAnime.length; j++) if (customAnime[j].mal_id === id) { anime = customAnime[j]; break; }
   if (!anime) return;
   document.getElementById('mImg').src = anime.img;
   renderModal(anime);
@@ -342,6 +471,7 @@ function renderModal(a) {
   var inList = isInWatchlist(a.mal_id);
   var reviews = getReviews(a.mal_id);
   var body = document.getElementById('modalBody');
+  var ytSearch = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(a.title + ' trailer');
   var html = '<h2>' + a.title + '</h2>';
   html += '<div class="modal-info">';
   html += '<span>⭐ ' + a.score + '</span>';
@@ -359,8 +489,11 @@ function renderModal(a) {
   html += inList ? '✓ In Watchlist — Remove' : '+ Add to Watchlist';
   html += '</button>';
   html += '<h3 class="section-title">📺 Trailer</h3>';
-  if (a.trailer) html += '<div class="trailer"><iframe src="' + a.trailer + '" allowfullscreen allow="autoplay; encrypted-media"></iframe></div>';
-  else html += '<div class="no-trailer">Ei anime er trailer paoa gelo na.</div>';
+  if (a.trailer) {
+    html += '<div class="trailer"><iframe src="' + a.trailer + '" allowfullscreen allow="autoplay; encrypted-media"></iframe></div>';
+  } else {
+    html += '<div class="no-trailer">Ei anime er trailer paoa gelo na.<br><a href="' + ytSearch + '" target="_blank">▶ YouTube e dekho</a></div>';
+  }
   html += '<h3 class="section-title">📝 Reviews (' + reviews.length + ')</h3>';
   html += '<div class="review-form">';
   html += '<input id="revName" type="text" placeholder="Tomar naam...">';
@@ -378,16 +511,13 @@ function renderModal(a) {
 function toggleWlFromModal(id) {
   var anime = null;
   for (var i = 0; i < currentList.length; i++) if (currentList[i].mal_id === id) { anime = currentList[i]; break; }
-  if (!anime) for (var j = 0; j < fallbackAnime.length; j++) if (fallbackAnime[j].mal_id === id) { anime = fallbackAnime[j]; break; }
+  if (!anime) for (var j = 0; j < customAnime.length; j++) if (customAnime[j].mal_id === id) { anime = customAnime[j]; break; }
   if (!anime) return;
   toggleWatchlist(anime);
   renderModal(anime);
 }
 
-function getReviews(id) {
-  try { return JSON.parse(localStorage.getItem('anbikai_reviews_' + id) || '[]'); }
-  catch(e) { return []; }
-}
+function getReviews(id) { try { return JSON.parse(localStorage.getItem('anbikai_reviews_' + id) || '[]'); } catch(e) { return []; } }
 function saveReviews(id, list) { localStorage.setItem('anbikai_reviews_' + id, JSON.stringify(list)); }
 function submitReview(id) {
   var name = document.getElementById('revName').value.trim() || 'Anonymous';
@@ -398,7 +528,7 @@ function submitReview(id) {
   saveReviews(id, list);
   var anime = null;
   for (var i = 0; i < currentList.length; i++) if (currentList[i].mal_id === id) { anime = currentList[i]; break; }
-  if (!anime) for (var j = 0; j < fallbackAnime.length; j++) if (fallbackAnime[j].mal_id === id) { anime = fallbackAnime[j]; break; }
+  if (!anime) for (var j = 0; j < customAnime.length; j++) if (customAnime[j].mal_id === id) { anime = customAnime[j]; break; }
   if (anime) renderModal(anime);
 }
 
@@ -413,9 +543,20 @@ function closeModal() {
   document.body.style.overflow = '';
 }
 
-input.addEventListener('keypress', function(e) { if (e.key === 'Enter') searchAnime(); });
+/* ===== Init ===== */
+input.addEventListener('input', function() {
+  var q = input.value.trim();
+  clearTimeout(suggestTimer);
+  if (q.length < 1) { hideSuggestions(); return; }
+  suggestTimer = setTimeout(function() { fetchSuggestions(q); }, 300);
+});
+input.addEventListener('keypress', function(e) { if (e.key === 'Enter') { hideSuggestions(); searchAnime(); } });
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.search-wrap')) hideSuggestions();
+});
+
 updateWlCount();
 loadTop();
 </script>
 </body>
-                                       </html>
+  </html>
