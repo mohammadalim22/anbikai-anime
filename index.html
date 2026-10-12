@@ -41,6 +41,8 @@
   .card p { font-size: 0.72rem; color: var(--muted); }
   .score { color: var(--score); font-weight: bold; }
   .play-badge { position: absolute; top: 8px; left: 8px; background: #22c55e; color: white; padding: 4px 10px; border-radius: 999px; font-size: 0.7rem; font-weight: bold; }
+  .lang-badges { position: absolute; top: 8px; right: 8px; display: flex; gap: 4px; flex-wrap: wrap; max-width: 60%; justify-content: flex-end; }
+  .lang-badge { background: rgba(0,0,0,0.75); color: white; padding: 3px 7px; border-radius: 6px; font-size: 0.6rem; font-weight: bold; letter-spacing: 0.5px; }
   .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 100; padding: 16px; overflow-y: auto; }
   .modal-overlay.active { display: block; }
   .modal { background: var(--card); border-radius: 16px; max-width: 900px; margin: 10px auto; overflow: hidden; }
@@ -57,7 +59,7 @@
   .section-title { font-size: 0.95rem; margin: 18px 0 10px; color: var(--accent); border-bottom: 1px solid var(--border); padding-bottom: 6px; }
   .video-player { aspect-ratio: 16/9; width: 100%; border-radius: 12px; overflow: hidden; background: black; margin-bottom: 12px; }
   .video-player iframe { width: 100%; height: 100%; border: none; }
-  .video-buttons { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  .video-buttons { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
   .video-btn { padding: 10px 16px; border-radius: 999px; border: none; background: var(--accent); color: white; font-weight: bold; cursor: pointer; font-size: 0.85rem; }
   .video-btn.active { background: #22c55e; }
   .no-video { text-align: center; padding: 30px 20px; background: var(--input-bg); border-radius: 12px; color: var(--muted); font-size: 0.85rem; }
@@ -78,7 +80,19 @@
   .review-item { background: var(--input-bg); padding: 10px 14px; border-radius: 10px; margin-bottom: 8px; font-size: 0.85rem; border: 1px solid var(--border); }
   .review-item strong { color: var(--accent); }
   .review-item .date { color: var(--muted); font-size: 0.7rem; display: block; margin-top: 4px; }
+  .disc-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 200; padding: 16px; overflow-y: auto; }
+  .disc-overlay.active { display: flex; align-items: center; justify-content: center; }
+  .disc-box { background: var(--card); border-radius: 20px; max-width: 500px; width: 100%; padding: 24px; border: 2px solid #ff4d6d; box-shadow: 0 20px 60px rgba(255,77,109,0.3); }
+  .disc-icon { text-align: center; font-size: 3rem; margin-bottom: 12px; }
+  .disc-title { text-align: center; font-size: 1.15rem; color: #ff4d6d; font-weight: bold; margin-bottom: 14px; }
+  .disc-text { font-size: 0.88rem; line-height: 1.6; margin-bottom: 16px; }
+  .disc-list { background: var(--input-bg); padding: 12px 16px; border-radius: 10px; margin-bottom: 16px; font-size: 0.82rem; line-height: 1.7; }
+  .disc-list a { color: #f47521; text-decoration: none; font-weight: bold; }
+  .disc-btn { padding: 12px 18px; border-radius: 999px; border: none; font-weight: bold; font-size: 0.88rem; cursor: pointer; width: 100%; margin-bottom: 8px; }
+  .disc-btn-primary { background: #ff4d6d; color: white; }
+  .disc-btn-secondary { background: var(--input-bg); color: var(--text); border: 1px solid var(--border); }
   footer { text-align: center; padding: 20px; color: var(--muted); font-size: 0.78rem; border-top: 1px solid var(--border); margin-top: 40px; }
+  footer a { color: var(--accent); }
 </style>
 </head>
 <body>
@@ -123,7 +137,10 @@
 <div class="section-header" id="trendingHeader">🔥 Trending Now</div>
 <div class="grid" id="animeGrid"></div>
 
-<footer>AnbiKai Anime • Data: AniList API</footer>
+<footer>
+  AnbiKai Anime • Data: AniList API<br>
+  <small>All anime content belongs to their respective owners. <a href="#" onclick="showDisclaimer();return false;">Full Disclaimer</a></small>
+</footer>
 
 <div class="modal-overlay" id="modal" onclick="if(event.target===this) closeModal()">
   <div class="modal">
@@ -132,6 +149,25 @@
       <button class="modal-close" onclick="closeModal()">✕</button>
     </div>
     <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<div class="disc-overlay" id="discModal">
+  <div class="disc-box">
+    <div class="disc-icon">⚠️</div>
+    <div class="disc-title">গুরুত্বপূর্ণ ঘোষণা</div>
+    <div class="disc-text">
+      তুমি এখন <b>থার্ড-পার্টি সোর্স</b> থেকে ভিডিও দেখতে যাচ্ছো। আমরা কোনো ভিডিও হোস্ট করি না বা মালিকানা দাবি করি না।
+    </div>
+    <div class="disc-list">
+      <b>🎯 অফিশিয়াল সাপোর্ট করতে:</b><br>
+      ✅ <a href="https://www.crunchyroll.com" target="_blank">Crunchyroll</a><br>
+      ✅ <a href="https://www.netflix.com" target="_blank">Netflix</a><br>
+      ✅ <a href="https://museasia.com" target="_blank">Muse Asia</a><br><br>
+      <b>📌 অ্যানিমে ইন্ডাস্ট্রি টিকিয়ে রাখতে অফিশিয়াল প্ল্যাটফর্মে দেখুন!</b>
+    </div>
+    <button class="disc-btn disc-btn-primary" onclick="acceptDisclaimer()">✅ বুঝেছি, চালিয়ে যাও</button>
+    <button class="disc-btn disc-btn-secondary" onclick="closeDisclaimer()">❌ অফিশিয়ালে যাই</button>
   </div>
 </div>
 
@@ -144,26 +180,29 @@ var suggestionsEl = document.getElementById('suggestions');
 var currentList = [];
 var currentView = 'browse';
 var suggestTimer = null;
+var pendingVideoEmbed = null;
+var disclaimerAccepted = false;
+var activeLang = 'all';
 
 var ANILIST_URL = 'https://graphql.anilist.co';
 var QUERY = 'query ($search: String, $genre: String, $sort: [MediaSort], $perPage: Int) { Page(page: 1, perPage: $perPage) { media(type: ANIME, search: $search, genre: $genre, sort: $sort, isAdult: false) { id title { romaji english } description(asHtml: false) coverImage { extraLarge large } bannerImage episodes nextAiringEpisode { episode } averageScore format startDate { year } genres trailer { id site } } } }';
 
 /* ============================================================
-   ⭐ VIDEO_DATA — নিজের আপলোড করা ভিডিওর লিংক
+   ⭐⭐ MULTI-LANGUAGE VIDEO DATA ⭐⭐
+   
+   প্রতিটা ভিডিওতে এখন "lang" যোগ করতে হবে।
+   lang options: "Hindi", "English", "Japanese", "Bangla", "Tamil", "Telugu"
+   
+   উদাহরণ:
+   { label: "Episode 1", lang: "Hindi", embed: "https://..." }
    ============================================================ */
 var VIDEO_DATA = {
   97940: [
-    { label: "Episode 1 (Hindi)", embed: "https://streamtape.com/e/JKKxw2xeQ0sj0R0/" },
-    { label: "Trailer", embed: "https://streamtape.com/e/PDyGxboGa3u03pq/" }
+    { label: "Episode 1", lang: "Hindi", embed: "https://streamtape.com/e/JKKxw2xeQ0sj0R0/" },
+    { label: "Episode 1", lang: "English", embed: "https://streamtape.com/e/PDyGxboGa3u03pq/" }
   ]
 };
 
-/* ============================================================
-   ⭐ WATCH_LINKS — অফিশিয়াল স্ট্রিমিং সাইটের লিংক
-   
-   প্রতিটা অ্যানিমের জন্য multiple লিংক দিতে পারবে।
-   platform: crunchyroll / netflix / hulu / prime / youtube / muse
-   ============================================================ */
 var WATCH_LINKS = {
   97940: [
     { platform: "crunchyroll", url: "https://www.crunchyroll.com/series/GRE50VZWR/black-clover" },
@@ -191,7 +230,6 @@ function platformLabel(p) {
   var map = { crunchyroll: "Crunchyroll", netflix: "Netflix", hulu: "Hulu", prime: "Prime Video", youtube: "YouTube", muse: "Muse Asia" };
   return map[p] || p;
 }
-
 function platformIcon(p) {
   var map = { crunchyroll: "🟠", netflix: "🔴", hulu: "🟢", prime: "🔵", youtube: "▶️", muse: "🟣" };
   return map[p] || "▶";
@@ -315,11 +353,50 @@ if (localStorage.getItem('anbikai_theme') === 'light') {
   document.getElementById('themeBtn').textContent = '☀️';
 }
 
+function showDisclaimer(embed) {
+  pendingVideoEmbed = embed || null;
+  document.getElementById('discModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function closeDisclaimer() {
+  document.getElementById('discModal').classList.remove('active');
+  document.body.style.overflow = '';
+  pendingVideoEmbed = null;
+}
+function acceptDisclaimer() {
+  disclaimerAccepted = true;
+  document.getElementById('discModal').classList.remove('active');
+  document.body.style.overflow = '';
+  if (pendingVideoEmbed) {
+    var player = document.getElementById('videoPlayer');
+    if (player) player.innerHTML = '<iframe src="' + pendingVideoEmbed + '" allowfullscreen allow="autoplay; encrypted-media" scrolling="no" frameborder="0"></iframe>';
+    pendingVideoEmbed = null;
+  }
+}
+
 function hasVideo(id) { return VIDEO_DATA[id] && VIDEO_DATA[id].length > 0; }
+
+function getLanguages(id) {
+  var videos = VIDEO_DATA[id] || [];
+  var langs = [];
+  for (var i = 0; i < videos.length; i++) {
+    if (videos[i].lang && langs.indexOf(videos[i].lang) < 0) langs.push(videos[i].lang);
+  }
+  return langs;
+}
 
 function makeCard(a) {
   var playBadge = hasVideo(a.mal_id) ? '<div class="play-badge">▶ WATCH</div>' : '';
-  return '<div class="card" onclick="openDetails(' + a.mal_id + ')">' + playBadge +
+  var langs = getLanguages(a.mal_id);
+  var langBadges = '';
+  if (langs.length > 0) {
+    langBadges = '<div class="lang-badges">';
+    for (var i = 0; i < langs.length && i < 3; i++) {
+      langBadges += '<span class="lang-badge">' + langs[i] + '</span>';
+    }
+    langBadges += '</div>';
+  }
+  return '<div class="card" onclick="openDetails(' + a.mal_id + ')">' + playBadge + langBadges +
     '<img src="' + a.img + '" alt="" loading="lazy" onerror="this.style.opacity=0.2">' +
     '<div class="card-content">' +
       '<h3>' + a.title + '</h3>' +
@@ -439,10 +516,9 @@ function openDetails(id) {
   if (!anime) for (var j = 0; j < fallbackAnime.length; j++) if (fallbackAnime[j].mal_id === id) { anime = fallbackAnime[j]; break; }
   if (!anime) return;
   document.getElementById('mImg').src = anime.img;
+  activeLang = 'all';
   renderModal(anime);
 }
-
-var activeVideoIndex = 0;
 
 function renderModal(a) {
   var inList = isInWatchlist(a.mal_id);
@@ -452,7 +528,6 @@ function renderModal(a) {
   var watchLinks = WATCH_LINKS[a.mal_id] || [];
   var ytSearch = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(a.title + ' trailer');
   
-  activeVideoIndex = 0;
   var html = '<h2>' + a.title + '</h2>';
   html += '<div class="modal-info">';
   html += '<span>⭐ ' + a.score + '</span>';
@@ -467,28 +542,48 @@ function renderModal(a) {
   }
   html += '<p class="synopsis">' + (a.synopsis || 'No description available.') + '</p>';
 
-  /* ===== VIDEO SECTION ===== */
-  if (videos.length > 0) {
-    html += '<h3 class="section-title">▶ Watch Online</h3>';
-    html += '<div class="video-buttons" id="videoButtons">';
-    for (var v = 0; v < videos.length; v++) {
-      html += '<button class="video-btn ' + (v === 0 ? 'active' : '') + '" onclick="switchVideo(' + a.mal_id + ', ' + v + ')">' + videos[v].label + '</button>';
-    }
-    html += '</div>';
-    html += '<div class="video-player" id="videoPlayer"><iframe src="' + videos[0].embed + '" allowfullscreen allow="autoplay; encrypted-media" scrolling="no" frameborder="0"></iframe></div>';
-  } else {
-    html += '<div class="no-video">😔 Ei anime er video ekhono upload kora hoyni. Niche official link theke dekho.</div>';
-  }
-
-  /* ===== OFFICIAL WATCH LINKS ===== */
   if (watchLinks.length > 0) {
-    html += '<h3 class="section-title">🌐 Official Streaming</h3>';
+    html += '<h3 class="section-title">🌐 Official Streaming (Recommended)</h3>';
     html += '<div class="watch-links">';
     for (var w = 0; w < watchLinks.length; w++) {
       var wl = watchLinks[w];
       html += '<a class="watch-link-btn wl-' + wl.platform + '" href="' + wl.url + '" target="_blank">' + platformIcon(wl.platform) + ' ' + platformLabel(wl.platform) + '</a>';
     }
     html += '</div>';
+  }
+
+  if (videos.length > 0) {
+    var langs = getLanguages(a.mal_id);
+    
+    html += '<h3 class="section-title">▶ Watch Online</h3>';
+    
+    // Language selector
+    if (langs.length > 1) {
+      html += '<div style="margin-bottom:10px;font-size:0.82rem;color:var(--muted);">🌍 Language select koro:</div>';
+      html += '<div class="video-buttons" id="langButtons" style="margin-bottom:12px;">';
+      html += '<button class="video-btn active" style="background:#3b82f6;" onclick="selectLang(\'' + a.mal_id + '\', \'all\')">All</button>';
+      for (var L = 0; L < langs.length; L++) {
+        html += '<button class="video-btn" style="background:#6366f1;" onclick="selectLang(\'' + a.mal_id + '\', \'' + langs[L] + '\')">' + langs[L] + '</button>';
+      }
+      html += '</div>';
+    }
+    
+    // Episode buttons (filtered by activeLang)
+    var filtered = videos;
+    if (activeLang !== 'all') {
+      filtered = videos.filter(function(v){ return v.lang === activeLang; });
+    }
+    
+    html += '<div class="video-buttons" id="videoButtons">';
+    for (var v = 0; v < filtered.length; v++) {
+      var label = filtered[v].label;
+      if (langs.length > 1 && filtered[v].lang) label += ' (' + filtered[v].lang + ')';
+      html += '<button class="video-btn ' + (v === 0 ? 'active' : '') + '" onclick="playVideo(\'' + a.mal_id + '\', ' + v + ', \'' + activeLang + '\')">' + label + '</button>';
+    }
+    html += '</div>';
+    html += '<div class="video-player" id="videoPlayer"></div>';
+  } else {
+    html += '<div class="no-video">😔 Ei anime er video ekhono upload kora hoyni.</div>';
   }
 
   html += '<button class="watchlist-btn ' + (inList ? 'in-list' : '') + '" onclick="toggleWlFromModal(' + a.mal_id + ')">';
@@ -514,15 +609,41 @@ function renderModal(a) {
     html += '<span class="date">' + reviews[k].date + '</span></div>';
   }
   body.innerHTML = html;
+
+  // Auto-load first video
+  if (videos.length > 0) {
+    setTimeout(function() {
+      var initialVideos = activeLang === 'all' ? videos : videos.filter(function(v){ return v.lang === activeLang; });
+      if (initialVideos.length > 0) {
+        if (!disclaimerAccepted) showDisclaimer(initialVideos[0].embed);
+        else {
+          var player = document.getElementById('videoPlayer');
+          if (player) player.innerHTML = '<iframe src="' + initialVideos[0].embed + '" allowfullscreen allow="autoplay; encrypted-media" scrolling="no" frameborder="0"></iframe>';
+        }
+      }
+    }, 100);
+  }
 }
 
-function switchVideo(animeId, index) {
+function selectLang(animeId, lang) {
+  activeLang = lang;
+  var anime = null;
+  for (var i = 0; i < currentList.length; i++) if (currentList[i].mal_id == animeId) { anime = currentList[i]; break; }
+  if (!anime) for (var j = 0; j < fallbackAnime.length; j++) if (fallbackAnime[j].mal_id == animeId) { anime = fallbackAnime[j]; break; }
+  if (!anime) return;
+  renderModal(anime);
+}
+
+function playVideo(animeId, index, lang) {
   var videos = VIDEO_DATA[animeId] || [];
-  if (!videos[index]) return;
-  activeVideoIndex = index;
-  var player = document.getElementById('videoPlayer');
-  if (player) {
-    player.innerHTML = '<iframe src="' + videos[index].embed + '" allowfullscreen allow="autoplay; encrypted-media" scrolling="no" frameborder="0"></iframe>';
+  var filtered = lang === 'all' ? videos : videos.filter(function(v){ return v.lang === lang; });
+  if (!filtered[index]) return;
+  var embed = filtered[index].embed;
+  if (!disclaimerAccepted) {
+    showDisclaimer(embed);
+  } else {
+    var player = document.getElementById('videoPlayer');
+    if (player) player.innerHTML = '<iframe src="' + embed + '" allowfullscreen allow="autoplay; encrypted-media" scrolling="no" frameborder="0"></iframe>';
   }
   var buttons = document.querySelectorAll('#videoButtons .video-btn');
   for (var i = 0; i < buttons.length; i++) buttons[i].classList.remove('active');
