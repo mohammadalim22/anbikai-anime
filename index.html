@@ -71,15 +71,6 @@
   .wl-prime { background: #00a8e1; }
   .wl-youtube { background: #ff0000; }
   .wl-muse { background: #ff0050; }
-
-  /* ===== SETTINGS BAR (Language + Quality) ===== */
-  .settings-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; padding: 12px 14px; background: var(--input-bg); border-radius: 12px; border: 1px solid var(--border); flex-wrap: wrap; }
-  .settings-title { font-size: 0.83rem; color: var(--muted); display: flex; align-items: center; gap: 6px; font-weight: 600; width: 100%; margin-bottom: 4px; }
-  .setting-item { display: flex; align-items: center; gap: 6px; flex: 1; min-width: 130px; }
-  .setting-item label { font-size: 0.78rem; color: var(--muted); }
-  .setting-item select { padding: 8px 12px; border-radius: 999px; border: 1px solid var(--border); background: var(--card); color: var(--text); font-family: inherit; font-size: 0.82rem; font-weight: bold; cursor: pointer; outline: none; flex: 1; min-width: 90px; }
-  .setting-item select:focus { border-color: var(--accent); }
-
   .watchlist-btn { padding: 11px 16px; border-radius: 999px; border: 1px solid var(--accent); background: transparent; color: var(--accent); font-weight: bold; cursor: pointer; width: 100%; font-size: 0.9rem; margin-bottom: 8px; }
   .watchlist-btn.in-list { background: var(--accent); color: white; }
   .review-form { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
@@ -191,18 +182,15 @@ var currentView = 'browse';
 var suggestTimer = null;
 var pendingVideoEmbed = null;
 var disclaimerAccepted = false;
-var activeLang = 'all';
-var activeQuality = 'all';
 
 var ANILIST_URL = 'https://graphql.anilist.co';
 var QUERY = 'query ($search: String, $genre: String, $sort: [MediaSort], $perPage: Int) { Page(page: 1, perPage: $perPage) { media(type: ANIME, search: $search, genre: $genre, sort: $sort, isAdult: false) { id title { romaji english } description(asHtml: false) coverImage { extraLarge large } bannerImage episodes nextAiringEpisode { episode } averageScore format startDate { year } genres trailer { id site } } } }';
 
 /* ============================================================
-   ⭐⭐ VIDEO_DATA — প্রতিটা ভিডিওতে lang ও quality যোগ করো ⭐⭐
+   ⭐⭐ VIDEO_DATA — প্রতিটা ভিডিওতে lang ও quality ⭐⭐
    
    উদাহরণ:
    { label: "Episode 1", lang: "Hindi", quality: "1080p", embed: "https://..." }
-   { label: "Episode 1", lang: "Hindi", quality: "720p",  embed: "https://..." }
    ============================================================ */
 var VIDEO_DATA = {
   97940: [
@@ -393,26 +381,6 @@ function getLanguages(id) {
   return langs;
 }
 
-function getQualities(id) {
-  var videos = VIDEO_DATA[id] || [];
-  var quals = [];
-  for (var i = 0; i < videos.length; i++) {
-    if (videos[i].quality && quals.indexOf(videos[i].quality) < 0) quals.push(videos[i].quality);
-  }
-  // Sort descending (1080p > 720p > 480p > 360p)
-  quals.sort(function(a, b) { return parseInt(b) - parseInt(a); });
-  return quals;
-}
-
-function getFilteredVideos(id, lang, quality) {
-  var videos = VIDEO_DATA[id] || [];
-  return videos.filter(function(v) {
-    if (lang !== 'all' && v.lang !== lang) return false;
-    if (quality !== 'all' && v.quality !== quality) return false;
-    return true;
-  });
-}
-
 function makeCard(a) {
   var playBadge = hasVideo(a.mal_id) ? '<div class="play-badge">▶ WATCH</div>' : '';
   var langs = getLanguages(a.mal_id);
@@ -524,7 +492,7 @@ function fetchSuggestions(q) {
   suggestionsEl.innerHTML = '<div class="sug-loading">Loading...</div>';
   anilistFetch({ search: q, perPage: 8 }).then(function(res) {
     if (res && res.data && res.data.Page && res.data.Page.media && res.data.Page.media.length > 0) {
-      var list = res.data.page ? [] : res.data.Page.media.map(mapAniList);
+      var list = res.data.Page.media.map(mapAniList);
       list = sortSearchResults(list, q);
       showSuggestions(list);
     } else { hideSuggestions(); }
@@ -544,8 +512,6 @@ function openDetails(id) {
   if (!anime) for (var j = 0; j < fallbackAnime.length; j++) if (fallbackAnime[j].mal_id === id) { anime = fallbackAnime[j]; break; }
   if (!anime) return;
   document.getElementById('mImg').src = anime.img;
-  activeLang = 'all';
-  activeQuality = 'all';
   renderModal(anime);
 }
 
@@ -582,52 +548,15 @@ function renderModal(a) {
   }
 
   if (videos.length > 0) {
-    var langs = getLanguages(a.mal_id);
-    var quals = getQualities(a.mal_id);
-    
     html += '<h3 class="section-title">▶ Watch Online</h3>';
     
-    /* ===== SETTINGS BAR — Language + Quality ===== */
-    if (langs.length > 1 || quals.length > 1) {
-      html += '<div class="settings-bar">';
-      html += '<div class="settings-title">⚙️ Settings</div>';
-      
-      if (langs.length > 1) {
-        html += '<div class="setting-item"><label>🌍 Language:</label>';
-        html += '<select onchange="selectLang(\'' + a.mal_id + '\', this.value)">';
-        html += '<option value="all"' + (activeLang === 'all' ? ' selected' : '') + '>All</option>';
-        for (var L = 0; L < langs.length; L++) {
-          html += '<option value="' + langs[L] + '"' + (activeLang === langs[L] ? ' selected' : '') + '>' + langs[L] + '</option>';
-        }
-        html += '</select></div>';
-      }
-      
-      if (quals.length > 1) {
-        html += '<div class="setting-item"><label>📺 Quality:</label>';
-        html += '<select onchange="selectQuality(\'' + a.mal_id + '\', this.value)">';
-        html += '<option value="all"' + (activeQuality === 'all' ? ' selected' : '') + '>Auto</option>';
-        for (var Q = 0; Q < quals.length; Q++) {
-          html += '<option value="' + quals[Q] + '"' + (activeQuality === quals[Q] ? ' selected' : '') + '>' + quals[Q] + '</option>';
-        }
-        html += '</select></div>';
-      }
-      
-      html += '</div>';
-    }
-    
-    /* Filter videos based on active settings */
-    var filtered = getFilteredVideos(a.mal_id, activeLang, activeQuality);
-    if (filtered.length === 0) {
-      // Fallback: if filter produced no results, show all with current lang only
-      filtered = getFilteredVideos(a.mal_id, activeLang, 'all');
-    }
-    
     html += '<div class="video-buttons" id="videoButtons">';
-    for (var v = 0; v < filtered.length; v++) {
-      var label = filtered[v].label;
-      if (filtered[v].lang) label += ' (' + filtered[v].lang + ')';
-      if (filtered[v].quality && activeQuality === 'all') label += ' • ' + filtered[v].quality;
-      html += '<button class="video-btn ' + (v === 0 ? 'active' : '') + '" onclick="playVideoIndex(\'' + a.mal_id + '\', ' + v + ')">' + label + '</button>';
+    for (var v = 0; v < videos.length; v++) {
+      var parts = [videos[v].label];
+      if (videos[v].lang) parts.push(videos[v].lang);
+      if (videos[v].quality) parts.push(videos[v].quality);
+      var label = parts.join(' • ');
+      html += '<button class="video-btn ' + (v === 0 ? 'active' : '') + '" onclick="playVideo(' + v + ')">' + label + '</button>';
     }
     html += '</div>';
     html += '<div class="video-player" id="videoPlayer"></div>';
@@ -659,40 +588,26 @@ function renderModal(a) {
   }
   body.innerHTML = html;
 
-  if (filtered && filtered.length > 0) {
+  if (videos.length > 0) {
     setTimeout(function() {
-      if (!disclaimerAccepted) showDisclaimer(filtered[0].embed);
+      if (!disclaimerAccepted) showDisclaimer(videos[0].embed);
       else {
         var player = document.getElementById('videoPlayer');
-        if (player) player.innerHTML = '<iframe src="' + filtered[0].embed + '" allowfullscreen allow="autoplay; encrypted-media" scrolling="no" frameborder="0"></iframe>';
+        if (player) player.innerHTML = '<iframe src="' + videos[0].embed + '" allowfullscreen allow="autoplay; encrypted-media" scrolling="no" frameborder="0"></iframe>';
       }
     }, 100);
   }
 }
 
-function selectLang(animeId, lang) {
-  activeLang = lang;
-  reloadModal(animeId);
-}
-
-function selectQuality(animeId, quality) {
-  activeQuality = quality;
-  reloadModal(animeId);
-}
-
-function reloadModal(animeId) {
-  var anime = null;
-  for (var i = 0; i < currentList.length; i++) if (currentList[i].mal_id == animeId) { anime = currentList[i]; break; }
-  if (!anime) for (var j = 0; j < fallbackAnime.length; j++) if (fallbackAnime[j].mal_id == animeId) { anime = fallbackAnime[j]; break; }
-  if (!anime) return;
-  renderModal(anime);
-}
-
-function playVideoIndex(animeId, index) {
-  var filtered = getFilteredVideos(animeId, activeLang, activeQuality);
-  if (filtered.length === 0) filtered = getFilteredVideos(animeId, activeLang, 'all');
-  if (!filtered[index]) return;
-  var embed = filtered[index].embed;
+function playVideo(index) {
+  var modalBody = document.getElementById('modalBody');
+  // Find current anime from currentList by looking at modal contents — simpler: use a global
+  var currentAnimeId = null;
+  // Walk currentList and detect which has VIDEO_DATA matching
+  // We'll store it in a global
+  var videos = window._currentVideos || [];
+  if (!videos[index]) return;
+  var embed = videos[index].embed;
   if (!disclaimerAccepted) {
     showDisclaimer(embed);
   } else {
@@ -703,6 +618,13 @@ function playVideoIndex(animeId, index) {
   for (var i = 0; i < buttons.length; i++) buttons[i].classList.remove('active');
   if (buttons[index]) buttons[index].classList.add('active');
 }
+
+/* Store videos for current modal in a global so playVideo can access */
+var _origRenderModal = renderModal;
+renderModal = function(a) {
+  window._currentVideos = VIDEO_DATA[a.mal_id] || [];
+  _origRenderModal(a);
+};
 
 function toggleWlFromModal(id) {
   var anime = null;
@@ -722,7 +644,10 @@ function submitReview(id) {
   var list = getReviews(id);
   list.unshift({ name: name, text: text, date: new Date().toLocaleString() });
   saveReviews(id, list);
-  reloadModal(id);
+  var anime = null;
+  for (var i = 0; i < currentList.length; i++) if (currentList[i].mal_id === id) { anime = currentList[i]; break; }
+  if (!anime) for (var j = 0; j < fallbackAnime.length; j++) if (fallbackAnime[j].mal_id === id) { anime = fallbackAnime[j]; break; }
+  if (anime) renderModal(anime);
 }
 
 function escapeHtml(s) {
