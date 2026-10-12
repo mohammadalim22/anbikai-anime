@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AnbiKai Anime</title>
+<style>
+  * { box-sizing: border-box; margin:0; padding:0; }
+  body { font-family: system-ui, sans-serif; background:#0f0f13; color:#f5f5f5; }
+  header { padding:20px; text-align:center; border-bottom:1px solid #2a2a35; }
+  h1 { font-size:1.8rem; color:#ff4d6d; }
+  header p { color:#a1a1aa; margin-top:6px; font-size:0.9rem; }
+  .search-box { display:flex; gap:8px; max-width:600px; margin:20px auto; padding:0 16px; }
+  input { flex:1; padding:12px 16px; border-radius:999px; border:1px solid #333; background:#15151c; color:white; outline:none; }
+  button { padding:12px 20px; border-radius:999px; border:none; background:#ff4d6d; color:white; font-weight:bold; }
+  #status { text-align:center; color:#a1a1aa; margin:20px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:12px; padding:16px; }
+  .card { background:#1b1b22; border-radius:12px; overflow:hidden; }
+  .card img { width:100%; height:220px; object-fit:cover; display:block; }
+  .card-content { padding:10px; }
+  .card h3 { font-size:0.9rem; margin-bottom:6px; }
+  .card p { font-size:0.75rem; color:#a1a1aa; }
+  .score { color:#f5c518; font-weight:bold; }
+  footer { text-align:center; padding:20px; color:#a1a1aa; font-size:0.8rem; border-top:1px solid #2a2a35; margin-top:30px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>🌸 AnbiKai Anime</h1>
+  <p>Free anime catalog — Jikan API</p>
+</header>
+
+<div class="search-box">
+  <input id="searchInput" type="text" placeholder="Anime search koro...">
+  <button onclick="searchAnime()">Search</button>
+</div>
+
+<div id="status">Loading top anime...</div>
+<div class="grid" id="animeGrid"></div>
+
+<footer>
+  Data: Jikan API (MyAnimeList) • AnbiKai Anime
+</footer>
+
+<script>
+const grid = document.getElementById('animeGrid');
+const status = document.getElementById('status');
+const input = document.getElementById('searchInput');
+
+async function fetchAnime(url) {
+  status.textContent = 'Loading...';
+  grid.innerHTML = '';
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    renderAnime(data.data);
+  } catch (err) {
+    status.textContent = 'Kichu bhul holo. Abar try koro.';
+  }
+}
+
+function renderAnime(list) {
+  if (!list || list.length === 0) {
+    status.textContent = 'Kono anime paoa gelo na.';
+    return;
+  }
+  status.textContent = '';
+  grid.innerHTML = list.map(a => `
+    <div class="card">
+      <img src="${a.images?.jpg?.image_url || ''}" alt="${a.title}">
+      <div class="card-content">
+        <h3>${a.title_english || a.title}</h3>
+        <p><span class="score">⭐ ${a.score || 'N/A'}</span></p>
+        <p>${a.type || ''} • ${a.episodes || '?'} eps</p>
+      </div>
+    </div>
+  `).join('');
+}
+
+function searchAnime() {
+  const q = input.value.trim();
+  if (!q) { loadTop(); return; }
+  fetchAnime('https://api.jikan.moe/v4/anime?q=' + encodeURIComponent(q) + '&limit=12&sfw=true');
+}
+
+function loadTop() {
+  fetchAnime('https://api.jikan.moe/v4/top/anime?limit=12');
+}
+
+input.addEventListener('keypress', e => { if (e.key === 'Enter') searchAnime(); });
+
+loadTop();
+</script>
+</body>
+  </html>
