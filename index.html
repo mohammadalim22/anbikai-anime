@@ -143,17 +143,21 @@ var QUERY = 'query ($search: String, $genre: String, $sort: [MediaSort], $perPag
 /* ============================================================
    ⭐⭐ VIDEO PLAYLIST — এখানে নতুন ভিডিও যোগ করবে ⭐⭐
    
+   - mal_id (AniList ID): key
+   - প্রতিটা ভিডিও: { label, embed }
+   
    উদাহরণ:
    var VIDEO_DATA = {
-     21: [
-       { label: "Episode 1", embed: "https://streamtape.com/e/XXXXX/" },
-       { label: "Episode 2", embed: "https://streamtape.com/e/YYYYY/" }
-     ]
+     21: [ { label: "Watch Now", embed: "https://streamtape.com/e/XXXXX/" } ],
+     97940: [ { label: "Trailer", embed: "https://streamtape.com/e/YYYYY/" } ]
    };
    ============================================================ */
 var VIDEO_DATA = {
   21: [
     { label: "Watch Now", embed: "https://streamtape.com/e/Qex8L8KwY2UyDJ/" }
+  ],
+  97940: [
+    { label: "Trailer", embed: "https://streamtape.com/e/PDyGxboGa3u03pq/" }
   ]
 };
 
@@ -170,10 +174,10 @@ var fallbackAnime = [
     img: "https://cdn.myanimelist.net/images/anime/1286/99889.jpg",
     synopsis: "Tanjiro becomes a demon slayer to avenge his family and cure his sister.",
     genres: ["Action","Supernatural"], trailer: "https://www.youtube.com/embed/VQGCKyvzIM4", year: 2019 },
-  { mal_id: 16498, title: "Attack on Titan", score: 8.5, type: "TV", episodes: 87,
-    img: "https://cdn.myanimelist.net/images/anime/10/47347.jpg",
-    synopsis: "Humanity fights for survival against giant man-eating Titans behind enormous walls.",
-    genres: ["Action","Drama"], trailer: "https://www.youtube.com/embed/LHtdKWJdif4", year: 2013 }
+  { mal_id: 97940, title: "Black Clover", score: 8.1, type: "TV", episodes: 170,
+    img: "https://cdn.myanimelist.net/images/anime/2/88336.jpg",
+    synopsis: "Asta, a boy born without magic in a world where magic is everything, aims to become the Wizard King.",
+    genres: ["Action","Adventure","Fantasy"], trailer: "https://www.youtube.com/embed/PDyGxboGa3u", year: 2017 }
 ];
 
 function fetchWithTimeout(url, options, ms) {
