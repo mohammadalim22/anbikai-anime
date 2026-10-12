@@ -189,16 +189,11 @@ var ANILIST_URL = 'https://graphql.anilist.co';
 var QUERY = 'query ($search: String, $genre: String, $sort: [MediaSort], $perPage: Int) { Page(page: 1, perPage: $perPage) { media(type: ANIME, search: $search, genre: $genre, sort: $sort, isAdult: false) { id title { romaji english } description(asHtml: false) coverImage { extraLarge large } bannerImage episodes nextAiringEpisode { episode } averageScore format startDate { year } genres trailer { id site } } } }';
 
 /* ============================================================
-   ⭐⭐ VIDEO_DATA — ৩টি সার্ভার সাপোর্ট ⭐⭐
+   ⭐⭐ VIDEO_DATA — ৩টি সার্ভার ⭐⭐
    
    Server 1: Streamtape (Main)
-   Server 2: Videy (Backup — ডেস্কটপে ভালো কাজ করে)
+   Server 2: Videy (Backup)
    Server 3: Streamtape (Backup 2)
-   
-   প্রতিটা ভিডিওতে:
-   - label: বাটনে যা দেখাবে
-   - embed: প্লে করার লিংক
-   - download: ডাউনলোড লিংক (না দিলে অটো হবে)
    ============================================================ */
 var VIDEO_DATA = {
   97940: [
@@ -209,7 +204,7 @@ var VIDEO_DATA = {
     },
     {
       label: "Episode 1 (Server 2 - Backup)",
-      embed: "https://videy.co/embed?id=gyQns3pY1",
+      embed: "https://videy.co/v/?id=gyQns3pY1",
       download: ""
     },
     {
