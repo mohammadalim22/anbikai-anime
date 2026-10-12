@@ -364,6 +364,252 @@ function closeModal() {
 input.addEventListener('keypress', e => { if (e.key === 'Enter') searchAnime(); });
 updateWlCount();
 loadTop();
-</script>
+  <script>
+const grid = document.getElementById('animeGrid');
+const status = document.getElementById('status');
+const input = document.getElementById('searchInput');
+let currentList = [];
+let currentView = 'browse';
+
+const fallbackAnime = [
+  { mal_id:20, title:"Naruto", score:8.0, type:"TV", episodes:220, img:"https://cdn.myanimelist.net/images/anime/13/17405.jpg", synopsis:"Naruto Uzumaki, a young ninja with a sealed demon fox inside him, seeks recognition and dreams of becoming Hokage.", genres:["Action","Adventure"] },
+  { mal_id:21, title:"One Piece", score:8.7, type:"TV", episodes:1000, img:"https://cdn.myanimelist.net/images/anime/6/73245.jpg", synopsis:"Monkey D. Luffy sets off on an adventure to find the legendary One Piece treasure and become Pirate King.", genres:["Action","Adventure","Fantasy"] },
+  { mal_id:16498, title:"Attack on Titan", score:8.5, type:"TV", episodes:25, img:"https://cdn.myanimelist.net/images/anime/10/47347.jpg", synopsis:"Humanity fights for survival against giant man-eating Titans behind enormous walls.", genres:["Action","Drama"] },
+  { mal_id:38000, title:"Demon Slayer", score:8.5, type:"TV", episodes:26, img:"https://cdn.myanimelist.net/images/anime/1286/99889.jpg", synopsis:"Tanjiro becomes a demon slayer to avenge his family and cure his sister.", genres:["Action","Supernatural"] },
+  { mal_id:40748, title:"Jujutsu Kaisen", score:8.6, type:"TV", episodes:24, img:"https://cdn.myanimelist.net/images/anime/1171/109222.jpg", synopsis:"Yuji Itadori swallows a cursed finger and joins a secret school of Jujutsu sorcerers.", genres:["Action","Supernatural"] },
+  { mal_id:1535, title:"Death Note", score:8.6, type:"TV", episodes:37, img:"https://cdn.myanimelist.net/images/anime/9/9453.jpg", synopsis:"A genius student finds a notebook that kills anyone whose name is written in it.", genres:["Mystery","Supernatural"] },
+  { mal_id:5114, title:"Fullmetal Alchemist Brotherhood", score:9.1, type:"TV", episodes:64, img:"https://cdn.myanimelist.net/images/anime/1223/96541.jpg", synopsis:"Two brothers search for the Philosopher's Stone to restore their bodies after a failed alchemy ritual.", genres:["Action","Adventure","Drama"] },
+  { mal_id:31964, title:"My Hero Academia", score:7.9, type:"TV", episodes:13, img:"https://cdn.myanimelist.net/images/anime/10/78745.jpg", synopsis:"In a world of superheroes, a powerless boy inherits the power of the world's greatest hero.", genres:["Action","Comedy"] },
+  { mal_id:22319, title:"Tokyo Ghoul", score:7.8, type:"TV", episodes:12, img:"https://cdn.myanimelist.net/images/anime/5/64449.jpg", synopsis:"A college student becomes half-ghoul and must survive between two worlds.", genres:["Action","Horror"] },
+  { mal_id:11757, title:"Sword Art Online", score:7.2, type:"TV", episodes:25, img:"https://cdn.myanimelist.net/images/anime/11/39717.jpg", synopsis:"Players are trapped inside a VRMMORPG where death in game means death in real life.", genres:["Action","Adventure","Fantasy"] },
+  { mal_id:44511, title:"Chainsaw Man", score:8.5, type:"TV", episodes:12, img:"https://cdn.myanimelist.net/images/anime/1806/126216.jpg", synopsis:"A young man merges with his chainsaw devil dog to become Chainsaw Man.", genres:["Action","Supernatural"] },
+  { mal_id:50265, title:"Spy x Family", score:8.5, type:"TV", episodes:12, img:"https://cdn.myanimelist.net/images/anime/1441/122795.jpg", synopsis:"A spy forms a fake family, unaware his wife is an assassin and daughter a telepath.", genres:["Action","Comedy"] }
+];
+
+/* Fetch with 3-second timeout */
+async function fetchWithTimeout(url, ms = 3000) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), ms);
+  try {
+    const res = await fetch(url, { signal: controller.signal });
+    clearTimeout(timer);
+    if (!res.ok) throw new Error('API fail');
+    return res.json();
+  } catch (err) {
+    clearTimeout(timer);
+    throw err;
+  }
+}
+
+function getWatchlist() { return JSON.parse(localStorage.getItem('anbikai_watchlist') || '[]'); }
+function saveWatchlist(list) { localStorage.setItem('anbikai_watchlist', JSON.stringify(list)); updateWlCount(); }
+function updateWlCount() { document.getElementById('wlCount').textContent = getWatchlist().length; }
+function isInWatchlist(id) { return getWatchlist().some(a => a.mal_id === id); }
+function toggleWatchlist(anime) {
+  let list = getWatchlist();
+  if (list.some(a => a.mal_id === anime.mal_id)) list = list.filter(a => a.mal_id !== anime.mal_id);
+  else list.push(anime);
+  saveWatchlist(list);
+  return isInWatchlist(anime.mal_id);
+}
+
+function toggleTheme() {
+  document.body.classList.toggle('light');
+  const isLight = document.body.classList.contains('light');
+  document.getElementById('themeBtn').textContent = isLight ? '☀️' : '🌙';
+  localStorage.setItem('anbikai_theme', isLight ? 'light' : 'dark');
+}
+if (localStorage.getItem('anbikai_theme') === 'light') {
+  document.body.classList.add('light');
+  document.getElementById('themeBtn').textContent = '☀️';
+}
+
+function renderAnime(list) {
+  currentList = list;
+  if (!list || list.length === 0) {
+    status.textContent = 'Kono anime paoa gelo na.';
+    grid.innerHTML = '';
+    return;
+  }
+  status.textContent = '';
+  grid.innerHTML = list.map(a => `
+    <div class="card" onclick="openDetails(${a.mal_id})">
+      <img src="${a.img}" alt="${a.title}" onerror="this.style.opacity=0.2">
+      <div class="card-content">
+        <h3>${a.title}</h3>
+        <p><span class="score">⭐ ${a.score}</span></p>
+        <p>${a.type} • ${a.episodes} eps</p>
+      </div>
+    </div>
+  `).join('');
+}
+
+function mapAnime(a) {
+  return {
+    mal_id: a.mal_id,
+    title: a.title_english || a.title,
+    score: a.score || 'N/A',
+    type: a.type || '',
+    episodes: a.episodes || '?',
+    img: a.images?.jpg?.image_url || '',
+    synopsis: a.synopsis || '',
+    genres: (a.genres || []).map(g => g.name),
+    trailer: a.trailer?.embed_url || null,
+    year: a.year || (a.aired?.prop?.from?.year) || ''
+  };
+}
+
+async function loadTop() {
+  status.textContent = '';
+  renderAnime(fallbackAnime);
+  try {
+    const data = await fetchWithTimeout('https://api.jikan.moe/v4/top/anime?limit=24', 3000);
+    renderAnime(data.data.map(mapAnime));
+  } catch (err) { /* fallback already showing */ }
+}
+
+async function searchAnime() {
+  const q = input.value.trim();
+  if (!q) { loadTop(); return; }
+  status.textContent = 'Searching...';
+  grid.innerHTML = '';
+  try {
+    const data = await fetchWithTimeout('https://api.jikan.moe/v4/anime?q=' + encodeURIComponent(q) + '&limit=24&sfw=true', 5000);
+    renderAnime(data.data.map(mapAnime));
+  } catch (err) {
+    status.textContent = 'Search kaj korche na, popular dekhacchi:';
+    renderAnime(fallbackAnime);
+  }
+}
+
+async function filterGenre() {
+  const genreId = document.getElementById('genreSelect').value;
+  if (!genreId) { loadTop(); return; }
+  status.textContent = 'Filtering...';
+  grid.innerHTML = '';
+  try {
+    const data = await fetchWithTimeout('https://api.jikan.moe/v4/anime?genres=' + genreId + '&limit=24&order_by=score&sort=desc&sfw=true', 5000);
+    renderAnime(data.data.map(mapAnime));
+  } catch (err) {
+    status.textContent = 'Genre filter kaj korche na.';
+    renderAnime(fallbackAnime);
+  }
+}
+
+function showWatchlist() {
+  const btn = document.getElementById('watchlistBtn');
+  if (currentView === 'watchlist') {
+    currentView = 'browse';
+    btn.classList.remove('active');
+    loadTop();
+    return;
+  }
+  currentView = 'watchlist';
+  btn.classList.add('active');
+  const list = getWatchlist();
+  if (list.length === 0) {
+    status.textContent = 'Watchlist khali. Card e tap kore "Add to Watchlist" koro.';
+    grid.innerHTML = '';
+    return;
+  }
+  status.textContent = '⭐ Watchlist (' + list.length + ')';
+  renderAnime(list);
+}
+
+function openDetails(id) {
+  const modal = document.getElementById('modal');
+  modal.classList.add('active');
+  document.body.style.overflow = 'hidden';
+
+  // Use existing data immediately — no waiting
+  let anime = currentList.find(a => a.mal_id === id) || fallbackAnime.find(a => a.mal_id === id);
+  if (!anime) return;
+
+  document.getElementById('mImg').src = anime.img;
+  renderModal(anime);
+
+  // Try to get trailer in background (non-blocking)
+  if (!anime.trailer) {
+    fetchWithTimeout('https://api.jikan.moe/v4/anime/' + id + '/full', 4000)
+      .then(data => {
+        const full = mapAnime(data.data);
+        anime.trailer = full.trailer;
+        anime.synopsis = full.synopsis || anime.synopsis;
+        renderModal(anime);
+      })
+      .catch(() => {});
+  }
+}
+
+function renderModal(a) {
+  const inList = isInWatchlist(a.mal_id);
+  const reviews = getReviews(a.mal_id);
+  const body = document.getElementById('modalBody');
+
+  body.innerHTML = `
+    <h2>${a.title}</h2>
+    <div class="modal-info">
+      <span>⭐ ${a.score}</span>
+      <span>${a.type || 'TV'}</span>
+      <span>${a.episodes} eps</span>
+      ${a.year ? '<span>' + a.year + '</span>' : ''}
+    </div>
+    ${a.genres && a.genres.length ? '<div class="genres">' + a.genres.map(g => '<span class="genre-tag">' + g + '</span>').join('') + '</div>' : ''}
+    <p class="synopsis">${a.synopsis || 'No description available.'}</p>
+
+    <button class="watchlist-btn ${inList ? 'in-list' : ''}" onclick='toggleWlFromModal(${JSON.stringify(a).replace(/'/g, "&apos;")})'>
+      ${inList ? '✓ In Watchlist — Remove' : '+ Add to Watchlist'}
+    </button>
+
+    <h3 class="section-title">📺 Trailer</h3>
+    ${a.trailer ? `<div class="trailer"><iframe src="${a.trailer}" allowfullscreen></iframe></div>` : '<div class="no-trailer">Ei anime er trailer paoa gelo na.</div>'}
+
+    <h3 class="section-title">📝 Reviews (${reviews.length})</h3>
+    <div class="review-form">
+      <input id="revName" type="text" placeholder="Tomar naam...">
+      <textarea id="revText" placeholder="Tomar review likho..."></textarea>
+      <button onclick="submitReview(${a.mal_id})">Post Review</button>
+    </div>
+    <div id="reviewList">${reviews.map(r => `
+      <div class="review-item">
+        <strong>${escapeHtml(r.name)}</strong>
+        <p style="margin-top:4px;">${escapeHtml(r.text)}</p>
+        <span class="date">${r.date}</span>
+      </div>
+    `).join('')}</div>
+  `;
+}
+
+function toggleWlFromModal(anime) {
+  toggleWatchlist(anime);
+  renderModal(anime);
+}
+
+function getReviews(id) { return JSON.parse(localStorage.getItem('anbikai_reviews_' + id) || '[]'); }
+function saveReviews(id, list) { localStorage.setItem('anbikai_reviews_' + id, JSON.stringify(list)); }
+function submitReview(id) {
+  const name = document.getElementById('revName').value.trim() || 'Anonymous';
+  const text = document.getElementById('revText').value.trim();
+  if (!text) { alert('Review lekho age!'); return; }
+  const list = getReviews(id);
+  list.unshift({ name, text, date: new Date().toLocaleString() });
+  saveReviews(id, list);
+  const anime = currentList.find(a => a.mal_id === id);
+  if (anime) renderModal(anime);
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+input.addEventListener('keypress', e => { if (e.key === 'Enter') searchAnime(); });
+updateWlCount();
+loadTop();
+</script>>
 </body>
   </html>
