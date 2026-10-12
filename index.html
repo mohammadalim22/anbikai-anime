@@ -5,72 +5,184 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AnbiKai Anime</title>
 <style>
+  :root {
+    --bg:#0f0f13; --card:#1b1b22; --card-hover:#23232c; --text:#f5f5f5;
+    --muted:#a1a1aa; --accent:#ff4d6d; --border:#2a2a35; --input-bg:#15151c; --score:#f5c518;
+  }
+  body.light {
+    --bg:#f7f7fa; --card:#ffffff; --card-hover:#f0f0f5; --text:#1a1a1a;
+    --muted:#6b6b76; --accent:#ff4d6d; --border:#e0e0e8; --input-bg:#f2f2f7; --score:#d4a017;
+  }
   * { box-sizing: border-box; margin:0; padding:0; }
-  body { font-family: system-ui, sans-serif; background:#0f0f13; color:#f5f5f5; }
-  header { padding:20px; text-align:center; border-bottom:1px solid #2a2a35; }
-  h1 { font-size:1.8rem; color:#ff4d6d; }
-  header p { color:#a1a1aa; margin-top:6px; font-size:0.9rem; }
-  .search-box { display:flex; gap:8px; max-width:600px; margin:20px auto; padding:0 16px; }
-  input { flex:1; padding:12px 16px; border-radius:999px; border:1px solid #333; background:#15151c; color:white; outline:none; }
-  button { padding:12px 20px; border-radius:999px; border:none; background:#ff4d6d; color:white; font-weight:bold; }
-  #status { text-align:center; color:#a1a1aa; margin:20px; }
-  .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:12px; padding:16px; }
-  .card { background:#1b1b22; border-radius:12px; overflow:hidden; }
-  .card img { width:100%; height:220px; object-fit:cover; display:block; }
-  .card-content { padding:10px; }
-  .card h3 { font-size:0.9rem; margin-bottom:6px; }
-  .card p { font-size:0.75rem; color:#a1a1aa; }
-  .score { color:#f5c518; font-weight:bold; }
-  footer { text-align:center; padding:20px; color:#a1a1aa; font-size:0.8rem; border-top:1px solid #2a2a35; margin-top:30px; }
+  body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--text); transition: background 0.3s, color 0.3s; }
+
+  header { padding: 14px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; position: sticky; top: 0; background: var(--bg); z-index: 50; }
+  .logo { font-size: 1.4rem; color: var(--accent); font-weight: bold; }
+  .logo small { display: block; color: var(--muted); font-size: 0.7rem; font-weight: normal; margin-top: 2px; }
+  .header-buttons { display: flex; gap: 6px; flex-wrap: wrap; }
+  .icon-btn { background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 8px 12px; border-radius: 999px; cursor: pointer; font-size: 0.8rem; font-weight: 600; }
+  .icon-btn:hover { background: var(--card-hover); }
+  .icon-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+
+  .controls { max-width: 900px; margin: 16px auto; padding: 0 16px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .search-box { display: flex; gap: 8px; flex: 1; min-width: 220px; }
+  input, select { padding: 11px 16px; border-radius: 999px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); outline: none; font-size: 0.85rem; font-family: inherit; }
+  input { flex: 1; }
+  select { cursor: pointer; }
+  .search-btn { padding: 11px 20px; border-radius: 999px; border: none; background: var(--accent); color: white; font-weight: bold; cursor: pointer; font-size: 0.85rem; }
+
+  #status { text-align: center; color: var(--muted); margin: 20px; font-size: 0.9rem; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; padding: 16px; max-width: 1200px; margin: 0 auto; }
+  .card { background: var(--card); border-radius: 12px; overflow: hidden; cursor: pointer; transition: transform 0.2s, background 0.2s; border: 1px solid var(--border); position: relative; }
+  .card:hover { transform: translateY(-4px); background: var(--card-hover); }
+  .card img { width: 100%; height: 220px; object-fit: cover; display: block; }
+  .card-content { padding: 10px; }
+  .card h3 { font-size: 0.88rem; margin-bottom: 6px; line-height: 1.3; }
+  .card p { font-size: 0.72rem; color: var(--muted); }
+  .score { color: var(--score); font-weight: bold; }
+  .star-badge { position: absolute; top: 8px; right: 8px; background: var(--accent); color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; }
+
+  /* Modal */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 100; padding: 16px; overflow-y: auto; }
+  .modal-overlay.active { display: block; }
+  .modal { background: var(--card); border-radius: 16px; max-width: 700px; margin: 10px auto; overflow: hidden; }
+  .modal-header { position: relative; }
+  .modal-header img { width: 100%; height: 200px; object-fit: cover; }
+  .modal-close { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; border: none; width: 34px; height: 34px; border-radius: 50%; font-size: 1.1rem; cursor: pointer; }
+  .modal-body { padding: 18px; }
+  .modal-body h2 { font-size: 1.2rem; margin-bottom: 10px; line-height: 1.3; }
+  .modal-info { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; font-size: 0.78rem; color: var(--muted); }
+  .modal-info span { background: var(--input-bg); padding: 4px 10px; border-radius: 999px; border: 1px solid var(--border); }
+  .genres { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+  .genre-tag { background: var(--accent); color: white; padding: 3px 10px; border-radius: 999px; font-size: 0.72rem; }
+  .synopsis { font-size: 0.87rem; line-height: 1.5; margin-bottom: 16px; color: var(--text); }
+  .section-title { font-size: 0.95rem; margin: 18px 0 10px; color: var(--accent); border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+  .trailer { aspect-ratio: 16/9; width: 100%; border-radius: 10px; overflow: hidden; margin-bottom: 8px; }
+  .trailer iframe { width: 100%; height: 100%; border: none; }
+  .no-trailer { text-align: center; color: var(--muted); font-size: 0.85rem; padding: 20px; background: var(--input-bg); border-radius: 10px; }
+  .watchlist-btn { padding: 11px 16px; border-radius: 999px; border: 1px solid var(--accent); background: transparent; color: var(--accent); font-weight: bold; cursor: pointer; width: 100%; font-size: 0.9rem; margin-bottom: 8px; }
+  .watchlist-btn.in-list { background: var(--accent); color: white; }
+
+  .review-form { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+  .review-form input, .review-form textarea { padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); font-family: inherit; font-size: 0.85rem; width: 100%; }
+  .review-form textarea { min-height: 60px; resize: vertical; }
+  .review-form button { padding: 10px 18px; border-radius: 999px; border: none; background: var(--accent); color: white; font-weight: bold; cursor: pointer; align-self: flex-end; font-size: 0.85rem; }
+  .review-item { background: var(--input-bg); padding: 10px 14px; border-radius: 10px; margin-bottom: 8px; font-size: 0.85rem; border: 1px solid var(--border); }
+  .review-item strong { color: var(--accent); }
+  .review-item .date { color: var(--muted); font-size: 0.7rem; display: block; margin-top: 4px; }
+
+  footer { text-align: center; padding: 20px; color: var(--muted); font-size: 0.78rem; border-top: 1px solid var(--border); margin-top: 40px; }
 </style>
 </head>
 <body>
+
 <header>
-  <h1>🌸 AnbiKai Anime</h1>
-  <p>Free anime catalog</p>
+  <div class="logo">🌸 AnbiKai Anime<small>Free anime catalog</small></div>
+  <div class="header-buttons">
+    <button class="icon-btn" id="watchlistBtn" onclick="showWatchlist()">⭐ My List (<span id="wlCount">0</span>)</button>
+    <button class="icon-btn" id="themeBtn" onclick="toggleTheme()">🌙</button>
+  </div>
 </header>
 
-<div class="search-box">
-  <input id="searchInput" type="text" placeholder="Anime search koro...">
-  <button onclick="searchAnime()">Search</button>
+<div class="controls">
+  <div class="search-box">
+    <input id="searchInput" type="text" placeholder="Anime search koro...">
+    <button class="search-btn" onclick="searchAnime()">Search</button>
+  </div>
+  <select id="genreSelect" onchange="filterGenre()">
+    <option value="">All Genres</option>
+    <option value="1">Action</option>
+    <option value="2">Adventure</option>
+    <option value="4">Comedy</option>
+    <option value="8">Drama</option>
+    <option value="10">Fantasy</option>
+    <option value="14">Horror</option>
+    <option value="7">Mystery</option>
+    <option value="22">Romance</option>
+    <option value="24">Sci-Fi</option>
+    <option value="36">Slice of Life</option>
+    <option value="30">Sports</option>
+    <option value="37">Supernatural</option>
+  </select>
 </div>
 
 <div id="status">Loading...</div>
 <div class="grid" id="animeGrid"></div>
 
-<footer>
-  AnbiKai Anime
-</footer>
+<footer>AnbiKai Anime • Data: Jikan API</footer>
+
+<div class="modal-overlay" id="modal" onclick="if(event.target===this) closeModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <img id="mImg" src="" alt="">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
 
 <script>
 const grid = document.getElementById('animeGrid');
 const status = document.getElementById('status');
 const input = document.getElementById('searchInput');
+let currentList = [];
+let currentView = 'browse';
 
 const fallbackAnime = [
-  { title:"Naruto", score:8.0, type:"TV", episodes:220, img:"https://cdn.myanimelist.net/images/anime/13/17405.jpg" },
-  { title:"One Piece", score:8.7, type:"TV", episodes:1000, img:"https://cdn.myanimelist.net/images/anime/6/73245.jpg" },
-  { title:"Attack on Titan", score:8.5, type:"TV", episodes:25, img:"https://cdn.myanimelist.net/images/anime/10/47347.jpg" },
-  { title:"Demon Slayer", score:8.5, type:"TV", episodes:26, img:"https://cdn.myanimelist.net/images/anime/1286/99889.jpg" },
-  { title:"Jujutsu Kaisen", score:8.6, type:"TV", episodes:24, img:"https://cdn.myanimelist.net/images/anime/1171/109222.jpg" },
-  { title:"Death Note", score:8.6, type:"TV", episodes:37, img:"https://cdn.myanimelist.net/images/anime/9/9453.jpg" },
-  { title:"Fullmetal Alchemist", score:9.1, type:"TV", episodes:64, img:"https://cdn.myanimelist.net/images/anime/1223/96541.jpg" },
-  { title:"My Hero Academia", score:7.9, type:"TV", episodes:13, img:"https://cdn.myanimelist.net/images/anime/10/78745.jpg" },
-  { title:"Tokyo Ghoul", score:7.8, type:"TV", episodes:12, img:"https://cdn.myanimelist.net/images/anime/5/64449.jpg" },
-  { title:"Sword Art Online", score:7.2, type:"TV", episodes:25, img:"https://cdn.myanimelist.net/images/anime/11/39717.jpg" },
-  { title:"Chainsaw Man", score:8.5, type:"TV", episodes:12, img:"https://cdn.myanimelist.net/images/anime/1806/126216.jpg" },
-  { title:"Spy x Family", score:8.5, type:"TV", episodes:12, img:"https://cdn.myanimelist.net/images/anime/1441/122795.jpg" }
+  { mal_id:20, title:"Naruto", score:8.0, type:"TV", episodes:220, img:"https://cdn.myanimelist.net/images/anime/13/17405.jpg", synopsis:"Naruto Uzumaki, a young ninja with a sealed demon fox inside him, seeks recognition and dreams of becoming Hokage.", genres:["Action","Adventure"] },
+  { mal_id:21, title:"One Piece", score:8.7, type:"TV", episodes:1000, img:"https://cdn.myanimelist.net/images/anime/6/73245.jpg", synopsis:"Monkey D. Luffy sets off on an adventure to find the legendary One Piece treasure and become Pirate King.", genres:["Action","Adventure","Fantasy"] },
+  { mal_id:16498, title:"Attack on Titan", score:8.5, type:"TV", episodes:25, img:"https://cdn.myanimelist.net/images/anime/10/47347.jpg", synopsis:"Humanity fights for survival against giant man-eating Titans behind enormous walls.", genres:["Action","Drama"] },
+  { mal_id:38000, title:"Demon Slayer", score:8.5, type:"TV", episodes:26, img:"https://cdn.myanimelist.net/images/anime/1286/99889.jpg", synopsis:"Tanjiro becomes a demon slayer to avenge his family and cure his sister.", genres:["Action","Supernatural"] },
+  { mal_id:40748, title:"Jujutsu Kaisen", score:8.6, type:"TV", episodes:24, img:"https://cdn.myanimelist.net/images/anime/1171/109222.jpg", synopsis:"Yuji Itadori swallows a cursed finger and joins a secret school of Jujutsu sorcerers.", genres:["Action","Supernatural"] },
+  { mal_id:1535, title:"Death Note", score:8.6, type:"TV", episodes:37, img:"https://cdn.myanimelist.net/images/anime/9/9453.jpg", synopsis:"A genius student finds a notebook that kills anyone whose name is written in it.", genres:["Mystery","Supernatural"] },
+  { mal_id:5114, title:"Fullmetal Alchemist Brotherhood", score:9.1, type:"TV", episodes:64, img:"https://cdn.myanimelist.net/images/anime/1223/96541.jpg", synopsis:"Two brothers search for the Philosopher's Stone to restore their bodies after a failed alchemy ritual.", genres:["Action","Adventure","Drama"] },
+  { mal_id:31964, title:"My Hero Academia", score:7.9, type:"TV", episodes:13, img:"https://cdn.myanimelist.net/images/anime/10/78745.jpg", synopsis:"In a world of superheroes, a powerless boy inherits the power of the world's greatest hero.", genres:["Action","Comedy"] },
+  { mal_id:22319, title:"Tokyo Ghoul", score:7.8, type:"TV", episodes:12, img:"https://cdn.myanimelist.net/images/anime/5/64449.jpg", synopsis:"A college student becomes half-ghoul and must survive between two worlds.", genres:["Action","Horror"] },
+  { mal_id:11757, title:"Sword Art Online", score:7.2, type:"TV", episodes:25, img:"https://cdn.myanimelist.net/images/anime/11/39717.jpg", synopsis:"Players are trapped inside a VRMMORPG where death in game means death in real life.", genres:["Action","Adventure","Fantasy"] },
+  { mal_id:44511, title:"Chainsaw Man", score:8.5, type:"TV", episodes:12, img:"https://cdn.myanimelist.net/images/anime/1806/126216.jpg", synopsis:"A young man merges with his chainsaw devil dog to become Chainsaw Man.", genres:["Action","Supernatural"] },
+  { mal_id:50265, title:"Spy x Family", score:8.5, type:"TV", episodes:12, img:"https://cdn.myanimelist.net/images/anime/1441/122795.jpg", synopsis:"A spy forms a fake family, unaware his wife is an assassin and daughter a telepath.", genres:["Action","Comedy"] }
 ];
 
+/* ===== Watchlist ===== */
+function getWatchlist() { return JSON.parse(localStorage.getItem('anbikai_watchlist') || '[]'); }
+function saveWatchlist(list) { localStorage.setItem('anbikai_watchlist', JSON.stringify(list)); updateWlCount(); }
+function updateWlCount() { document.getElementById('wlCount').textContent = getWatchlist().length; }
+function isInWatchlist(id) { return getWatchlist().some(a => a.mal_id === id); }
+function toggleWatchlist(anime) {
+  let list = getWatchlist();
+  if (list.some(a => a.mal_id === anime.mal_id)) {
+    list = list.filter(a => a.mal_id !== anime.mal_id);
+  } else {
+    list.push(anime);
+  }
+  saveWatchlist(list);
+  return isInWatchlist(anime.mal_id);
+}
+
+/* ===== Theme ===== */
+function toggleTheme() {
+  document.body.classList.toggle('light');
+  const isLight = document.body.classList.contains('light');
+  document.getElementById('themeBtn').textContent = isLight ? '☀️' : '🌙';
+  localStorage.setItem('anbikai_theme', isLight ? 'light' : 'dark');
+}
+if (localStorage.getItem('anbikai_theme') === 'light') {
+  document.body.classList.add('light');
+  document.getElementById('themeBtn').textContent = '☀️';
+}
+
+/* ===== Render ===== */
 function renderAnime(list) {
+  currentList = list;
   if (!list || list.length === 0) {
     status.textContent = 'Kono anime paoa gelo na.';
+    grid.innerHTML = '';
     return;
   }
   status.textContent = '';
   grid.innerHTML = list.map(a => `
-    <div class="card">
-      <img src="${a.img}" alt="${a.title}" onerror="this.style.display='none'">
+    <div class="card" onclick="openDetails(${a.mal_id})">
+      <img src="${a.img}" alt="${a.title}" onerror="this.style.opacity=0.2">
       <div class="card-content">
         <h3>${a.title}</h3>
         <p><span class="score">⭐ ${a.score}</span></p>
@@ -80,52 +192,181 @@ function renderAnime(list) {
   `).join('');
 }
 
-async function searchAnime() {
-  const q = input.value.trim();
-  if (!q) { loadTop(); return; }
-  status.textContent = 'Loading...';
-  grid.innerHTML = '';
-  try {
-    const res = await fetch('https://api.jikan.moe/v4/anime?q=' + encodeURIComponent(q) + '&limit=12&sfw=true');
-    if (!res.ok) throw new Error('API fail');
-    const data = await res.json();
-    const list = data.data.map(a => ({
-      title: a.title_english || a.title,
-      score: a.score || 'N/A',
-      type: a.type || '',
-      episodes: a.episodes || '?',
-      img: a.images?.jpg?.image_url || ''
-    }));
-    renderAnime(list);
-  } catch (err) {
-    status.textContent = 'API kaj korche na, popular anime dekhacchi:';
-    renderAnime(fallbackAnime);
-  }
+/* ===== API ===== */
+async function apiFetch(url) {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('API fail');
+  return res.json();
+}
+
+function mapAnime(a) {
+  return {
+    mal_id: a.mal_id,
+    title: a.title_english || a.title,
+    score: a.score || 'N/A',
+    type: a.type || '',
+    episodes: a.episodes || '?',
+    img: a.images?.jpg?.image_url || '',
+    synopsis: a.synopsis || '',
+    genres: (a.genres || []).map(g => g.name),
+    trailer: a.trailer?.embed_url || null,
+    year: a.year || (a.aired?.prop?.from?.year) || ''
+  };
 }
 
 async function loadTop() {
   status.textContent = 'Loading...';
   grid.innerHTML = '';
   try {
-    const res = await fetch('https://api.jikan.moe/v4/top/anime?limit=12');
-    if (!res.ok) throw new Error('API fail');
-    const data = await res.json();
-    const list = data.data.map(a => ({
-      title: a.title_english || a.title,
-      score: a.score || 'N/A',
-      type: a.type || '',
-      episodes: a.episodes || '?',
-      img: a.images?.jpg?.image_url || ''
-    }));
-    renderAnime(list);
+    const data = await apiFetch('https://api.jikan.moe/v4/top/anime?limit=24');
+    renderAnime(data.data.map(mapAnime));
   } catch (err) {
     status.textContent = 'Popular anime:';
     renderAnime(fallbackAnime);
   }
 }
 
-input.addEventListener('keypress', e => { if (e.key === 'Enter') searchAnime(); });
+async function searchAnime() {
+  const q = input.value.trim();
+  if (!q) { loadTop(); return; }
+  status.textContent = 'Loading...';
+  grid.innerHTML = '';
+  try {
+    const data = await apiFetch('https://api.jikan.moe/v4/anime?q=' + encodeURIComponent(q) + '&limit=24&sfw=true');
+    renderAnime(data.data.map(mapAnime));
+  } catch (err) {
+    status.textContent = 'Search failed. Try again.';
+    grid.innerHTML = '';
+  }
+}
 
+async function filterGenre() {
+  const genreId = document.getElementById('genreSelect').value;
+  if (!genreId) { loadTop(); return; }
+  status.textContent = 'Loading...';
+  grid.innerHTML = '';
+  try {
+    const data = await apiFetch('https://api.jikan.moe/v4/anime?genres=' + genreId + '&limit=24&order_by=score&sort=desc&sfw=true');
+    renderAnime(data.data.map(mapAnime));
+  } catch (err) {
+    status.textContent = 'Genre filter failed. Try again.';
+  }
+}
+
+function showWatchlist() {
+  const btn = document.getElementById('watchlistBtn');
+  if (currentView === 'watchlist') {
+    currentView = 'browse';
+    btn.classList.remove('active');
+    loadTop();
+    return;
+  }
+  currentView = 'watchlist';
+  btn.classList.add('active');
+  const list = getWatchlist();
+  if (list.length === 0) {
+    status.textContent = 'Tomar watchlist khali. Anime card e "Add to Watchlist" chepe add koro.';
+    grid.innerHTML = '';
+    return;
+  }
+  status.textContent = '⭐ Tomar Watchlist (' + list.length + ')';
+  renderAnime(list);
+}
+
+/* ===== Modal / Details ===== */
+async function openDetails(id) {
+  const modal = document.getElementById('modal');
+  const body = document.getElementById('modalBody');
+  modal.classList.add('active');
+  document.body.style.overflow = 'hidden';
+
+  let anime = currentList.find(a => a.mal_id === id) || fallbackAnime.find(a => a.mal_id === id);
+  if (!anime) return;
+
+  document.getElementById('mImg').src = anime.img;
+  body.innerHTML = '<p style="text-align:center;color:var(--muted);">Loading details...</p>';
+
+  try {
+    const data = await apiFetch('https://api.jikan.moe/v4/anime/' + id + '/full');
+    anime = mapAnime(data.data);
+    document.getElementById('mImg').src = anime.img;
+  } catch (err) {
+    /* fallback data already there */
+  }
+
+  renderModal(anime);
+}
+
+function renderModal(a) {
+  const inList = isInWatchlist(a.mal_id);
+  const reviews = getReviews(a.mal_id);
+  const body = document.getElementById('modalBody');
+
+  body.innerHTML = `
+    <h2>${a.title}</h2>
+    <div class="modal-info">
+      <span>⭐ ${a.score}</span>
+      <span>${a.type || 'TV'}</span>
+      <span>${a.episodes} eps</span>
+      ${a.year ? '<span>' + a.year + '</span>' : ''}
+    </div>
+    ${a.genres && a.genres.length ? '<div class="genres">' + a.genres.map(g => '<span class="genre-tag">' + g + '</span>').join('') + '</div>' : ''}
+    <p class="synopsis">${a.synopsis || 'No description available.'}</p>
+
+    <button class="watchlist-btn ${inList ? 'in-list' : ''}" onclick='toggleWlFromModal(${JSON.stringify(a).replace(/'/g, "&apos;")})'>
+      ${inList ? '✓ In Watchlist — Remove' : '+ Add to Watchlist'}
+    </button>
+
+    <h3 class="section-title">📺 Trailer</h3>
+    ${a.trailer ? `<div class="trailer"><iframe src="${a.trailer}" allowfullscreen></iframe></div>` : '<div class="no-trailer">Ei anime er trailer paoa gelo na.</div>'}
+
+    <h3 class="section-title">📝 Reviews (${reviews.length})</h3>
+    <div class="review-form">
+      <input id="revName" type="text" placeholder="Tomar naam...">
+      <textarea id="revText" placeholder="Tomar review likho..."></textarea>
+      <button onclick="submitReview(${a.mal_id})">Post Review</button>
+    </div>
+    <div id="reviewList">${reviews.map(r => `
+      <div class="review-item">
+        <strong>${escapeHtml(r.name)}</strong>
+        <p style="margin-top:4px;">${escapeHtml(r.text)}</p>
+        <span class="date">${r.date}</span>
+      </div>
+    `).join('')}</div>
+  `;
+}
+
+function toggleWlFromModal(anime) {
+  toggleWatchlist(anime);
+  renderModal(anime);
+}
+
+/* ===== Reviews ===== */
+function getReviews(id) { return JSON.parse(localStorage.getItem('anbikai_reviews_' + id) || '[]'); }
+function saveReviews(id, list) { localStorage.setItem('anbikai_reviews_' + id, JSON.stringify(list)); }
+function submitReview(id) {
+  const name = document.getElementById('revName').value.trim() || 'Anonymous';
+  const text = document.getElementById('revText').value.trim();
+  if (!text) { alert('Review lekho age!'); return; }
+  const list = getReviews(id);
+  list.unshift({ name, text, date: new Date().toLocaleString() });
+  saveReviews(id, list);
+  const anime = currentList.find(a => a.mal_id === id);
+  if (anime) renderModal(anime);
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+/* ===== Init ===== */
+input.addEventListener('keypress', e => { if (e.key === 'Enter') searchAnime(); });
+updateWlCount();
 loadTop();
 </script>
 </body>
