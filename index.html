@@ -191,9 +191,9 @@ var QUERY = 'query ($search: String, $genre: String, $sort: [MediaSort], $perPag
 /* ============================================================
    ⭐⭐ VIDEO_DATA — ৩টি সার্ভার ⭐⭐
    
-   Server 1: Streamtape (Main)
-   Server 2: Videy (Backup)
-   Server 3: Streamtape (Backup 2)
+   Server 1: Streamtape
+   Server 2: Filemoon (নতুন!)
+   Server 3: Streamtape (Backup)
    ============================================================ */
 var VIDEO_DATA = {
   97940: [
@@ -203,9 +203,9 @@ var VIDEO_DATA = {
       download: "https://streamtape.com/v/JKKxw2xeQ0sj0R0/"
     },
     {
-      label: "Episode 1 (Server 2 - Backup)",
-      embed: "https://videy.co/v/?id=gyQns3pY1",
-      download: ""
+      label: "Episode 1 (Server 2)",
+      embed: "https://bysefujedu.com/e/k6659hlcqjod",
+      download: "https://bysefujedu.com/d/k6659hlcqjod"
     },
     {
       label: "Episode 1 (Server 3 - Backup)",
@@ -251,6 +251,9 @@ function getDownloadLink(video) {
   if (video.download) return video.download;
   if (video.embed && video.embed.indexOf('streamtape.com/e/') >= 0) {
     return video.embed.replace('/e/', '/v/');
+  }
+  if (video.embed && video.embed.indexOf('/e/') >= 0) {
+    return video.embed.replace('/e/', '/d/');
   }
   return video.embed;
 }
