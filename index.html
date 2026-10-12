@@ -115,24 +115,21 @@ var currentList = [];
 var currentView = 'browse';
 
 var ANILIST_URL = 'https://graphql.anilist.co';
-var QUERY = 'query ($search: String, $genre: String, $sort: [MediaSort]) { Page(page: 1, perPage: 24) { media(type: ANIME, search: $search, genre: $genre, sort: $sort, isAdult: false) { id title { romaji english } description(asHtml: false) coverImage { large } bannerImage episodes averageScore format startDate { year } genres trailer { id site } } } }';
+var QUERY = 'query ($search: String, $genre: String, $sort: [MediaSort]) { Page(page: 1, perPage: 30) { media(type: ANIME, search: $search, genre: $genre, sort: $sort, isAdult: false) { id title { romaji english } description(asHtml: false) coverImage { large } bannerImage episodes nextAiringEpisode { episode } averageScore format startDate { year } genres trailer { id site } } } }';
 
 var fallbackAnime = [
-  { mal_id:20, title:"Naruto", score:8.0, type:"TV", episodes:220, img:"https://cdn.myanimelist.net/images/anime/13/17405.jpg", synopsis:"Naruto Uzumaki, a young ninja with a sealed demon fox inside him, seeks recognition and dreams of becoming Hokage.", genres:["Action","Adventure"], trailer:null, year:2002 },
-  { mal_id:21, title:"One Piece", score:8.7, type:"TV", episodes:"1100+", img:"https://cdn.myanimelist.net/images/anime/6/73245.jpg", synopsis:"Monkey D. Luffy sets off on an adventure to find the legendary One Piece treasure and become Pirate King.", genres:["Action","Adventure","Fantasy"], trailer:null, year:1999 },
-  { mal_id:16498, title:"Attack on Titan", score:8.5, type:"TV", episodes:87, img:"https://cdn.myanimelist.net/images/anime/10/47347.jpg", synopsis:"Humanity fights for survival against giant man-eating Titans behind enormous walls.", genres:["Action","Drama"], trailer:null, year:2013 },
-  { mal_id:38000, title:"Demon Slayer", score:8.5, type:"TV", episodes:55, img:"https://cdn.myanimelist.net/images/anime/1286/99889.jpg", synopsis:"Tanjiro becomes a demon slayer to avenge his family and cure his sister.", genres:["Action","Supernatural"], trailer:null, year:2019 },
-  { mal_id:40748, title:"Jujutsu Kaisen", score:8.6, type:"TV", episodes:47, img:"https://cdn.myanimelist.net/images/anime/1171/109222.jpg", synopsis:"Yuji Itadori swallows a cursed finger and joins a secret school of Jujutsu sorcerers.", genres:["Action","Supernatural"], trailer:null, year:2020 },
-  { mal_id:1535, title:"Death Note", score:8.6, type:"TV", episodes:37, img:"https://cdn.myanimelist.net/images/anime/9/9453.jpg", synopsis:"A genius student finds a notebook that kills anyone whose name is written in it.", genres:["Mystery","Supernatural"], trailer:null, year:2006 },
-  { mal_id:5114, title:"Fullmetal Alchemist Brotherhood", score:9.1, type:"TV", episodes:64, img:"https://cdn.myanimelist.net/images/anime/1223/96541.jpg", synopsis:"Two brothers search for the Philosopher's Stone to restore their bodies.", genres:["Action","Adventure","Drama"], trailer:null, year:2009 },
-  { mal_id:31964, title:"My Hero Academia", score:7.9, type:"TV", episodes:158, img:"https://cdn.myanimelist.net/images/anime/10/78745.jpg", synopsis:"In a world of superheroes, a powerless boy inherits the power of the world's greatest hero.", genres:["Action","Comedy"], trailer:null, year:2016 },
-  { mal_id:22319, title:"Tokyo Ghoul", score:7.8, type:"TV", episodes:12, img:"https://cdn.myanimelist.net/images/anime/5/64449.jpg", synopsis:"A college student becomes half-ghoul and must survive between two worlds.", genres:["Action","Horror"], trailer:null, year:2014 },
-  { mal_id:11757, title:"Sword Art Online", score:7.2, type:"TV", episodes:96, img:"https://cdn.myanimelist.net/images/anime/11/39717.jpg", synopsis:"Players are trapped inside a VRMMORPG where death in game means death in real life.", genres:["Action","Adventure","Fantasy"], trailer:null, year:2012 },
-  { mal_id:44511, title:"Chainsaw Man", score:8.5, type:"TV", episodes:12, img:"https://cdn.myanimelist.net/images/anime/1806/126216.jpg", synopsis:"A young man merges with his chainsaw devil dog to become Chainsaw Man.", genres:["Action","Supernatural"], trailer:null, year:2022 },
-  { mal_id:50265, title:"Spy x Family", score:8.5, type:"TV", episodes:37, img:"https://cdn.myanimelist.net/images/anime/1441/122795.jpg", synopsis:"A spy forms a fake family, unaware his wife is an assassin and daughter a telepath.", genres:["Action","Comedy"], trailer:null, year:2022 },
-  { mal_id:269, title:"Bleach", score:7.9, type:"TV", episodes:366, img:"https://cdn.myanimelist.net/images/anime/3/40451.jpg", synopsis:"Ichigo Kurosaki becomes a Soul Reaper after meeting a female Soul Reaper named Rukia.", genres:["Action","Adventure","Supernatural"], trailer:null, year:2004 },
-  { mal_id:11061, title:"Hunter x Hunter", score:9.0, type:"TV", episodes:148, img:"https://cdn.myanimelist.net/images/anime/1337/99013.jpg", synopsis:"Gon Freecss aspires to become a Hunter and find his father.", genres:["Action","Adventure","Fantasy"], trailer:null, year:2011 },
-  { mal_id:30276, title:"One Punch Man", score:8.5, type:"TV", episodes:12, img:"https://cdn.myanimelist.net/images/anime/12/76049.jpg", synopsis:"A hero who can defeat anyone with one punch searches for a worthy opponent.", genres:["Action","Comedy"], trailer:null, year:2015 }
+  { mal_id:20, title:"Naruto", score:8.0, type:"TV", episodes:220, img:"https://cdn.myanimelist.net/images/anime/13/17405.jpg", synopsis:"Naruto Uzumaki, a young ninja with a sealed demon fox inside him, seeks recognition and dreams of becoming Hokage.", genres:["Action","Adventure"], trailer:"https://www.youtube.com/embed/QczGoCmX-pI", year:2002 },
+  { mal_id:21, title:"One Piece", score:8.7, type:"TV", episodes:"1100+", img:"https://cdn.myanimelist.net/images/anime/6/73245.jpg", synopsis:"Monkey D. Luffy sets off on an adventure to find the legendary One Piece treasure and become Pirate King.", genres:["Action","Adventure","Fantasy"], trailer:"https://www.youtube.com/embed/MCb13lbVGE0", year:1999 },
+  { mal_id:16498, title:"Attack on Titan", score:8.5, type:"TV", episodes:87, img:"https://cdn.myanimelist.net/images/anime/10/47347.jpg", synopsis:"Humanity fights for survival against giant man-eating Titans behind enormous walls.", genres:["Action","Drama"], trailer:"https://www.youtube.com/embed/LHtdKWJdif4", year:2013 },
+  { mal_id:38000, title:"Demon Slayer", score:8.5, type:"TV", episodes:55, img:"https://cdn.myanimelist.net/images/anime/1286/99889.jpg", synopsis:"Tanjiro becomes a demon slayer to avenge his family and cure his sister.", genres:["Action","Supernatural"], trailer:"https://www.youtube.com/embed/VQGCKyvzIM4", year:2019 },
+  { mal_id:40748, title:"Jujutsu Kaisen", score:8.6, type:"TV", episodes:47, img:"https://cdn.myanimelist.net/images/anime/1171/109222.jpg", synopsis:"Yuji Itadori swallows a cursed finger and joins a secret school of Jujutsu sorcerers.", genres:["Action","Supernatural"], trailer:"https://www.youtube.com/embed/4A_X-Dvl0ws", year:2020 },
+  { mal_id:1535, title:"Death Note", score:8.6, type:"TV", episodes:37, img:"https://cdn.myanimelist.net/images/anime/9/9453.jpg", synopsis:"A genius student finds a notebook that kills anyone whose name is written in it.", genres:["Mystery","Supernatural"], trailer:"https://www.youtube.com/embed/NlJZ-YgAt-c", year:2006 },
+  { mal_id:5114, title:"Fullmetal Alchemist Brotherhood", score:9.1, type:"TV", episodes:64, img:"https://cdn.myanimelist.net/images/anime/1223/96541.jpg", synopsis:"Two brothers search for the Philosopher's Stone to restore their bodies.", genres:["Action","Adventure","Drama"], trailer:"https://www.youtube.com/embed/--IvhX5I7W0", year:2009 },
+  { mal_id:31964, title:"My Hero Academia", score:7.9, type:"TV", episodes:158, img:"https://cdn.myanimelist.net/images/anime/10/78745.jpg", synopsis:"In a world of superheroes, a powerless boy inherits the power of the world's greatest hero.", genres:["Action","Comedy"], trailer:"https://www.youtube.com/embed/EP_OZ8p4LJ4", year:2016 },
+  { mal_id:22319, title:"Tokyo Ghoul", score:7.8, type:"TV", episodes:12, img:"https://cdn.myanimelist.net/images/anime/5/64449.jpg", synopsis:"A college student becomes half-ghoul and must survive between two worlds.", genres:["Action","Horror"], trailer:"https://www.youtube.com/embed/vGuQeQsoRgU", year:2014 },
+  { mal_id:11757, title:"Sword Art Online", score:7.2, type:"TV", episodes:96, img:"https://cdn.myanimelist.net/images/anime/11/39717.jpg", synopsis:"Players are trapped inside a VRMMORPG where death in game means death in real life.", genres:["Action","Adventure","Fantasy"], trailer:"https://www.youtube.com/embed/6ohYYtxfDCg", year:2012 },
+  { mal_id:44511, title:"Chainsaw Man", score:8.5, type:"TV", episodes:12, img:"https://cdn.myanimelist.net/images/anime/1806/126216.jpg", synopsis:"A young man merges with his chainsaw devil dog to become Chainsaw Man.", genres:["Action","Supernatural"], trailer:"https://www.youtube.com/embed/dFlDRhvM4L0", year:2022 },
+  { mal_id:50265, title:"Spy x Family", score:8.5, type:"TV", episodes:37, img:"https://cdn.myanimelist.net/images/anime/1441/122795.jpg", synopsis:"A spy forms a fake family, unaware his wife is an assassin and daughter a telepath.", genres:["Action","Comedy"], trailer:"https://www.youtube.com/embed/ofXigq9aIpo", year:2022 }
 ];
 
 function fetchWithTimeout(url, options, ms) {
@@ -169,12 +166,17 @@ function mapAniList(a) {
     if (a.trailer.site === 'youtube') trailer = 'https://www.youtube.com/embed/' + a.trailer.id;
     else if (a.trailer.site === 'dailymotion') trailer = 'https://www.dailymotion.com/embed/video/' + a.trailer.id;
   }
+  var eps = a.episodes;
+  if (!eps && a.nextAiringEpisode && a.nextAiringEpisode.episode) {
+    eps = (a.nextAiringEpisode.episode - 1) + '+';
+  }
+  if (!eps) eps = '?';
   return {
     mal_id: a.id,
     title: (a.title && (a.title.english || a.title.romaji)) || 'Unknown',
     score: a.averageScore ? (a.averageScore / 10).toFixed(1) : 'N/A',
-    type: a.format || '',
-    episodes: a.episodes || '?',
+    type: (a.format || '').replace('_', ' '),
+    episodes: eps,
     img: (a.coverImage && a.coverImage.large) || '',
     banner: a.bannerImage || null,
     synopsis: cleanText(a.description),
@@ -182,6 +184,31 @@ function mapAniList(a) {
     trailer: trailer,
     year: (a.startDate && a.startDate.year) || ''
   };
+}
+
+function sortSearchResults(list, query) {
+  var q = String(query).toLowerCase().trim();
+  function titleScore(a) {
+    var t = String(a.title).toLowerCase();
+    if (t === q) return 100;
+    if (t.startsWith(q + ' ')) return 80;
+    if (t.startsWith(q)) return 60;
+    if (t.indexOf(q) >= 0) return 40;
+    return 20;
+  }
+  function formatScore(a) {
+    var map = { 'TV': 100, 'TV_SHORT': 80, 'ONA': 70, 'OVA': 50, 'SPECIAL': 40, 'MOVIE': 30, 'MUSIC': 10 };
+    return map[a.format] || 20;
+  }
+  list.sort(function(a, b) {
+    var aT = titleScore(a), bT = titleScore(b);
+    if (aT !== bT) return bT - aT;
+    var aF = formatScore(a), bF = formatScore(b);
+    if (aF !== bF) return bF - aF;
+    var aY = a.year || 9999, bY = b.year || 9999;
+    return aY - bY;
+  });
+  return list;
 }
 
 function getWatchlist() {
@@ -224,7 +251,7 @@ function renderAnime(list) {
   for (var i = 0; i < list.length; i++) {
     var a = list[i];
     html += '<div class="card" onclick="openDetails(' + a.mal_id + ')">';
-    html += '<img src="' + a.img + '" alt="' + a.title + '" onerror="this.style.opacity=0.2">';
+    html += '<img src="' + a.img + '" alt="" onerror="this.style.opacity=0.2">';
     html += '<div class="card-content">';
     html += '<h3>' + a.title + '</h3>';
     html += '<p><span class="score">⭐ ' + a.score + '</span></p>';
@@ -251,7 +278,9 @@ function searchAnime() {
   grid.innerHTML = '';
   anilistFetch({ search: q }).then(function(res) {
     if (res && res.data && res.data.Page && res.data.Page.media && res.data.Page.media.length > 0) {
-      renderAnime(res.data.Page.media.map(mapAniList));
+      var list = res.data.Page.media.map(mapAniList);
+      list = sortSearchResults(list, q);
+      renderAnime(list);
     } else {
       statusEl.textContent = 'Kichu paoa gelo na. Popular dekhacchi:';
       renderAnime(fallbackAnime);
@@ -389,4 +418,4 @@ updateWlCount();
 loadTop();
 </script>
 </body>
-  </html>
+                                       </html>
