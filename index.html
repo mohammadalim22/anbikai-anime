@@ -189,22 +189,31 @@ var ANILIST_URL = 'https://graphql.anilist.co';
 var QUERY = 'query ($search: String, $genre: String, $sort: [MediaSort], $perPage: Int) { Page(page: 1, perPage: $perPage) { media(type: ANIME, search: $search, genre: $genre, sort: $sort, isAdult: false) { id title { romaji english } description(asHtml: false) coverImage { extraLarge large } bannerImage episodes nextAiringEpisode { episode } averageScore format startDate { year } genres trailer { id site } } } }';
 
 /* ============================================================
-   ⭐⭐ VIDEO_DATA — এখানে ভিডিও যোগ করবে ⭐⭐
+   ⭐⭐ VIDEO_DATA — ৩টি সার্ভার সাপোর্ট ⭐⭐
+   
+   Server 1: Streamtape (Main)
+   Server 2: Videy (Backup — ডেস্কটপে ভালো কাজ করে)
+   Server 3: Streamtape (Backup 2)
    
    প্রতিটা ভিডিওতে:
-   - label: "Episode 1" (বাটনে যা দেখাবে)
-   - embed: Streamtape-এর /e/ লিংক
-   - download: Streamtape-এর /v/ লিংক (না দিলে অটো হবে)
+   - label: বাটনে যা দেখাবে
+   - embed: প্লে করার লিংক
+   - download: ডাউনলোড লিংক (না দিলে অটো হবে)
    ============================================================ */
 var VIDEO_DATA = {
   97940: [
     {
-      label: "Episode 1",
+      label: "Episode 1 (Server 1)",
       embed: "https://streamtape.com/e/JKKxw2xeQ0sj0R0/",
       download: "https://streamtape.com/v/JKKxw2xeQ0sj0R0/"
     },
     {
-      label: "Episode 1 (Backup)",
+      label: "Episode 1 (Server 2 - Backup)",
+      embed: "https://videy.co/embed?id=gyQns3pY1",
+      download: ""
+    },
+    {
+      label: "Episode 1 (Server 3 - Backup)",
       embed: "https://streamtape.com/e/PDyGxboGa3u03pq/",
       download: "https://streamtape.com/v/PDyGxboGa3u03pq/"
     }
@@ -592,7 +601,6 @@ function renderModalContent(a) {
   }
   body.innerHTML = html;
 
-  /* Auto-load first video */
   if (videos.length > 0) {
     setTimeout(function() {
       if (!disclaimerAccepted) showDisclaimer(videos[0].embed);
@@ -671,4 +679,4 @@ updateWlCount();
 loadTop();
 </script>
 </body>
-                                                                </html>
+  </html>
