@@ -130,7 +130,6 @@
   .ep-tools { display: flex; gap: 8px; }
   .ep-tool { background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 9px 14px; border-radius: 9px; cursor: pointer; font-size: 0.9rem; font-weight: 700; display: flex; align-items: center; gap: 6px; transition: all 0.15s; }
   .ep-tool:hover { background: var(--card2); }
-  .ep-tool.active { background: var(--orange); border-color: var(--orange); color: white; }
   .ep-tool .find-label { font-weight: 800; }
   .ep-tool .find-input { background: transparent; border: none; color: inherit; font-family: inherit; font-size: 0.9rem; font-weight: 800; width: 0; padding: 0; outline: none; transition: width 0.25s, padding 0.25s; }
   .ep-tool.expanded .find-input { width: 60px; padding-left: 4px; }
@@ -146,15 +145,15 @@
   .ep-cell:hover { background: var(--card2); border-color: var(--border); }
   .ep-cell.active { background: var(--orange); color: white; border-color: var(--orange); box-shadow: 0 4px 12px rgba(255,102,51,0.4); }
 
-  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 100; padding: 16px; overflow-y: auto; }
+  /* MODAL */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.94); z-index: 100; padding: 0; overflow-y: auto; }
   .modal-overlay.active { display: block; }
-  .modal { background: var(--bg2); border-radius: 16px; max-width: 900px; margin: 10px auto; overflow: hidden; }
+  .modal { background: var(--bg2); max-width: 100%; min-height: 100vh; margin: 0; }
   .modal-header { position: relative; }
-  .modal-header img { width: 100%; height: 240px; object-fit: cover; display: block; }
+  .modal-header img { width: 100%; height: 260px; object-fit: cover; display: block; }
   .modal-header::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 0%, var(--bg2) 100%); }
-  .modal-close { position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.85); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; z-index: 5; display: flex; align-items: center; justify-content: center; }
-  .modal-body { padding: 20px; margin-top: -50px; position: relative; z-index: 2; }
-  .modal-body h2 { font-size: 1.4rem; font-weight: 900; margin-bottom: 14px; }
+  .modal-body { padding: 20px; margin-top: -60px; position: relative; z-index: 2; max-width: 900px; margin-left: auto; margin-right: auto; }
+  .modal-body h2 { font-size: 1.5rem; font-weight: 900; margin-bottom: 14px; }
   .modal-info { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; font-size: 0.78rem; color: var(--muted); }
   .modal-info span { background: var(--card); padding: 5px 12px; border-radius: 8px; border: 1px solid var(--border); font-weight: 700; }
   .modal-info span.score { color: var(--score); border-color: var(--score); font-weight: 900; }
@@ -392,9 +391,6 @@ var watchCurrentServer = 0;
 var watchRangeStart = 1;
 var watchRangeSize = 100;
 
-/* Track whether a modal was open before entering watch */
-var lastModalAnime = null;
-
 var ANILIST_URL = 'https://graphql.anilist.co';
 var QUERY = 'query ($search: String, $genre: String, $sort: [MediaSort], $perPage: Int) { Page(page: 1, perPage: $perPage) { media(type: ANIME, search: $search, genre: $genre, sort: $sort, isAdult: false) { id title { romaji english } description(asHtml: false) coverImage { extraLarge large } bannerImage episodes nextAiringEpisode { episode } averageScore format startDate { year } genres trailer { id site } } } }';
 
@@ -497,8 +493,33 @@ function showWatchView(){ document.getElementById('homeView').style.display='non
 function goHome(){
   setActiveBtn('homeBtn');
   document.getElementById('searchBar').classList.remove('active');
+  hideAnimeModal();
   showHomeView();
   loadTop();
+}
+
+/* ---- HISTORY STATE MANAGEMENT ---- */
+function isModalOpen() {
+  var o = document.getElementById('animeModalOverlay');
+  return !!(o && o.classList.contains('active'));
+}
+function isWatchOpen() {
+  return document.getElementById('watchPage').classList.contains('active');
+}
+
+function hideAnimeModal(){
+  var overlay = document.getElementById('animeModalOverlay');
+  if(overlay) overlay.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function findAnimeById(id) {
+  for(var i=0;i<currentList.length;i++) if(currentList[i].mal_id===id) return currentList[i];
+  for(var j=0;j<fallbackAnime.length;j++) if(fallbackAnime[j].mal_id===id) return fallbackAnime[j];
+  for(var k=0;k<heroAnimeList.length;k++) if(heroAnimeList[k].mal_id===id) return heroAnimeList[k];
+  var h = getHistory();
+  for(var m=0;m<h.length;m++) if(h[m].mal_id===id) return h[m];
+  return null;
 }
 
 function loadTop() {
@@ -635,16 +656,14 @@ function fetchSuggestions(q) {
 
 /* ============ MODAL ============ */
 function openDetails(id) {
-  var a = null;
-  for(var i=0;i<currentList.length;i++) if(currentList[i].mal_id===id){a=currentList[i];break;}
-  if(!a) for(var j=0;j<fallbackAnime.length;j++) if(fallbackAnime[j].mal_id===id){a=fallbackAnime[j];break;}
-  if(!a) for(var k=0;k<heroAnimeList.length;k++) if(heroAnimeList[k].mal_id===id){a=heroAnimeList[k];break;}
-  if(!a){ var h=getHistory(); for(var m=0;m<h.length;m++) if(h[m].mal_id===id){a=h[m];break;} }
+  var a = findAnimeById(id);
   if(!a) return;
   window._currentModalAnime = a;
   showAnimeModal(a);
-  /* Push history so back button closes modal */
-  try { history.pushState({ view: 'details', animeId: a.mal_id }, '', '#anime-' + a.mal_id); } catch(e) {}
+  /* Push history so back button can restore */
+  try {
+    history.pushState({ view: 'details', animeId: a.mal_id }, '', location.pathname + location.search + '#anime-' + a.mal_id);
+  } catch(e) {}
 }
 
 function showAnimeModal(a) {
@@ -658,8 +677,7 @@ function showAnimeModal(a) {
     overlay = document.createElement('div');
     overlay.id = 'animeModalOverlay';
     overlay.className = 'modal-overlay';
-    overlay.onclick = function(e){ if(e.target===overlay) closeAnimeModal(); };
-    overlay.innerHTML = '<div class="modal"><div class="modal-header"><img id="mImg" src=""><button class="modal-close" onclick="closeAnimeModal()">✕</button></div><div class="modal-body" id="animeModalBody"></div></div>';
+    overlay.innerHTML = '<div class="modal"><div class="modal-header"><img id="mImg" src=""></div><div class="modal-body" id="animeModalBody"></div></div>';
     document.body.appendChild(overlay);
   }
   document.getElementById('mImg').src = a.banner || a.img;
@@ -697,12 +715,6 @@ function showAnimeModal(a) {
   document.body.style.overflow = 'hidden';
 }
 
-function closeAnimeModal(){
-  var overlay = document.getElementById('animeModalOverlay');
-  if(overlay) overlay.classList.remove('active');
-  document.body.style.overflow='';
-}
-
 function toggleWlFromModal(id) {
   var a = window._currentModalAnime;
   if(!a || a.mal_id!==id) return;
@@ -722,7 +734,7 @@ function submitReview(id) {
 
 function escapeHtml(s){ return String(s).replace(/[&<>"']/g,function(c){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]);}); }
 
-/* ============ DISCLAIMER ============ */
+/* DISCLAIMER */
 function showDisclaimer(e){ pendingVideoEmbed=e||null; document.getElementById('discModal').classList.add('active'); document.body.style.overflow='hidden'; }
 function closeDisclaimer(){ document.getElementById('discModal').classList.remove('active'); document.body.style.overflow=''; pendingVideoEmbed=null; }
 function acceptDisclaimer(){ disclaimerAccepted=true; document.getElementById('discModal').classList.remove('active'); document.body.style.overflow=''; if(pendingVideoEmbed){ var p=document.getElementById('watchPlayer'); if(p) p.innerHTML='<iframe src="'+pendingVideoEmbed+'" allowfullscreen allow="autoplay; encrypted-media" scrolling="no" frameborder="0"></iframe>'; pendingVideoEmbed=null; } }
@@ -732,15 +744,11 @@ function toggleWelcomeCheck(e){ if(e && e.target && e.target.tagName!=='INPUT' &
 function closeWelcome(){ var cb=document.getElementById('dontShowAgain'); if(cb.checked) localStorage.setItem('anbikai_welcome_off','yes'); document.getElementById('welcomeModal').classList.remove('active'); }
 function skipWelcome(){ localStorage.setItem('anbikai_welcome_off','yes'); document.getElementById('welcomeModal').classList.remove('active'); }
 
-/* ============ WATCH PAGE ============ */
+/* WATCH PAGE */
 function startWatching() {
   var a = window._currentModalAnime;
   if (!a) return;
   if (!VIDEO_DATA[a.mal_id]) { alert('Video paoa gelo na.'); return; }
-
-  lastModalAnime = a;   /* remember for back navigation */
-
-  closeAnimeModal();
 
   watchAnime = a;
   var epsNum = parseInt(a.episodes);
@@ -752,6 +760,12 @@ function startWatching() {
   watchRangeStart = 1;
   watchRangeSize = 100;
 
+  /* Push state BEFORE hiding modal */
+  try {
+    history.pushState({ view: 'watch', animeId: a.mal_id }, '', location.pathname + location.search + '#watch-' + a.mal_id);
+  } catch(e) {}
+
+  hideAnimeModal();
   showWatchView();
   renderBreadcrumb();
   renderLangTabs();
@@ -759,9 +773,6 @@ function startWatching() {
   renderEpisodeGrid();
   loadVideo();
   window.scrollTo(0,0);
-
-  /* Push a state so phone back button returns to details */
-  try { history.pushState({ view: 'watch', animeId: a.mal_id }, '', '#watch-' + a.mal_id); } catch(e) {}
 }
 
 function pickFirstAvailableLang(id) {
@@ -845,7 +856,6 @@ function renderEpisodeGrid() {
   var from = watchRangeStart;
   var to = Math.min(from + watchRangeSize - 1, watchEpsCount);
   document.getElementById('rangeLabel').textContent = from + '-' + to;
-
   var html = '';
   for (var i=from; i<=to; i++) {
     html += '<div class="ep-cell'+(i===watchCurrentEp?' active':'')+'" onclick="selectEpisode('+i+')">'+i+'</div>';
@@ -887,7 +897,6 @@ function replayVideo() {
   }
 }
 
-/* ============ EPISODE SEARCH ============ */
 function toggleFindInput(e) {
   if (e) e.stopPropagation();
   var btn = document.getElementById('findBtn');
@@ -914,34 +923,38 @@ document.addEventListener('click', function(e) {
   if (!e.target.closest('#findBtn')) btn.classList.remove('expanded');
 });
 
-/* ============ PHONE BACK BUTTON HANDLER ============ */
+/* ============ POPSTATE — PHONE BACK BUTTON ============ */
 window.addEventListener('popstate', function(e) {
-  var watchPage = document.getElementById('watchPage');
-  var modalOverlay = document.getElementById('animeModalOverlay');
-  var watchActive = watchPage.classList.contains('active');
-  var modalActive = modalOverlay && modalOverlay.classList.contains('active');
+  var state = e.state || { view: 'home' };
 
-  if (watchActive) {
-    /* Return from watch page to details modal */
-    watchPage.classList.remove('active');
-    document.getElementById('homeView').style.display = 'block';
-    var a = lastModalAnime || watchAnime;
+  if (state.view === 'watch' && watchAnime && watchAnime.mal_id === state.animeId) {
+    /* Restore watch page */
+    hideAnimeModal();
+    showWatchView();
+    return;
+  }
+
+  if (state.view === 'details') {
+    var a = findAnimeById(state.animeId);
     if (a) {
+      showHomeView();
       window._currentModalAnime = a;
       showAnimeModal(a);
-      try { history.pushState({ view: 'details', animeId: a.mal_id }, '', '#anime-' + a.mal_id); } catch(err) {}
+      return;
     }
-    return;
   }
 
-  if (modalActive) {
-    closeAnimeModal();
-    return;
-  }
-  /* Else let the browser handle it normally */
+  /* Default: home view */
+  hideAnimeModal();
+  showHomeView();
+  loadTop();
 });
 
 /* INIT */
+if (!history.state) {
+  try { history.replaceState({ view: 'home' }, '', location.pathname + location.search); } catch(e) {}
+}
+
 input.addEventListener('input', function(){ var q=input.value.trim(); clearTimeout(suggestTimer); if(q.length<1){hideSuggestions();return;} suggestTimer=setTimeout(function(){fetchSuggestions(q);},300); });
 input.addEventListener('keypress', function(e){ if(e.key==='Enter'){ hideSuggestions(); searchAnime(); } });
 document.addEventListener('click', function(e){ if(!e.target.closest('.search-wrap') && !e.target.closest('#searchBar')) hideSuggestions(); });
