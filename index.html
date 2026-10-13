@@ -2,7 +2,7 @@
 <html lang="bn">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>AnbuKai Anime</title>
 <meta name="google-site-verification" content="OK1razUv1UOsWUr0ZHZYsJ2lZ4-r21DB4BDC9Wf1e4E" />
 <link rel="manifest" href="manifest.json">
@@ -17,12 +17,14 @@
   * { box-sizing: border-box; margin:0; padding:0; -webkit-tap-highlight-color: transparent; }
   body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; padding-bottom: 30px; }
 
-  /* ===== TOUCH-FRIENDLY: সব button এ single tap ===== */
-  button, a, .card, .icon-btn, .ctrl-btn, .lang-tab, .server-tab, .ep-cell, .btn-play, .btn-bookmark, .watch-now-btn, .watch-link-btn, .watchlist-btn, .dl-icon-btn, .sug-item, .ep-tool, .range-selector button, .filter-btn, .search-btn {
-    touch-action: manipulation;
-    -webkit-tap-highlight-color: transparent;
+  /* ===== TOUCH-FRIENDLY: সব button এবং iframe এ single tap ===== */
+  button, a, .card, .icon-btn, .ctrl-btn, .lang-tab, .server-tab, .ep-cell, .btn-play, .btn-bookmark, .watch-now-btn, .watch-link-btn, .watchlist-btn, .dl-icon-btn, .sug-item, .ep-tool, .range-selector button, .filter-btn, .search-btn, iframe, video {
+    touch-action: manipulation !important;
+    -webkit-tap-highlight-color: transparent !important;
     -webkit-user-select: none;
     user-select: none;
+  }
+  button, a, .card, .icon-btn, .ctrl-btn, .lang-tab, .server-tab, .ep-cell, .btn-play, .btn-bookmark, .watch-now-btn, .watch-link-btn, .watchlist-btn, .dl-icon-btn, .sug-item, .ep-tool, .range-selector button, .filter-btn, .search-btn {
     cursor: pointer;
   }
 
@@ -107,7 +109,7 @@
 
   .player-wrap { max-width: 1200px; margin: 0 auto; padding: 0 16px; }
   .player { aspect-ratio: 16/9; width: 100%; background: #000; border-radius: 14px; overflow: hidden; margin-bottom: 14px; position: relative; }
-  .player iframe { width: 100%; height: 100%; border: none; display: block; }
+  .player iframe { width: 100%; height: 100%; border: none; display: block; touch-action: manipulation !important; }
   .player-empty { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 0.85rem; text-align: center; padding: 20px; }
 
   .player-controls { display: flex; justify-content: center; gap: 14px; padding: 16px; background: var(--card); border-radius: 14px; margin-bottom: 16px; border: 1px solid var(--border); }
@@ -423,6 +425,15 @@
 </div>
 
 <script>
+// ==== SINGLE TAP FIX START ====
+// ১. iframe ফোকাস ফিক্স: মোবাইলে প্রথম ট্যাপে যাতে ভিডিও প্লে হয়
+document.addEventListener('pointerdown', function(e) {
+    if (e.target.tagName === 'IFRAME') {
+        e.target.focus();
+    }
+}, true);
+// ==== SINGLE TAP FIX END ====
+
 var grid = document.getElementById('animeGrid');
 var trendingHeader = document.getElementById('trendingHeader');
 var trendingText = document.getElementById('trendingText');
@@ -824,7 +835,7 @@ function showAnimeModal(a) {
   html += '<button class="watchlist-btn '+(inList?'in-list':'')+'" onclick="toggleWlFromModal('+a.mal_id+')">'+(inList?'✓ In Watchlist — Remove':'+ Add to Watchlist')+'</button>';
 
   html += '<h3 class="section-title">📺 Trailer</h3>';
-  if(a.trailer) html += '<div style="aspect-ratio:16/9;border-radius:12px;overflow:hidden;margin-bottom:8px;"><iframe src="'+a.trailer+'" style="width:100%;height:100%;border:none;" allowfullscreen></iframe></div>';
+  if(a.trailer) html += '<div style="aspect-ratio:16/9;border-radius:12px;overflow:hidden;margin-bottom:8px;"><iframe src="'+a.trailer+'" style="width:100%;height:100%;border:none;touch-action:manipulation;" allowfullscreen></iframe></div>';
   else html += '<div style="padding:22px;background:var(--card);border-radius:12px;text-align:center;color:var(--muted);font-size:0.85rem;">Trailer paoa gelo na. <a href="'+ytSearch+'" target="_blank" style="color:var(--orange);font-weight:800;">YouTube e dekho</a></div>';
 
   html += '<h3 class="section-title">📝 Reviews ('+reviews.length+')</h3>';
@@ -857,7 +868,7 @@ function escapeHtml(s){ return String(s).replace(/[&<>"']/g,function(c){return (
 
 function showDisclaimer(e){ pendingVideoEmbed=e||null; document.getElementById('discModal').classList.add('active'); document.body.style.overflow='hidden'; }
 function closeDisclaimer(){ document.getElementById('discModal').classList.remove('active'); document.body.style.overflow=''; pendingVideoEmbed=null; }
-function acceptDisclaimer(){ disclaimerAccepted=true; document.getElementById('discModal').classList.remove('active'); document.body.style.overflow=''; if(pendingVideoEmbed){ var p=document.getElementById('watchPlayer'); if(p) p.innerHTML='<iframe src="'+pendingVideoEmbed+'" allowfullscreen allow="autoplay; encrypted-media" scrolling="no" frameborder="0"></iframe>'; pendingVideoEmbed=null; } }
+function acceptDisclaimer(){ disclaimerAccepted=true; document.getElementById('discModal').classList.remove('active'); document.body.style.overflow=''; if(pendingVideoEmbed){ var p=document.getElementById('watchPlayer'); if(p) p.innerHTML='<iframe src="'+pendingVideoEmbed+'" style="width:100%;height:100%;border:none;touch-action:manipulation;" allowfullscreen allow="autoplay; encrypted-media" scrolling="no" frameborder="0"></iframe>'; pendingVideoEmbed=null; } }
 
 function showWelcome(){ if(localStorage.getItem('anbikai_welcome_off')==='yes') return; if(sessionStorage.getItem('anbikai_welcome_shown')==='yes') return; sessionStorage.setItem('anbikai_welcome_shown','yes'); document.getElementById('welcomeModal').classList.add('active'); }
 function toggleWelcomeCheck(e){ if(e && e.target && e.target.tagName!=='INPUT' && e.target.tagName!=='LABEL'){ var cb=document.getElementById('dontShowAgain'); cb.checked=!cb.checked; } }
@@ -978,7 +989,8 @@ function loadVideo() {
     showDisclaimer(embed);
     player.innerHTML = '<div class="player-empty">Loading...</div>';
   } else {
-    player.innerHTML = '<iframe src="'+embed+'" allowfullscreen allow="autoplay; encrypted-media" scrolling="no" frameborder="0"></iframe>';
+    // Single Tap Fix: iframe e touch-action add kora hoyeche
+    player.innerHTML = '<iframe src="'+embed+'" style="width:100%;height:100%;border:none;touch-action:manipulation;" allowfullscreen allow="autoplay; encrypted-media" scrolling="no" frameborder="0"></iframe>';
   }
   document.getElementById('watchingEpText').textContent = 'Episode '+watchCurrentEp;
   if (watchAnime) addToHistory(watchAnime, 'Episode '+watchCurrentEp+' ('+langLabel(watchCurrentLang)+')');
@@ -1083,4 +1095,4 @@ loadTop();
 setTimeout(showWelcome, 1500);
 </script>
 </body>
-  </html>
+    </html>
