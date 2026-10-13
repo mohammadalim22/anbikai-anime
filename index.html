@@ -384,14 +384,9 @@ var QUERY = 'query ($search: String, $genre: String, $sort: [MediaSort], $perPag
 
 /* ========================================================
    ⭐⭐ VIDEO_DATA — সব anime + language ভিত্তিক ভিডিও ⭐⭐
-   
-   sub    = English Subtitle (Japanese audio)
-   dub    = English Dub
-   hindi  = Hindi Dub
-   bangla = Bengali Dub
    ======================================================== */
 var VIDEO_DATA = {
-  /* Black Clover (AniList ID: 97940) */
+  /* Black Clover (ID: 97940) */
   97940: {
     sub: [
       { name: "Server 1", embed: "https://streamtape.com/e/JKKxw2xeQ0sj0R0/" },
@@ -411,7 +406,7 @@ var VIDEO_DATA = {
     ]
   },
 
-  /* Naruto Shippuden (AniList ID: 1735) */
+  /* Naruto Shippuden (ID: 1735) */
   1735: {
     sub: [
       { name: "Japanese", embed: "https://streamtape.com/e/PW4m8D2oGeI0ORJ/" }
@@ -427,16 +422,19 @@ var VIDEO_DATA = {
     ]
   },
 
-  /* ⭐⭐ Solo Leveling (AniList ID: 151807) — ৩ ভাষায় ⭐⭐ */
+  /* Solo Leveling (ID: 151807) — Filemoon + Streamtape */
   151807: {
     sub: [
-      { name: "Japanese", embed: "https://streamtape.com/e/2a3KAG3bXJIZXm4/" }
+      { name: "Filemoon", embed: "https://bysefujedu.com/e/3r4nyti9w1d0/" },
+      { name: "Streamtape", embed: "https://streamtape.com/e/2a3KAG3bXJIZXm4/" }
     ],
     dub: [
-      { name: "English", embed: "https://streamtape.com/e/xqAMwoYg6khkbXV/" }
+      { name: "Filemoon", embed: "https://bysefujedu.com/e/759arii02xep/" },
+      { name: "Streamtape", embed: "https://streamtape.com/e/xqAMwoYg6khkbXV/" }
     ],
     hindi: [
-      { name: "Hindi", embed: "https://streamtape.com/e/dpjZ9KbK4GSk8Wl/" }
+      { name: "Filemoon", embed: "https://bysefujedu.com/e/n2aanl7bpp5u/" },
+      { name: "Streamtape", embed: "https://streamtape.com/e/dpjZ9KbK4GSk8Wl/" }
     ],
     bangla: []
   }
