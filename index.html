@@ -26,7 +26,6 @@
   .logo-text .g { color: var(--accent2); }
   .header-right { display: flex; gap: 8px; align-items: center; }
   .icon-btn { background: var(--card); border: 1px solid var(--border); color: var(--text); width: 42px; height: 42px; border-radius: 50%; cursor: pointer; font-size: 1.15rem; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
-  .icon-btn:hover { background: var(--card2); }
   .icon-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
 
   .search-bar { padding: 0 16px 14px; max-width: 1000px; margin: 0 auto; display: none; }
@@ -39,7 +38,6 @@
   .suggestions { position: absolute; top: 100%; left: 0; right: 0; background: var(--card); border: 1px solid var(--border); border-radius: 12px; margin-top: 6px; max-height: 350px; overflow-y: auto; display: none; z-index: 60; box-shadow: 0 12px 30px rgba(0,0,0,0.6); }
   .suggestions.active { display: block; }
   .sug-item { display: flex; gap: 10px; padding: 10px 12px; cursor: pointer; align-items: center; border-bottom: 1px solid var(--border); }
-  .sug-item:hover { background: var(--card2); }
   .sug-item img { width: 40px; height: 55px; object-fit: cover; border-radius: 6px; flex-shrink: 0; }
   .sug-item-info { flex: 1; min-width: 0; }
   .sug-item-info h4 { font-size: 0.82rem; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -72,10 +70,9 @@
 
   .card { flex-shrink: 0; width: 145px; cursor: pointer; position: relative; }
   .card-img { position: relative; width: 100%; aspect-ratio: 2/3; border-radius: 12px; overflow: hidden; background: var(--card2); }
-  .card-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.3s; }
-  .card:hover .card-img img { transform: scale(1.05); }
-  .card-badge { position: absolute; top: 8px; left: 8px; background: var(--accent); color: white; padding: 3px 9px; border-radius: 6px; font-size: 0.6rem; font-weight: 900; letter-spacing: 0.5px; }
-  .card-score { position: absolute; bottom: 8px; left: 8px; background: rgba(0,0,0,0.85); color: var(--score); padding: 4px 9px; border-radius: 6px; font-size: 0.7rem; font-weight: 800; backdrop-filter: blur(4px); }
+  .card-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .card-badge { position: absolute; top: 8px; left: 8px; background: var(--accent); color: white; padding: 3px 9px; border-radius: 6px; font-size: 0.6rem; font-weight: 900; }
+  .card-score { position: absolute; bottom: 8px; left: 8px; background: rgba(0,0,0,0.85); color: var(--score); padding: 4px 9px; border-radius: 6px; font-size: 0.7rem; font-weight: 800; }
   .card-play { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 48px; height: 48px; background: rgba(255,102,51,0.95); border-radius: 50%; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; }
   .card:hover .card-play { opacity: 1; }
   .card-play::after { content: ''; width: 0; height: 0; border-left: 13px solid white; border-top: 8px solid transparent; border-bottom: 8px solid transparent; margin-left: 4px; }
@@ -92,7 +89,6 @@
   .watch-page.active { display: block; }
   .breadcrumb { max-width: 1200px; margin: 0 auto; padding: 8px 16px 14px; font-size: 0.82rem; color: var(--muted); display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
   .breadcrumb a { color: var(--muted); text-decoration: none; display: flex; align-items: center; gap: 4px; }
-  .breadcrumb a:hover { color: var(--orange); }
   .breadcrumb .sep { color: var(--border); font-weight: 900; }
   .breadcrumb .current { color: var(--text); font-weight: 800; }
 
@@ -102,20 +98,17 @@
   .player-empty { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 0.85rem; text-align: center; padding: 20px; }
 
   .player-controls { display: flex; justify-content: center; gap: 14px; padding: 16px; background: var(--card); border-radius: 14px; margin-bottom: 16px; border: 1px solid var(--border); }
-  .ctrl-btn { background: var(--card2); border: 1px solid var(--border); color: var(--text); font-size: 1.15rem; cursor: pointer; width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
-  .ctrl-btn:hover { background: var(--orange); border-color: var(--orange); color: white; transform: translateY(-2px); }
+  .ctrl-btn { background: var(--card2); border: 1px solid var(--border); color: var(--text); font-size: 1.15rem; cursor: pointer; width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
   .ctrl-btn.play { background: var(--orange); border-color: var(--orange); color: white; font-size: 1.3rem; }
 
   .lang-tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
-  .lang-tab { background: transparent; border: 1.5px solid var(--border); color: var(--muted); padding: 9px 18px; border-radius: 999px; cursor: pointer; font-size: 0.85rem; font-weight: 800; display: flex; align-items: center; gap: 7px; transition: all 0.15s; }
-  .lang-tab:hover { border-color: var(--muted); }
+  .lang-tab { background: transparent; border: 1.5px solid var(--border); color: var(--muted); padding: 9px 18px; border-radius: 999px; cursor: pointer; font-size: 0.85rem; font-weight: 800; display: flex; align-items: center; gap: 7px; }
   .lang-tab.active { background: var(--bg2); color: var(--text); border-color: var(--text); }
-  .lang-tab .cc-icon { background: #444; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 0.62rem; font-weight: 900; letter-spacing: 0.5px; }
+  .lang-tab .cc-icon { background: #444; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 0.62rem; font-weight: 900; }
   .lang-tab.active .cc-icon { background: var(--orange); }
 
   .server-tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
-  .server-tab { background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 11px 24px; border-radius: 10px; cursor: pointer; font-size: 0.9rem; font-weight: 800; transition: all 0.15s; }
-  .server-tab:hover { background: var(--card2); }
+  .server-tab { background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 11px 24px; border-radius: 10px; cursor: pointer; font-size: 0.9rem; font-weight: 800; }
   .server-tab.active { background: var(--accent2); color: white; border-color: var(--accent2); }
 
   .watching-info { text-align: center; margin-bottom: 24px; padding: 0 16px; }
@@ -128,8 +121,7 @@
   .ep-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
   .ep-head h3 { font-size: 1.25rem; font-weight: 900; letter-spacing: -0.3px; }
   .ep-tools { display: flex; gap: 8px; }
-  .ep-tool { background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 9px 14px; border-radius: 9px; cursor: pointer; font-size: 0.9rem; font-weight: 700; display: flex; align-items: center; gap: 6px; transition: all 0.15s; }
-  .ep-tool:hover { background: var(--card2); }
+  .ep-tool { background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 9px 14px; border-radius: 9px; cursor: pointer; font-size: 0.9rem; font-weight: 700; display: flex; align-items: center; gap: 6px; }
   .ep-tool .find-label { font-weight: 800; }
   .ep-tool .find-input { background: transparent; border: none; color: inherit; font-family: inherit; font-size: 0.9rem; font-weight: 800; width: 0; padding: 0; outline: none; transition: width 0.25s, padding 0.25s; }
   .ep-tool.expanded .find-input { width: 60px; padding-left: 4px; }
@@ -137,15 +129,12 @@
 
   .range-selector { display: flex; align-items: center; justify-content: center; gap: 10px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 10px; margin-bottom: 18px; }
   .range-selector button { background: transparent; border: none; color: var(--text); font-size: 1.3rem; cursor: pointer; padding: 4px 14px; border-radius: 8px; font-weight: 900; }
-  .range-selector button:hover { background: var(--card2); }
   .range-selector .range-label { flex: 1; text-align: center; font-weight: 800; color: var(--text); font-size: 1rem; }
 
   .ep-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(58px, 1fr)); gap: 8px; }
-  .ep-cell { background: var(--card); color: var(--text); padding: 14px 6px; text-align: center; border-radius: 9px; cursor: pointer; font-size: 0.88rem; font-weight: 800; border: 1px solid transparent; transition: all 0.15s; }
-  .ep-cell:hover { background: var(--card2); border-color: var(--border); }
+  .ep-cell { background: var(--card); color: var(--text); padding: 14px 6px; text-align: center; border-radius: 9px; cursor: pointer; font-size: 0.88rem; font-weight: 800; border: 1px solid transparent; }
   .ep-cell.active { background: var(--orange); color: white; border-color: var(--orange); box-shadow: 0 4px 12px rgba(255,102,51,0.4); }
 
-  /* MODAL */
   .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.94); z-index: 100; padding: 0; overflow-y: auto; }
   .modal-overlay.active { display: block; }
   .modal { background: var(--bg2); max-width: 100%; min-height: 100vh; margin: 0; }
@@ -225,11 +214,11 @@
     <div class="logo-text"><span class="w">Anbu</span><span class="g">Kai</span></div>
   </div>
   <div class="header-right">
-    <button class="icon-btn" id="homeBtn" onclick="goHome()" title="Home">🏠</button>
-    <button class="icon-btn" id="searchToggleBtn" onclick="toggleSearchBar()" title="Search">🔍</button>
-    <button class="icon-btn" id="watchlistBtn" onclick="showWatchlist()" title="Watchlist">⭐</button>
-    <button class="icon-btn" id="historyBtn" onclick="showHistory()" title="History">🕐</button>
-    <button class="icon-btn" id="themeBtn" onclick="toggleTheme()" title="Theme">🌙</button>
+    <button class="icon-btn" id="homeBtn" onclick="goHome()">🏠</button>
+    <button class="icon-btn" id="searchToggleBtn" onclick="toggleSearchBar()">🔍</button>
+    <button class="icon-btn" id="watchlistBtn" onclick="showWatchlist()">⭐</button>
+    <button class="icon-btn" id="historyBtn" onclick="showHistory()">🕐</button>
+    <button class="icon-btn" id="themeBtn" onclick="toggleTheme()">🌙</button>
   </div>
 </header>
 
@@ -282,10 +271,10 @@
       <div class="player-empty">Video load hocche...</div>
     </div>
     <div class="player-controls">
-      <button class="ctrl-btn" onclick="prevEpisode()" title="Previous">⏮</button>
-      <button class="ctrl-btn play" onclick="replayVideo()" title="Replay">▶</button>
-      <button class="ctrl-btn" onclick="nextEpisode()" title="Next">⏭</button>
-      <button class="ctrl-btn" onclick="randomEpisode()" title="Random">🔀</button>
+      <button class="ctrl-btn" onclick="prevEpisode()">⏮</button>
+      <button class="ctrl-btn play" onclick="replayVideo()">▶</button>
+      <button class="ctrl-btn" onclick="nextEpisode()">⏭</button>
+      <button class="ctrl-btn" onclick="randomEpisode()">🔀</button>
     </div>
     <div class="lang-tabs" id="langTabs"></div>
     <div class="server-tabs" id="serverTabs"></div>
@@ -394,7 +383,18 @@ var watchRangeSize = 100;
 var ANILIST_URL = 'https://graphql.anilist.co';
 var QUERY = 'query ($search: String, $genre: String, $sort: [MediaSort], $perPage: Int) { Page(page: 1, perPage: $perPage) { media(type: ANIME, search: $search, genre: $genre, sort: $sort, isAdult: false) { id title { romaji english } description(asHtml: false) coverImage { extraLarge large } bannerImage episodes nextAiringEpisode { episode } averageScore format startDate { year } genres trailer { id site } } } }';
 
+/* ========================================================
+   ⭐⭐ VIDEO_DATA — প্রতিটা anime-এর ভাষা-ভিত্তিক ভিডিও ⭐⭐
+
+   sub    = English Subtitle (Japanese audio)
+   dub    = English Dub
+   hindi  = Hindi Dub
+   bangla = Bengali Dub
+
+   ⚠️ শুধু যেই language-এ ভিডিও আছে, সেটাই দেখাবে
+   ======================================================== */
 var VIDEO_DATA = {
+  /* Black Clover (AniList ID: 97940) */
   97940: {
     sub: [
       { name: "Server 1", embed: "https://streamtape.com/e/JKKxw2xeQ0sj0R0/" },
@@ -412,11 +412,28 @@ var VIDEO_DATA = {
       { name: "Server 1", embed: "https://streamtape.com/e/JKKxw2xeQ0sj0R0/" },
       { name: "Server 2", embed: "https://streamtape.com/e/PDyGxboGa3u03pq/" }
     ]
+  },
+
+  /* ⭐ Naruto Shippuden (AniList ID: 1735) — ৪ ভাষায় ⭐ */
+  1735: {
+    sub: [
+      { name: "Japanese", embed: "https://streamtape.com/e/PW4m8D2oGeI0ORJ/" }
+    ],
+    dub: [
+      { name: "English", embed: "https://streamtape.com/e/M9aW9kwMdOIYRa/" }
+    ],
+    hindi: [
+      { name: "Hindi", embed: "https://streamtape.com/e/kb9DQGkLoVHOoLG/" }
+    ],
+    bangla: [
+      { name: "Bengali", embed: "https://streamtape.com/e/eoYOmAJ6LoTZjM/" }
+    ]
   }
 };
 
 var WATCH_LINKS = {
   97940: [{ platform: "crunchyroll", url: "https://www.crunchyroll.com/series/GRE50VZWR/black-clover" }, { platform: "netflix", url: "https://www.netflix.com/title/80238012" }],
+  1735: [{ platform: "crunchyroll", url: "https://www.crunchyroll.com/naruto-shippuden" }],
   21: [{ platform: "crunchyroll", url: "https://www.crunchyroll.com/one-piece" }, { platform: "netflix", url: "https://www.netflix.com/title/80107103" }],
   20: [{ platform: "crunchyroll", url: "https://www.crunchyroll.com/naruto" }, { platform: "netflix", url: "https://www.netflix.com/title/70205012" }],
   38000: [{ platform: "crunchyroll", url: "https://www.crunchyroll.com/demon-slayer-kimetsu-no-yaiba" }, { platform: "netflix", url: "https://www.netflix.com/title/81091393" }],
@@ -429,9 +446,10 @@ function langIcon(l) { var m = { sub: '<span class="cc-icon">CC</span>', dub: '�
 function langLabel(l) { var m = { sub: "Soft Sub", dub: "Dub", hindi: "Hindi", bangla: "Bangla" }; return m[l] || l; }
 
 var fallbackAnime = [
-  { mal_id: 21, title: "One Piece", score: 8.7, type: "TV", episodes: "1100+", img: "https://cdn.myanimelist.net/images/anime/6/73245.jpg", banner: "https://cdn.myanimelist.net/images/anime/6/73245.jpg", synopsis: "Monkey D. Luffy sets off on an adventure to find the legendary One Piece treasure and become Pirate King.", genres: ["Action","Adventure","Fantasy"], trailer: "https://www.youtube.com/embed/MCb13lbVGE0", year: 1999 },
-  { mal_id: 20, title: "Naruto", score: 8.0, type: "TV", episodes: 220, img: "https://cdn.myanimelist.net/images/anime/13/17405.jpg", banner: "https://cdn.myanimelist.net/images/anime/13/17405.jpg", synopsis: "Naruto Uzumaki, a young ninja with a sealed demon fox inside him, seeks recognition.", genres: ["Action","Adventure"], trailer: "https://www.youtube.com/embed/QczGoCmX-pI", year: 2002 },
-  { mal_id: 38000, title: "Demon Slayer", score: 8.5, type: "TV", episodes: 55, img: "https://cdn.myanimelist.net/images/anime/1286/99889.jpg", banner: "https://cdn.myanimelist.net/images/anime/1286/99889.jpg", synopsis: "Tanjiro becomes a demon slayer to avenge his family and cure his sister.", genres: ["Action","Supernatural"], trailer: "https://www.youtube.com/embed/VQGCKyvzIM4", year: 2019 },
+  { mal_id: 1735, title: "Naruto Shippuden", score: 8.3, type: "TV", episodes: 500, img: "https://cdn.myanimelist.net/images/anime/5/17407.jpg", banner: "https://cdn.myanimelist.net/images/anime/5/17407.jpg", synopsis: "Naruto returns from training with Jiraiya to face the Akatsuki and protect the Hidden Leaf Village.", genres: ["Action","Adventure"], trailer: "https://www.youtube.com/embed/1M3H1yL2QeE", year: 2007 },
+  { mal_id: 21, title: "One Piece", score: 8.7, type: "TV", episodes: "1100+", img: "https://cdn.myanimelist.net/images/anime/6/73245.jpg", banner: "https://cdn.myanimelist.net/images/anime/6/73245.jpg", synopsis: "Monkey D. Luffy sets off on an adventure to find the legendary One Piece treasure.", genres: ["Action","Adventure","Fantasy"], trailer: "https://www.youtube.com/embed/MCb13lbVGE0", year: 1999 },
+  { mal_id: 20, title: "Naruto", score: 8.0, type: "TV", episodes: 220, img: "https://cdn.myanimelist.net/images/anime/13/17405.jpg", banner: "https://cdn.myanimelist.net/images/anime/13/17405.jpg", synopsis: "Naruto Uzumaki, a young ninja with a sealed demon fox inside him.", genres: ["Action","Adventure"], trailer: "https://www.youtube.com/embed/QczGoCmX-pI", year: 2002 },
+  { mal_id: 38000, title: "Demon Slayer", score: 8.5, type: "TV", episodes: 55, img: "https://cdn.myanimelist.net/images/anime/1286/99889.jpg", banner: "https://cdn.myanimelist.net/images/anime/1286/99889.jpg", synopsis: "Tanjiro becomes a demon slayer to avenge his family.", genres: ["Action","Supernatural"], trailer: "https://www.youtube.com/embed/VQGCKyvzIM4", year: 2019 },
   { mal_id: 97940, title: "Black Clover", score: 8.1, type: "TV", episodes: 170, img: "https://cdn.myanimelist.net/images/anime/2/88336.jpg", banner: "https://cdn.myanimelist.net/images/anime/2/88336.jpg", synopsis: "Asta, a boy born without magic, aims to become the Wizard King.", genres: ["Action","Adventure","Comedy","Fantasy"], trailer: "https://www.youtube.com/embed/PDyGxboGa3u", year: 2017 }
 ];
 
@@ -498,20 +516,9 @@ function goHome(){
   loadTop();
 }
 
-/* ---- HISTORY STATE MANAGEMENT ---- */
-function isModalOpen() {
-  var o = document.getElementById('animeModalOverlay');
-  return !!(o && o.classList.contains('active'));
-}
-function isWatchOpen() {
-  return document.getElementById('watchPage').classList.contains('active');
-}
-
-function hideAnimeModal(){
-  var overlay = document.getElementById('animeModalOverlay');
-  if(overlay) overlay.classList.remove('active');
-  document.body.style.overflow = '';
-}
+function isModalOpen() { var o = document.getElementById('animeModalOverlay'); return !!(o && o.classList.contains('active')); }
+function isWatchOpen() { return document.getElementById('watchPage').classList.contains('active'); }
+function hideAnimeModal(){ var overlay = document.getElementById('animeModalOverlay'); if(overlay) overlay.classList.remove('active'); document.body.style.overflow = ''; }
 
 function findAnimeById(id) {
   for(var i=0;i<currentList.length;i++) if(currentList[i].mal_id===id) return currentList[i];
@@ -654,16 +661,12 @@ function fetchSuggestions(q) {
   }).catch(function(){ var ql=q.toLowerCase(); var m=fallbackAnime.filter(function(a){return a.title.toLowerCase().indexOf(ql)>=0;}); if(m.length>0) showSuggestions(m); else hideSuggestions(); });
 }
 
-/* ============ MODAL ============ */
 function openDetails(id) {
   var a = findAnimeById(id);
   if(!a) return;
   window._currentModalAnime = a;
   showAnimeModal(a);
-  /* Push history so back button can restore */
-  try {
-    history.pushState({ view: 'details', animeId: a.mal_id }, '', location.pathname + location.search + '#anime-' + a.mal_id);
-  } catch(e) {}
+  try { history.pushState({ view: 'details', animeId: a.mal_id }, '', location.pathname + location.search + '#anime-' + a.mal_id); } catch(e) {}
 }
 
 function showAnimeModal(a) {
@@ -734,7 +737,6 @@ function submitReview(id) {
 
 function escapeHtml(s){ return String(s).replace(/[&<>"']/g,function(c){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]);}); }
 
-/* DISCLAIMER */
 function showDisclaimer(e){ pendingVideoEmbed=e||null; document.getElementById('discModal').classList.add('active'); document.body.style.overflow='hidden'; }
 function closeDisclaimer(){ document.getElementById('discModal').classList.remove('active'); document.body.style.overflow=''; pendingVideoEmbed=null; }
 function acceptDisclaimer(){ disclaimerAccepted=true; document.getElementById('discModal').classList.remove('active'); document.body.style.overflow=''; if(pendingVideoEmbed){ var p=document.getElementById('watchPlayer'); if(p) p.innerHTML='<iframe src="'+pendingVideoEmbed+'" allowfullscreen allow="autoplay; encrypted-media" scrolling="no" frameborder="0"></iframe>'; pendingVideoEmbed=null; } }
@@ -744,7 +746,6 @@ function toggleWelcomeCheck(e){ if(e && e.target && e.target.tagName!=='INPUT' &
 function closeWelcome(){ var cb=document.getElementById('dontShowAgain'); if(cb.checked) localStorage.setItem('anbikai_welcome_off','yes'); document.getElementById('welcomeModal').classList.remove('active'); }
 function skipWelcome(){ localStorage.setItem('anbikai_welcome_off','yes'); document.getElementById('welcomeModal').classList.remove('active'); }
 
-/* WATCH PAGE */
 function startWatching() {
   var a = window._currentModalAnime;
   if (!a) return;
@@ -760,10 +761,7 @@ function startWatching() {
   watchRangeStart = 1;
   watchRangeSize = 100;
 
-  /* Push state BEFORE hiding modal */
-  try {
-    history.pushState({ view: 'watch', animeId: a.mal_id }, '', location.pathname + location.search + '#watch-' + a.mal_id);
-  } catch(e) {}
+  try { history.pushState({ view: 'watch', animeId: a.mal_id }, '', location.pathname + location.search + '#watch-' + a.mal_id); } catch(e) {}
 
   hideAnimeModal();
   showWatchView();
@@ -892,9 +890,7 @@ function replayVideo() {
     var iframe = player.querySelector('iframe');
     var src = iframe.src;
     iframe.src = ''; setTimeout(function(){ iframe.src = src; }, 50);
-  } else {
-    loadVideo();
-  }
+  } else { loadVideo(); }
 }
 
 function toggleFindInput(e) {
@@ -923,12 +919,10 @@ document.addEventListener('click', function(e) {
   if (!e.target.closest('#findBtn')) btn.classList.remove('expanded');
 });
 
-/* ============ POPSTATE — PHONE BACK BUTTON ============ */
 window.addEventListener('popstate', function(e) {
   var state = e.state || { view: 'home' };
 
   if (state.view === 'watch' && watchAnime && watchAnime.mal_id === state.animeId) {
-    /* Restore watch page */
     hideAnimeModal();
     showWatchView();
     return;
@@ -944,13 +938,11 @@ window.addEventListener('popstate', function(e) {
     }
   }
 
-  /* Default: home view */
   hideAnimeModal();
   showHomeView();
   loadTop();
 });
 
-/* INIT */
 if (!history.state) {
   try { history.replaceState({ view: 'home' }, '', location.pathname + location.search); } catch(e) {}
 }
