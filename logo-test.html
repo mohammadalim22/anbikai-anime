@@ -28,30 +28,15 @@
     </filter>
   </defs>
 
-  <!-- Background -->
   <rect width="512" height="512" rx="110" fill="url(#bgG)"/>
-
-  <!-- Gradient border ring -->
   <rect x="6" y="6" width="500" height="500" rx="105" fill="none" stroke="url(#edgeG)" stroke-width="4" opacity="0.85"/>
-
-  <!-- Soft glow aura -->
   <circle cx="256" cy="256" r="200" fill="url(#glowG)"/>
 
-  <!-- Stylized "A" with anime glow -->
   <g filter="url(#softGlow)">
-    <path d="M 256 108
-             L 384 400
-             L 322 400
-             L 256 240
-             L 190 400
-             L 128 400
-             Z"
-          fill="url(#mainG)"/>
-    <!-- Crossbar -->
+    <path d="M 256 108 L 384 400 L 322 400 L 256 240 L 190 400 L 128 400 Z" fill="url(#mainG)"/>
     <rect x="182" y="292" width="148" height="30" rx="15" fill="url(#mainG)"/>
   </g>
 
-  <!-- Cherry blossom (sakura) accent top-right -->
   <g transform="translate(370,140)">
     <g fill="#ff8fa3" opacity="0.95">
       <ellipse cx="0" cy="-22" rx="13" ry="20"/>
@@ -63,11 +48,9 @@
     <circle cx="0" cy="0" r="7" fill="#ffd166"/>
   </g>
 
-  <!-- Small sparkle bottom-left -->
   <g transform="translate(140,372)" fill="#ffd166" opacity="0.9">
     <path d="M 0 -14 L 3 -3 L 14 0 L 3 3 L 0 14 L -3 3 L -14 0 L -3 -3 Z"/>
   </g>
 
-  <!-- Soft highlight top-left -->
   <circle cx="120" cy="110" r="60" fill="#ffffff" opacity="0.05"/>
-  </svg>
+      </svg>
