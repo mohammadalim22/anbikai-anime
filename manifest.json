@@ -1,7 +1,7 @@
 {
   "name": "AnbuKai Anime",
   "short_name": "AnbuKai",
-  "description": "Free anime catalog with Hindi, English and Japanese dubs",
+  "description": "Free anime catalog",
   "start_url": "/anbikai-anime/",
   "scope": "/anbikai-anime/",
   "display": "standalone",
@@ -10,21 +10,15 @@
   "theme_color": "#ff4d6d",
   "icons": [
     {
-      "src": "https://cdn.myanimelist.net/images/anime/2/88336.jpg",
-      "sizes": "192x192",
-      "type": "image/jpeg",
+      "src": "logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
       "purpose": "any"
     },
     {
-      "src": "https://cdn.myanimelist.net/images/anime/2/88336.jpg",
-      "sizes": "512x512",
-      "type": "image/jpeg",
-      "purpose": "any"
-    },
-    {
-      "src": "https://cdn.myanimelist.net/images/anime/2/88336.jpg",
-      "sizes": "512x512",
-      "type": "image/jpeg",
+      "src": "logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
       "purpose": "maskable"
     }
   ]
