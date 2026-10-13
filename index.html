@@ -14,8 +14,17 @@
 <style>
   :root { --bg:#0a0a0f; --bg2:#101018; --card:#16161f; --card2:#1e1e2a; --text:#f5f5f5; --muted:#8b8b9a; --accent:#ff4d6d; --accent2:#22c55e; --orange:#ff6633; --border:#232330; --input-bg:#12121a; --score:#f5c518; }
   body.light { --bg:#f7f7fa; --bg2:#fff; --card:#fff; --card2:#f0f0f5; --text:#1a1a1a; --muted:#6b6b76; --border:#e0e0e8; --input-bg:#f2f2f7; --score:#d4a017; }
-  * { box-sizing: border-box; margin:0; padding:0; }
+  * { box-sizing: border-box; margin:0; padding:0; -webkit-tap-highlight-color: transparent; }
   body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; padding-bottom: 30px; }
+
+  /* ===== TOUCH-FRIENDLY: সব button এ single tap ===== */
+  button, a, .card, .icon-btn, .ctrl-btn, .lang-tab, .server-tab, .ep-cell, .btn-play, .btn-bookmark, .watch-now-btn, .watch-link-btn, .watchlist-btn, .dl-icon-btn, .sug-item, .ep-tool, .range-selector button, .filter-btn, .search-btn {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none;
+    user-select: none;
+    cursor: pointer;
+  }
 
   header { padding: 12px 16px; background: var(--bg); display: flex; align-items: center; justify-content: space-between; gap: 10px; position: sticky; top: 0; z-index: 50; }
   .logo-wrap { display: flex; align-items: center; gap: 8px; cursor: pointer; }
@@ -26,6 +35,7 @@
   .logo-text .g { color: var(--accent2); }
   .header-right { display: flex; gap: 8px; align-items: center; }
   .icon-btn { background: var(--card); border: 1px solid var(--border); color: var(--text); width: 42px; height: 42px; border-radius: 50%; cursor: pointer; font-size: 1.15rem; display: flex; align-items: center; justify-content: center; }
+  .icon-btn:active { transform: scale(0.94); background: var(--card2); }
   .icon-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
 
   .search-bar { padding: 0 16px 14px; max-width: 1000px; margin: 0 auto; display: none; }
@@ -34,10 +44,12 @@
   .search-box input { flex: 1; background: transparent; border: none; color: var(--text); padding: 10px 0; outline: none; font-size: 0.92rem; font-family: inherit; }
   .search-box input::placeholder { color: var(--muted); }
   .filter-btn { background: var(--card); border: none; color: var(--muted); padding: 10px 16px; border-radius: 10px; font-weight: 800; cursor: pointer; font-size: 0.78rem; }
+  .filter-btn:active { background: var(--card2); }
   .search-wrap { position: relative; flex: 1; }
   .suggestions { position: absolute; top: 100%; left: 0; right: 0; background: var(--card); border: 1px solid var(--border); border-radius: 12px; margin-top: 6px; max-height: 350px; overflow-y: auto; display: none; z-index: 60; box-shadow: 0 12px 30px rgba(0,0,0,0.6); }
   .suggestions.active { display: block; }
   .sug-item { display: flex; gap: 10px; padding: 10px 12px; cursor: pointer; align-items: center; border-bottom: 1px solid var(--border); }
+  .sug-item:active { background: var(--card2); }
   .sug-item img { width: 40px; height: 55px; object-fit: cover; border-radius: 6px; flex-shrink: 0; }
   .sug-item-info { flex: 1; min-width: 0; }
   .sug-item-info h4 { font-size: 0.82rem; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -55,7 +67,9 @@
   .hero-meta span { background: rgba(255,255,255,0.15); padding: 4px 12px; border-radius: 999px; font-weight: 600; }
   .hero-actions { display: flex; gap: 10px; }
   .btn-play { background: var(--orange); color: white; border: none; padding: 13px 28px; border-radius: 12px; font-weight: 900; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 6px 20px rgba(255,102,51,0.4); }
+  .btn-play:active { transform: scale(0.97); }
   .btn-bookmark { background: var(--accent2); color: white; border: none; padding: 13px 20px; border-radius: 12px; font-weight: 900; cursor: pointer; font-size: 1.1rem; }
+  .btn-bookmark:active { transform: scale(0.97); }
   .hero-dots { display: flex; justify-content: center; gap: 8px; position: absolute; top: 20px; right: 20px; z-index: 5; }
   .hero-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.4); border: none; cursor: pointer; padding: 0; }
   .hero-dot.active { background: var(--orange); width: 24px; border-radius: 999px; }
@@ -63,19 +77,18 @@
   .section-head { display: flex; align-items: center; justify-content: space-between; padding: 20px 16px 12px; max-width: 1200px; margin: 0 auto; gap: 10px; }
   .section-head h2 { font-size: 1.1rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.8px; display: flex; align-items: center; gap: 8px; }
   .section-head .clear-btn { background: transparent; border: 1px solid #ef4444; color: #ef4444; padding: 6px 14px; border-radius: 999px; cursor: pointer; font-size: 0.72rem; font-weight: 800; }
+  .section-head .clear-btn:active { background: #ef4444; color: white; }
   .tag-on { background: var(--accent); color: white; padding: 2px 8px; border-radius: 5px; font-size: 0.6rem; font-weight: 900; }
 
   .hscroll { display: flex; gap: 12px; overflow-x: auto; padding: 4px 16px 20px; max-width: 1200px; margin: 0 auto; scrollbar-width: none; }
   .hscroll::-webkit-scrollbar { display: none; }
 
   .card { flex-shrink: 0; width: 145px; cursor: pointer; position: relative; }
+  .card:active { transform: scale(0.98); }
   .card-img { position: relative; width: 100%; aspect-ratio: 2/3; border-radius: 12px; overflow: hidden; background: var(--card2); }
   .card-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .card-badge { position: absolute; top: 8px; left: 8px; background: var(--accent); color: white; padding: 3px 9px; border-radius: 6px; font-size: 0.6rem; font-weight: 900; }
   .card-score { position: absolute; bottom: 8px; left: 8px; background: rgba(0,0,0,0.85); color: var(--score); padding: 4px 9px; border-radius: 6px; font-size: 0.7rem; font-weight: 800; }
-  .card-play { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 48px; height: 48px; background: rgba(255,102,51,0.95); border-radius: 50%; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; }
-  .card:hover .card-play { opacity: 1; }
-  .card-play::after { content: ''; width: 0; height: 0; border-left: 13px solid white; border-top: 8px solid transparent; border-bottom: 8px solid transparent; margin-left: 4px; }
   .card-title { font-size: 0.82rem; font-weight: 700; margin-top: 9px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
   .card-sub { font-size: 0.7rem; color: var(--muted); margin-top: 3px; }
   .hist-time { position: absolute; top: 8px; right: 8px; background: rgba(245,158,11,0.95); color: white; padding: 4px 8px; border-radius: 6px; font-size: 0.6rem; font-weight: 800; }
@@ -99,16 +112,19 @@
 
   .player-controls { display: flex; justify-content: center; gap: 14px; padding: 16px; background: var(--card); border-radius: 14px; margin-bottom: 16px; border: 1px solid var(--border); }
   .ctrl-btn { background: var(--card2); border: 1px solid var(--border); color: var(--text); font-size: 1.15rem; cursor: pointer; width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+  .ctrl-btn:active { transform: scale(0.92); background: var(--orange); color: white; border-color: var(--orange); }
   .ctrl-btn.play { background: var(--orange); border-color: var(--orange); color: white; font-size: 1.3rem; }
 
   .lang-tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
   .lang-tab { background: transparent; border: 1.5px solid var(--border); color: var(--muted); padding: 9px 18px; border-radius: 999px; cursor: pointer; font-size: 0.85rem; font-weight: 800; display: flex; align-items: center; gap: 7px; }
+  .lang-tab:active { transform: scale(0.96); }
   .lang-tab.active { background: var(--bg2); color: var(--text); border-color: var(--text); }
   .lang-tab .cc-icon { background: #444; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 0.62rem; font-weight: 900; }
   .lang-tab.active .cc-icon { background: var(--orange); }
 
   .server-row { display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
   .server-tab { background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 11px 22px; border-radius: 10px; cursor: pointer; font-size: 0.9rem; font-weight: 800; }
+  .server-tab:active { transform: scale(0.96); }
   .server-tab.active { background: var(--accent2); color: white; border-color: var(--accent2); }
   .dl-icon-btn {
     background: linear-gradient(135deg, #ff6633, #ff4d6d);
@@ -126,6 +142,7 @@
     box-shadow: 0 4px 12px rgba(255,102,51,0.4);
     line-height: 1;
   }
+  .dl-icon-btn:active { transform: scale(0.92); }
   .dl-icon-btn svg { width: 22px; height: 22px; fill: white; }
 
   .watching-info { text-align: center; margin-bottom: 24px; padding: 0 16px; }
@@ -139,16 +156,19 @@
   .ep-head h3 { font-size: 1.25rem; font-weight: 900; }
   .ep-tools { display: flex; gap: 8px; }
   .ep-tool { background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 9px 14px; border-radius: 9px; cursor: pointer; font-size: 0.9rem; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+  .ep-tool:active { background: var(--card2); }
   .ep-tool .find-input { background: transparent; border: none; color: inherit; font-family: inherit; font-size: 0.9rem; font-weight: 800; width: 0; padding: 0; outline: none; transition: width 0.25s, padding 0.25s; }
   .ep-tool.expanded .find-input { width: 60px; padding-left: 4px; }
   .ep-tool.expanded .find-hash { display: none; }
 
   .range-selector { display: flex; align-items: center; justify-content: center; gap: 10px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 10px; margin-bottom: 18px; }
   .range-selector button { background: transparent; border: none; color: var(--text); font-size: 1.3rem; cursor: pointer; padding: 4px 14px; border-radius: 8px; font-weight: 900; }
+  .range-selector button:active { background: var(--card2); }
   .range-selector .range-label { flex: 1; text-align: center; font-weight: 800; color: var(--text); font-size: 1rem; }
 
   .ep-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(58px, 1fr)); gap: 8px; }
   .ep-cell { background: var(--card); color: var(--text); padding: 14px 6px; text-align: center; border-radius: 9px; cursor: pointer; font-size: 0.88rem; font-weight: 800; border: 1px solid transparent; }
+  .ep-cell:active { transform: scale(0.94); }
   .ep-cell.active { background: var(--orange); color: white; border-color: var(--orange); box-shadow: 0 4px 12px rgba(255,102,51,0.4); }
 
   .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.94); z-index: 100; padding: 0; overflow-y: auto; }
@@ -167,8 +187,10 @@
   .synopsis { font-size: 0.88rem; line-height: 1.65; margin-bottom: 20px; color: #d0d0d8; }
   .section-title { font-size: 0.95rem; margin: 22px 0 12px; color: var(--orange); border-bottom: 1px solid var(--border); padding-bottom: 8px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.8px; }
   .watch-now-btn { width: 100%; padding: 16px; border-radius: 12px; background: var(--orange); color: white; border: none; font-weight: 900; font-size: 1rem; cursor: pointer; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 6px 20px rgba(255,102,51,0.4); }
+  .watch-now-btn:active { transform: scale(0.98); }
   .watch-links { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
   .watch-link-btn { display: inline-flex; align-items: center; gap: 6px; padding: 11px 18px; border-radius: 9px; text-decoration: none; color: white; font-weight: 800; font-size: 0.82rem; }
+  .watch-link-btn:active { transform: scale(0.96); }
   .wl-crunchyroll { background: #f47521; }
   .wl-netflix { background: #e50914; }
   .wl-hulu { background: #1ce783; color: #000; }
@@ -176,11 +198,13 @@
   .wl-youtube { background: #ff0000; }
   .wl-muse { background: #ff0050; }
   .watchlist-btn { padding: 14px 16px; border-radius: 12px; border: 1.5px solid var(--accent); background: transparent; color: var(--accent); font-weight: 900; cursor: pointer; width: 100%; font-size: 0.92rem; margin-bottom: 10px; }
+  .watchlist-btn:active { transform: scale(0.98); }
   .watchlist-btn.in-list { background: var(--accent); color: white; }
   .review-form { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
   .review-form input, .review-form textarea { padding: 13px 16px; border-radius: 10px; border: 1px solid var(--border); background: var(--card); color: var(--text); font-family: inherit; font-size: 0.85rem; width: 100%; }
   .review-form textarea { min-height: 70px; resize: vertical; }
   .review-form button { padding: 12px 20px; border-radius: 10px; border: none; background: var(--accent); color: white; font-weight: 900; cursor: pointer; align-self: flex-end; font-size: 0.85rem; }
+  .review-form button:active { transform: scale(0.97); }
   .review-item { background: var(--card); padding: 14px 16px; border-radius: 10px; margin-bottom: 10px; font-size: 0.85rem; border: 1px solid var(--border); }
   .review-item strong { color: var(--orange); }
   .review-item .date { color: var(--muted); font-size: 0.7rem; display: block; margin-top: 6px; }
@@ -194,6 +218,7 @@
   .disc-list { background: var(--bg); padding: 14px 18px; border-radius: 12px; margin-bottom: 18px; font-size: 0.85rem; line-height: 1.8; }
   .disc-list a { color: var(--orange); text-decoration: none; font-weight: 800; }
   .disc-btn { padding: 14px 20px; border-radius: 12px; border: none; font-weight: 900; font-size: 0.9rem; cursor: pointer; width: 100%; margin-bottom: 10px; }
+  .disc-btn:active { transform: scale(0.98); }
   .disc-btn-primary { background: var(--accent); color: white; }
   .disc-btn-secondary { background: var(--card2); color: var(--text); border: 1px solid var(--border); }
 
@@ -211,6 +236,7 @@
   .welcome-section { background: rgba(0,0,0,0.5); padding: 14px; border-radius: 12px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.1); }
   .welcome-section h4 { font-size: 0.78rem; color: #ffd166; margin-bottom: 12px; font-weight: 800; }
   .browser-btn { display: flex; align-items: center; gap: 10px; padding: 11px 14px; border-radius: 10px; background: rgba(255,255,255,0.06); color: #ffffff; text-decoration: none; margin-bottom: 8px; font-size: 0.85rem; font-weight: 700; }
+  .browser-btn:active { background: rgba(245,158,11,0.2); }
   .browser-btn .icon { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
   .browser-btn .name { flex: 1; }
   .browser-btn .arrow { color: #ffd166; font-weight: bold; }
@@ -219,7 +245,30 @@
   .welcome-check input[type="checkbox"] { width: 20px; height: 20px; accent-color: #f59e0b; cursor: pointer; }
   .welcome-check label { font-size: 0.85rem; color: #fff; cursor: pointer; flex: 1; font-weight: 700; }
   .welcome-btn-done { padding: 14px 18px; border-radius: 12px; border: none; background: linear-gradient(135deg, #f59e0b, #ff4d6d); color: white; font-weight: 900; font-size: 0.92rem; cursor: pointer; width: 100%; }
+  .welcome-btn-done:active { transform: scale(0.98); }
   .welcome-btn-skip { padding: 11px 18px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2); background: transparent; color: rgba(255,255,255,0.7); font-weight: 700; font-size: 0.82rem; cursor: pointer; width: 100%; margin-top: 8px; }
+  .welcome-btn-skip:active { background: rgba(255,255,255,0.08); }
+
+  /* ===== Desktop এ hover effect ===== */
+  @media (hover: hover) and (pointer: fine) {
+    .icon-btn:hover { background: var(--card2); }
+    .card:hover { transform: translateY(-2px); }
+    .sug-item:hover { background: var(--card2); }
+    .ctrl-btn:hover { background: var(--orange); color: white; border-color: var(--orange); }
+    .lang-tab:hover { border-color: var(--muted); }
+    .server-tab:hover { background: var(--card2); }
+    .ep-cell:hover { background: var(--card2); }
+    .watch-now-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255,102,51,0.5); }
+    .watch-link-btn:hover { transform: translateY(-2px); }
+    .watchlist-btn:hover { background: var(--accent); color: white; }
+    .btn-play:hover { transform: translateY(-2px); }
+    .dl-icon-btn:hover { transform: scale(1.08); }
+    .range-selector button:hover { background: var(--card2); }
+    .ep-tool:hover { background: var(--card2); }
+    .filter-btn:hover { background: var(--card2); }
+    .section-head .clear-btn:hover { background: #ef4444; color: white; }
+    .welcome-btn-done:hover { transform: translateY(-2px); }
+  }
 </style>
 </head>
 <body>
@@ -399,9 +448,6 @@ var watchRangeSize = 100;
 var ANILIST_URL = 'https://graphql.anilist.co';
 var QUERY = 'query ($search: String, $genre: String, $sort: [MediaSort], $perPage: Int) { Page(page: 1, perPage: $perPage) { media(type: ANIME, search: $search, genre: $genre, sort: $sort, isAdult: false) { id title { romaji english } description(asHtml: false) coverImage { extraLarge large } bannerImage episodes nextAiringEpisode { episode } averageScore format startDate { year } genres trailer { id site } } } }';
 
-/* ============================================================
-   ⭐⭐ VIDEO_DATA — Server 1 = Streamtape (default) ⭐⭐
-   ============================================================ */
 var VIDEO_DATA = {
   97940: {
     sub: [
@@ -429,7 +475,6 @@ var VIDEO_DATA = {
     bangla: [{ name: "Server 1", embed: "https://streamtape.com/e/eoYOmAJ6LoTZjM/" }]
   },
 
-  /* ⭐⭐ Solo Leveling — Episode-based, Streamtape = Server 1 ⭐⭐ */
   151807: {
     sub: [
       { name: "Server 1", embed: "https://streamtape.com/e/2a3KAG3bXJIZXm4/" },
@@ -459,27 +504,13 @@ var VIDEO_DATA = {
         { name: "Server 1", embed: "https://streamtape.com/e/kqy0V4XrVytOkbq/" },
         { name: "Server 2", embed: "https://bysefujedu.com/e/5ntowatrpmx1/" }
       ],
-      6: [
-        { name: "Server 1", embed: "https://streamtape.com/e/rbrqAwkB7vibmK7/" }
-      ],
-      7: [
-        { name: "Server 1", embed: "https://streamtape.com/e/myo68lGoL6TbooQ/" }
-      ],
-      8: [
-        { name: "Server 1", embed: "https://streamtape.com/e/Jegdz9ApDPUjYjP/" }
-      ],
-      9: [
-        { name: "Server 1", embed: "https://streamtape.com/e/D0A2kx0z2kTklp7/" }
-      ],
-      10: [
-        { name: "Server 1", embed: "https://streamtape.com/e/4D4GX2VX3lFpDK/" }
-      ],
-      11: [
-        { name: "Server 1", embed: "https://streamtape.com/e/4AYAKV39gmcKlvV/" }
-      ],
-      12: [
-        { name: "Server 1", embed: "https://streamtape.com/e/0B9AYqBXqgFbbvW/" }
-      ]
+      6: [{ name: "Server 1", embed: "https://streamtape.com/e/rbrqAwkB7vibmK7/" }],
+      7: [{ name: "Server 1", embed: "https://streamtape.com/e/myo68lGoL6TbooQ/" }],
+      8: [{ name: "Server 1", embed: "https://streamtape.com/e/Jegdz9ApDPUjYjP/" }],
+      9: [{ name: "Server 1", embed: "https://streamtape.com/e/D0A2kx0z2kTklp7/" }],
+      10: [{ name: "Server 1", embed: "https://streamtape.com/e/4D4GX2VX3lFpDK/" }],
+      11: [{ name: "Server 1", embed: "https://streamtape.com/e/4AYAKV39gmcKlvV/" }],
+      12: [{ name: "Server 1", embed: "https://streamtape.com/e/0B9AYqBXqgFbbvW/" }]
     },
     bangla: []
   }
@@ -724,12 +755,12 @@ function updateContinueRow() {
 }
 function makeContinueCard(h) {
   var score = (h.score && h.score!=='N/A') ? '<div class="card-score">★ '+h.score+'</div>' : '';
-  return '<div class="card" onclick="openDetails('+h.mal_id+')"><div class="card-img"><img src="'+h.img+'" loading="lazy" onerror="this.style.opacity=0.2">'+score+'<div class="hist-time">🕐 '+timeAgo(h.watchedAt)+'</div><div class="card-play"></div></div><div class="card-title">'+h.title+'</div><div class="card-sub" style="color:var(--orange);font-weight:700;">▶ '+h.episode+'</div></div>';
+  return '<div class="card" onclick="openDetails('+h.mal_id+')"><div class="card-img"><img src="'+h.img+'" loading="lazy" onerror="this.style.opacity=0.2">'+score+'<div class="hist-time">🕐 '+timeAgo(h.watchedAt)+'</div></div><div class="card-title">'+h.title+'</div><div class="card-sub" style="color:var(--orange);font-weight:700;">▶ '+h.episode+'</div></div>';
 }
 function makeCard(a) {
   var badge = (a.episodes && String(a.episodes).indexOf('+')>=0) ? '<div class="card-badge">ONGOING</div>' : '';
   var score = (a.score && a.score!=='N/A') ? '<div class="card-score">★ '+a.score+'</div>' : '';
-  return '<div class="card" onclick="openDetails('+a.mal_id+')"><div class="card-img"><img src="'+a.img+'" loading="lazy" onerror="this.style.opacity=0.2">'+badge+score+'<div class="card-play"></div></div><div class="card-title">'+a.title+'</div><div class="card-sub">'+((a.type||'TV')+' • '+(a.episodes||'?')+' eps')+'</div></div>';
+  return '<div class="card" onclick="openDetails('+a.mal_id+')"><div class="card-img"><img src="'+a.img+'" loading="lazy" onerror="this.style.opacity=0.2">'+badge+score+'</div><div class="card-title">'+a.title+'</div><div class="card-sub">'+((a.type||'TV')+' • '+(a.episodes||'?')+' eps')+'</div></div>';
 }
 function renderAnime(list){ currentList=list; if(!list||list.length===0){ statusEl.textContent='Kono anime paoa gelo na.'; grid.innerHTML=''; return; } statusEl.textContent=''; var h=''; for(var i=0;i<list.length;i++) h += makeCard(list[i]); grid.innerHTML=h; }
 
