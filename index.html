@@ -6,8 +6,9 @@
 <title>AnbuKai Anime</title>
 <meta name="google-site-verification" content="OK1razUv1UOsWUr0ZHZYsJ2lZ4-r21DB4BDC9Wf1e4E" />
 <link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/svg+xml" href="logo.svg">
+<link rel="apple-touch-icon" href="logo.svg">
 <meta name="theme-color" content="#ff4d6d">
-<link rel="apple-touch-icon" href="https://cdn.myanimelist.net/images/anime/2/88336.jpg">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="AnbuKai">
@@ -123,10 +124,11 @@
     content: '';
     position: absolute;
     inset: 0;
-    background-image: url('https://cdn.myanimelist.net/images/anime/2/88336.jpg');
-    background-size: cover;
-    background-position: center top;
-    opacity: 0.25;
+    background-image: url('logo.svg');
+    background-size: 60%;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.15;
     z-index: 0;
   }
   .welcome-box::after {
@@ -936,4 +938,4 @@ loadTop();
 setTimeout(showWelcome, 1500);
 </script>
 </body>
-        </html>
+  </html>
