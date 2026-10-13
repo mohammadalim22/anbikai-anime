@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Dark background with rounded corners for app icon -->
+  <rect width="512" height="512" rx="96" fill="#000000"/>
+
+  <!-- White circle -->
+  <circle cx="256" cy="256" r="210" fill="#ffffff"/>
+
+  <!-- "Anbu" (black) + "Kai" (green) - first line -->
+  <text x="256" y="242"
+        font-family="Arial Black, Arial, Helvetica, sans-serif"
+        font-size="88"
+        font-weight="900"
+        text-anchor="middle"
+        letter-spacing="-2">
+    <tspan fill="#000000">Anbu</tspan><tspan fill="#22c55e">Kai</tspan>
+  </text>
+
+  <!-- "Anime" (black) - second line -->
+  <text x="256" y="325"
+        font-family="Arial Black, Arial, Helvetica, sans-serif"
+        font-size="72"
+        font-weight="900"
+        fill="#000000"
+        text-anchor="middle"
+        letter-spacing="-1">Anime</text>
+</svg>
