@@ -25,7 +25,7 @@
   .logo-text .w { color: var(--text); }
   .logo-text .g { color: var(--accent2); }
   .header-right { display: flex; gap: 8px; align-items: center; }
-  .icon-btn { background: var(--card); border: 1px solid var(--border); color: var(--text); width: 42px; height: 42px; border-radius: 50%; cursor: pointer; font-size: 1.15rem; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+  .icon-btn { background: var(--card); border: 1px solid var(--border); color: var(--text); width: 42px; height: 42px; border-radius: 50%; cursor: pointer; font-size: 1.15rem; display: flex; align-items: center; justify-content: center; }
   .icon-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
 
   .search-bar { padding: 0 16px 14px; max-width: 1000px; margin: 0 auto; display: none; }
@@ -33,7 +33,7 @@
   .search-box { display: flex; gap: 8px; align-items: center; background: var(--input-bg); border: 1px solid var(--border); border-radius: 14px; padding: 6px 6px 6px 16px; }
   .search-box input { flex: 1; background: transparent; border: none; color: var(--text); padding: 10px 0; outline: none; font-size: 0.92rem; font-family: inherit; }
   .search-box input::placeholder { color: var(--muted); }
-  .filter-btn { background: var(--card); border: none; color: var(--muted); padding: 10px 16px; border-radius: 10px; font-weight: 800; cursor: pointer; font-size: 0.78rem; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px; }
+  .filter-btn { background: var(--card); border: none; color: var(--muted); padding: 10px 16px; border-radius: 10px; font-weight: 800; cursor: pointer; font-size: 0.78rem; }
   .search-wrap { position: relative; flex: 1; }
   .suggestions { position: absolute; top: 100%; left: 0; right: 0; background: var(--card); border: 1px solid var(--border); border-radius: 12px; margin-top: 6px; max-height: 350px; overflow-y: auto; display: none; z-index: 60; box-shadow: 0 12px 30px rgba(0,0,0,0.6); }
   .suggestions.active { display: block; }
@@ -50,12 +50,12 @@
   .hero-slide img { width: 100%; height: 100%; object-fit: cover; }
   .hero-slide::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 0%, rgba(10,10,15,0.6) 55%, var(--bg) 100%); }
   .hero-content { position: absolute; left: 0; right: 0; bottom: 0; padding: 26px 20px 20px; z-index: 2; }
-  .hero-title { font-size: 1.8rem; font-weight: 900; line-height: 1.15; margin-bottom: 10px; text-shadow: 0 2px 14px rgba(0,0,0,0.95); letter-spacing: -0.5px; }
+  .hero-title { font-size: 1.8rem; font-weight: 900; line-height: 1.15; margin-bottom: 10px; text-shadow: 0 2px 14px rgba(0,0,0,0.95); }
   .hero-meta { display: flex; gap: 8px; font-size: 0.78rem; color: #ddd; margin-bottom: 16px; flex-wrap: wrap; }
-  .hero-meta span { background: rgba(255,255,255,0.15); padding: 4px 12px; border-radius: 999px; backdrop-filter: blur(8px); font-weight: 600; }
+  .hero-meta span { background: rgba(255,255,255,0.15); padding: 4px 12px; border-radius: 999px; font-weight: 600; }
   .hero-actions { display: flex; gap: 10px; }
   .btn-play { background: var(--orange); color: white; border: none; padding: 13px 28px; border-radius: 12px; font-weight: 900; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 6px 20px rgba(255,102,51,0.4); }
-  .btn-bookmark { background: var(--accent2); color: white; border: none; padding: 13px 20px; border-radius: 12px; font-weight: 900; cursor: pointer; font-size: 1.1rem; box-shadow: 0 6px 20px rgba(34,197,94,0.3); }
+  .btn-bookmark { background: var(--accent2); color: white; border: none; padding: 13px 20px; border-radius: 12px; font-weight: 900; cursor: pointer; font-size: 1.1rem; }
   .hero-dots { display: flex; justify-content: center; gap: 8px; position: absolute; top: 20px; right: 20px; z-index: 5; }
   .hero-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.4); border: none; cursor: pointer; padding: 0; }
   .hero-dot.active { background: var(--orange); width: 24px; border-radius: 999px; }
@@ -63,7 +63,7 @@
   .section-head { display: flex; align-items: center; justify-content: space-between; padding: 20px 16px 12px; max-width: 1200px; margin: 0 auto; gap: 10px; }
   .section-head h2 { font-size: 1.1rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.8px; display: flex; align-items: center; gap: 8px; }
   .section-head .clear-btn { background: transparent; border: 1px solid #ef4444; color: #ef4444; padding: 6px 14px; border-radius: 999px; cursor: pointer; font-size: 0.72rem; font-weight: 800; }
-  .tag-on { background: var(--accent); color: white; padding: 2px 8px; border-radius: 5px; font-size: 0.6rem; font-weight: 900; letter-spacing: 0.5px; }
+  .tag-on { background: var(--accent); color: white; padding: 2px 8px; border-radius: 5px; font-size: 0.6rem; font-weight: 900; }
 
   .hscroll { display: flex; gap: 12px; overflow-x: auto; padding: 4px 16px 20px; max-width: 1200px; margin: 0 auto; scrollbar-width: none; }
   .hscroll::-webkit-scrollbar { display: none; }
@@ -88,7 +88,7 @@
   .watch-page { display: none; }
   .watch-page.active { display: block; }
   .breadcrumb { max-width: 1200px; margin: 0 auto; padding: 8px 16px 14px; font-size: 0.82rem; color: var(--muted); display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-  .breadcrumb a { color: var(--muted); text-decoration: none; display: flex; align-items: center; gap: 4px; }
+  .breadcrumb a { color: var(--muted); text-decoration: none; }
   .breadcrumb .sep { color: var(--border); font-weight: 900; }
   .breadcrumb .current { color: var(--text); font-weight: 800; }
 
@@ -119,10 +119,9 @@
 
   .episodes-panel { max-width: 1200px; margin: 0 auto; padding: 20px 16px; background: var(--bg2); border-radius: 14px; border: 1px solid var(--border); }
   .ep-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
-  .ep-head h3 { font-size: 1.25rem; font-weight: 900; letter-spacing: -0.3px; }
+  .ep-head h3 { font-size: 1.25rem; font-weight: 900; }
   .ep-tools { display: flex; gap: 8px; }
   .ep-tool { background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 9px 14px; border-radius: 9px; cursor: pointer; font-size: 0.9rem; font-weight: 700; display: flex; align-items: center; gap: 6px; }
-  .ep-tool .find-label { font-weight: 800; }
   .ep-tool .find-input { background: transparent; border: none; color: inherit; font-family: inherit; font-size: 0.9rem; font-weight: 800; width: 0; padding: 0; outline: none; transition: width 0.25s, padding 0.25s; }
   .ep-tool.expanded .find-input { width: 60px; padding-left: 4px; }
   .ep-tool.expanded .find-hash { display: none; }
@@ -150,7 +149,7 @@
   .genre-tag { background: var(--card2); color: var(--text); padding: 5px 14px; border-radius: 8px; font-size: 0.74rem; border: 1px solid var(--border); font-weight: 700; }
   .synopsis { font-size: 0.88rem; line-height: 1.65; margin-bottom: 20px; color: #d0d0d8; }
   .section-title { font-size: 0.95rem; margin: 22px 0 12px; color: var(--orange); border-bottom: 1px solid var(--border); padding-bottom: 8px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.8px; }
-  .watch-now-btn { width: 100%; padding: 16px; border-radius: 12px; background: var(--orange); color: white; border: none; font-weight: 900; font-size: 1rem; cursor: pointer; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 6px 20px rgba(255,102,51,0.4); letter-spacing: 0.5px; }
+  .watch-now-btn { width: 100%; padding: 16px; border-radius: 12px; background: var(--orange); color: white; border: none; font-weight: 900; font-size: 1rem; cursor: pointer; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 6px 20px rgba(255,102,51,0.4); }
   .watch-links { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
   .watch-link-btn { display: inline-flex; align-items: center; gap: 6px; padding: 11px 18px; border-radius: 9px; text-decoration: none; color: white; font-weight: 800; font-size: 0.82rem; }
   .wl-crunchyroll { background: #f47521; }
@@ -193,7 +192,7 @@
   .welcome-main-text { text-align: center; font-size: 0.95rem; color: #ffffff; font-weight: 700; line-height: 1.7; margin-bottom: 20px; padding: 14px 12px; background: rgba(0,0,0,0.5); border-radius: 12px; border: 1px solid rgba(245,158,11,0.4); }
   .welcome-main-text .hl { color: #ffd166; font-weight: 900; }
   .welcome-section { background: rgba(0,0,0,0.5); padding: 14px; border-radius: 12px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.1); }
-  .welcome-section h4 { font-size: 0.78rem; color: #ffd166; margin-bottom: 12px; font-weight: 800; letter-spacing: 0.5px; }
+  .welcome-section h4 { font-size: 0.78rem; color: #ffd166; margin-bottom: 12px; font-weight: 800; }
   .browser-btn { display: flex; align-items: center; gap: 10px; padding: 11px 14px; border-radius: 10px; background: rgba(255,255,255,0.06); color: #ffffff; text-decoration: none; margin-bottom: 8px; font-size: 0.85rem; font-weight: 700; }
   .browser-btn .icon { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
   .browser-btn .name { flex: 1; }
@@ -384,14 +383,12 @@ var ANILIST_URL = 'https://graphql.anilist.co';
 var QUERY = 'query ($search: String, $genre: String, $sort: [MediaSort], $perPage: Int) { Page(page: 1, perPage: $perPage) { media(type: ANIME, search: $search, genre: $genre, sort: $sort, isAdult: false) { id title { romaji english } description(asHtml: false) coverImage { extraLarge large } bannerImage episodes nextAiringEpisode { episode } averageScore format startDate { year } genres trailer { id site } } } }';
 
 /* ========================================================
-   ⭐⭐ VIDEO_DATA — প্রতিটা anime-এর ভাষা-ভিত্তিক ভিডিও ⭐⭐
-
+   ⭐⭐ VIDEO_DATA — সব anime + language ভিত্তিক ভিডিও ⭐⭐
+   
    sub    = English Subtitle (Japanese audio)
    dub    = English Dub
    hindi  = Hindi Dub
    bangla = Bengali Dub
-
-   ⚠️ শুধু যেই language-এ ভিডিও আছে, সেটাই দেখাবে
    ======================================================== */
 var VIDEO_DATA = {
   /* Black Clover (AniList ID: 97940) */
@@ -414,7 +411,7 @@ var VIDEO_DATA = {
     ]
   },
 
-  /* ⭐ Naruto Shippuden (AniList ID: 1735) — ৪ ভাষায় ⭐ */
+  /* Naruto Shippuden (AniList ID: 1735) */
   1735: {
     sub: [
       { name: "Japanese", embed: "https://streamtape.com/e/PW4m8D2oGeI0ORJ/" }
@@ -428,12 +425,27 @@ var VIDEO_DATA = {
     bangla: [
       { name: "Bengali", embed: "https://streamtape.com/e/eoYOmAJ6LoTZjM/" }
     ]
+  },
+
+  /* ⭐⭐ Solo Leveling (AniList ID: 151807) — ৩ ভাষায় ⭐⭐ */
+  151807: {
+    sub: [
+      { name: "Japanese", embed: "https://streamtape.com/e/2a3KAG3bXJIZXm4/" }
+    ],
+    dub: [
+      { name: "English", embed: "https://streamtape.com/e/xqAMwoYg6khkbXV/" }
+    ],
+    hindi: [
+      { name: "Hindi", embed: "https://streamtape.com/e/dpjZ9KbK4GSk8Wl/" }
+    ],
+    bangla: []
   }
 };
 
 var WATCH_LINKS = {
   97940: [{ platform: "crunchyroll", url: "https://www.crunchyroll.com/series/GRE50VZWR/black-clover" }, { platform: "netflix", url: "https://www.netflix.com/title/80238012" }],
   1735: [{ platform: "crunchyroll", url: "https://www.crunchyroll.com/naruto-shippuden" }],
+  151807: [{ platform: "crunchyroll", url: "https://www.crunchyroll.com/series/GDKHZEJ0K/solo-leveling" }],
   21: [{ platform: "crunchyroll", url: "https://www.crunchyroll.com/one-piece" }, { platform: "netflix", url: "https://www.netflix.com/title/80107103" }],
   20: [{ platform: "crunchyroll", url: "https://www.crunchyroll.com/naruto" }, { platform: "netflix", url: "https://www.netflix.com/title/70205012" }],
   38000: [{ platform: "crunchyroll", url: "https://www.crunchyroll.com/demon-slayer-kimetsu-no-yaiba" }, { platform: "netflix", url: "https://www.netflix.com/title/81091393" }],
@@ -446,7 +458,8 @@ function langIcon(l) { var m = { sub: '<span class="cc-icon">CC</span>', dub: '�
 function langLabel(l) { var m = { sub: "Soft Sub", dub: "Dub", hindi: "Hindi", bangla: "Bangla" }; return m[l] || l; }
 
 var fallbackAnime = [
-  { mal_id: 1735, title: "Naruto Shippuden", score: 8.3, type: "TV", episodes: 500, img: "https://cdn.myanimelist.net/images/anime/5/17407.jpg", banner: "https://cdn.myanimelist.net/images/anime/5/17407.jpg", synopsis: "Naruto returns from training with Jiraiya to face the Akatsuki and protect the Hidden Leaf Village.", genres: ["Action","Adventure"], trailer: "https://www.youtube.com/embed/1M3H1yL2QeE", year: 2007 },
+  { mal_id: 151807, title: "Solo Leveling", score: 8.3, type: "TV", episodes: 12, img: "https://cdn.myanimelist.net/images/anime/1779/141555.jpg", banner: "https://cdn.myanimelist.net/images/anime/1779/141555.jpg", synopsis: "In a world of hunters and monsters, the weakest hunter Sung Jinwoo gains a mysterious power to level up endlessly.", genres: ["Action","Adventure","Fantasy"], trailer: "https://www.youtube.com/embed/I6MQB0ELRsA", year: 2024 },
+  { mal_id: 1735, title: "Naruto Shippuden", score: 8.3, type: "TV", episodes: 500, img: "https://cdn.myanimelist.net/images/anime/5/17407.jpg", banner: "https://cdn.myanimelist.net/images/anime/5/17407.jpg", synopsis: "Naruto returns from training with Jiraiya to face the Akatsuki.", genres: ["Action","Adventure"], trailer: "https://www.youtube.com/embed/1M3H1yL2QeE", year: 2007 },
   { mal_id: 21, title: "One Piece", score: 8.7, type: "TV", episodes: "1100+", img: "https://cdn.myanimelist.net/images/anime/6/73245.jpg", banner: "https://cdn.myanimelist.net/images/anime/6/73245.jpg", synopsis: "Monkey D. Luffy sets off on an adventure to find the legendary One Piece treasure.", genres: ["Action","Adventure","Fantasy"], trailer: "https://www.youtube.com/embed/MCb13lbVGE0", year: 1999 },
   { mal_id: 20, title: "Naruto", score: 8.0, type: "TV", episodes: 220, img: "https://cdn.myanimelist.net/images/anime/13/17405.jpg", banner: "https://cdn.myanimelist.net/images/anime/13/17405.jpg", synopsis: "Naruto Uzumaki, a young ninja with a sealed demon fox inside him.", genres: ["Action","Adventure"], trailer: "https://www.youtube.com/embed/QczGoCmX-pI", year: 2002 },
   { mal_id: 38000, title: "Demon Slayer", score: 8.5, type: "TV", episodes: 55, img: "https://cdn.myanimelist.net/images/anime/1286/99889.jpg", banner: "https://cdn.myanimelist.net/images/anime/1286/99889.jpg", synopsis: "Tanjiro becomes a demon slayer to avenge his family.", genres: ["Action","Supernatural"], trailer: "https://www.youtube.com/embed/VQGCKyvzIM4", year: 2019 },
@@ -516,8 +529,6 @@ function goHome(){
   loadTop();
 }
 
-function isModalOpen() { var o = document.getElementById('animeModalOverlay'); return !!(o && o.classList.contains('active')); }
-function isWatchOpen() { return document.getElementById('watchPage').classList.contains('active'); }
 function hideAnimeModal(){ var overlay = document.getElementById('animeModalOverlay'); if(overlay) overlay.classList.remove('active'); document.body.style.overflow = ''; }
 
 function findAnimeById(id) {
@@ -921,23 +932,11 @@ document.addEventListener('click', function(e) {
 
 window.addEventListener('popstate', function(e) {
   var state = e.state || { view: 'home' };
-
-  if (state.view === 'watch' && watchAnime && watchAnime.mal_id === state.animeId) {
-    hideAnimeModal();
-    showWatchView();
-    return;
-  }
-
+  if (state.view === 'watch' && watchAnime && watchAnime.mal_id === state.animeId) { hideAnimeModal(); showWatchView(); return; }
   if (state.view === 'details') {
     var a = findAnimeById(state.animeId);
-    if (a) {
-      showHomeView();
-      window._currentModalAnime = a;
-      showAnimeModal(a);
-      return;
-    }
+    if (a) { showHomeView(); window._currentModalAnime = a; showAnimeModal(a); return; }
   }
-
   hideAnimeModal();
   showHomeView();
   loadTop();
@@ -958,4 +957,4 @@ loadTop();
 setTimeout(showWelcome, 1500);
 </script>
 </body>
-  </html>
+      </html>
