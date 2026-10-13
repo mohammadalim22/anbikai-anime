@@ -383,9 +383,13 @@ var watchRangeSize = 100;
 var ANILIST_URL = 'https://graphql.anilist.co';
 var QUERY = 'query ($search: String, $genre: String, $sort: [MediaSort], $perPage: Int) { Page(page: 1, perPage: $perPage) { media(type: ANIME, search: $search, genre: $genre, sort: $sort, isAdult: false) { id title { romaji english } description(asHtml: false) coverImage { extraLarge large } bannerImage episodes nextAiringEpisode { episode } averageScore format startDate { year } genres trailer { id site } } } }';
 
-/* ========================================================
-   ⭐⭐ VIDEO_DATA — Server 1 (Filemoon) always first ⭐⭐
-   ======================================================== */
+/* ============================================================
+   ⭐⭐ VIDEO_DATA — Episode-based for Solo Leveling ⭐⭐
+   
+   Format:
+   - Plain array: same video plays for ALL episodes
+   - Object with {epNum: [...]}: specific video per episode
+   ============================================================ */
 var VIDEO_DATA = {
   97940: {
     sub: [
@@ -421,7 +425,7 @@ var VIDEO_DATA = {
     ]
   },
 
-  /* Solo Leveling — Filemoon always Server 1 */
+  /* ⭐⭐ Solo Leveling — Episode-based Hindi ⭐⭐ */
   151807: {
     sub: [
       { name: "Server 1", embed: "https://bysefujedu.com/e/3r4nyti9w1d0/" },
@@ -431,10 +435,24 @@ var VIDEO_DATA = {
       { name: "Server 1", embed: "https://bysefujedu.com/e/759arii02xep/" },
       { name: "Server 2", embed: "https://streamtape.com/e/xqAMwoYg6khkbXV/" }
     ],
-    hindi: [
-      { name: "Server 1", embed: "https://bysefujedu.com/e/n2aanl7bpp5u/" },
-      { name: "Server 2", embed: "https://streamtape.com/e/dpjZ9KbK4GSk8Wl/" }
-    ],
+    hindi: {
+      1: [
+        { name: "Server 1", embed: "https://bysefujedu.com/e/n2aanl7bpp5u/" },
+        { name: "Server 2", embed: "https://streamtape.com/e/dpjZ9KbK4GSk8Wl/" }
+      ],
+      2: [
+        { name: "Server 1", embed: "https://bysefujedu.com/e/ayawbozdtk23/" }
+      ],
+      3: [
+        { name: "Server 1", embed: "https://streamtape.com/e/qxdL08gR1Liab6/" }
+      ],
+      4: [
+        { name: "Server 1", embed: "https://bysefujedu.com/e/kk06tmtp0btu/" }
+      ],
+      5: [
+        { name: "Server 1", embed: "https://bysefujedu.com/e/5ntowatrpmx1/" }
+      ]
+    },
     bangla: []
   }
 };
@@ -454,7 +472,6 @@ function platformIcon(p) { var m={crunchyroll:"🟠",netflix:"🔴",hulu:"🟢",
 function langIcon(l) { var m = { sub: '<span class="cc-icon">CC</span>', dub: '🎤', hindi: '🇮🇳', bangla: '🇧🇩' }; return m[l] || ''; }
 function langLabel(l) { var m = { sub: "Soft Sub", dub: "Dub", hindi: "Hindi", bangla: "Bangla" }; return m[l] || l; }
 
-/* Download link auto-detect */
 function getDownloadUrl(embed) {
   if (!embed) return '';
   if (embed.indexOf('streamtape.com/e/') >= 0) return embed.replace('/e/', '/v/');
@@ -462,6 +479,37 @@ function getDownloadUrl(embed) {
   if (embed.indexOf('filemoon.sx/e/') >= 0) return embed.replace('/e/', '/d/');
   if (embed.indexOf('dood.li/e/') >= 0) return embed.replace('/e/', '/d/');
   return '';
+}
+
+/* ============================================================
+   Helper: Get servers for a specific episode
+   - If lang data is Array → return it (applies to all episodes)
+   - If lang data is Object → return servers for that episode
+   ============================================================ */
+function getServersForEpisode(animeId, lang, epNum) {
+  var data = VIDEO_DATA[animeId] || {};
+  var langData = data[lang];
+  if (!langData) return [];
+  if (Array.isArray(langData)) return langData;
+  return langData[epNum] || [];
+}
+
+/* Check if a language has any videos at all */
+function hasAnyVideos(animeId, lang) {
+  var data = VIDEO_DATA[animeId] || {};
+  var langData = data[lang];
+  if (!langData) return false;
+  if (Array.isArray(langData)) return langData.length > 0;
+  return Object.keys(langData).length > 0;
+}
+
+/* Get total available episodes for a language (or null if array = all episodes) */
+function getAvailableEpisodes(animeId, lang) {
+  var data = VIDEO_DATA[animeId] || {};
+  var langData = data[lang];
+  if (!langData) return null;
+  if (Array.isArray(langData)) return null; // applies to all
+  return Object.keys(langData).map(Number).sort(function(a,b){return a-b;});
 }
 
 var fallbackAnime = [
@@ -708,7 +756,7 @@ function showAnimeModal(a) {
   if(a.genres && a.genres.length){ html += '<div class="genres">'; for(var i=0;i<a.genres.length;i++) html += '<span class="genre-tag">'+a.genres[i]+'</span>'; html += '</div>'; }
   html += '<p class="synopsis">'+(a.synopsis||'No description available.')+'</p>';
 
-  var hasVideoData = VIDEO_DATA[a.mal_id] && (VIDEO_DATA[a.mal_id].sub || VIDEO_DATA[a.mal_id].dub || VIDEO_DATA[a.mal_id].hindi || VIDEO_DATA[a.mal_id].bangla);
+  var hasVideoData = VIDEO_DATA[a.mal_id] && (hasAnyVideos(a.mal_id, 'sub') || hasAnyVideos(a.mal_id, 'dub') || hasAnyVideos(a.mal_id, 'hindi') || hasAnyVideos(a.mal_id, 'bangla'));
   if (hasVideoData) {
     html += '<button class="watch-now-btn" onclick="startWatching()">▶ Watch Now</button>';
   } else {
@@ -793,8 +841,7 @@ function startWatching() {
 
 function pickFirstAvailableLang(id) {
   var langs = ['sub','dub','hindi','bangla'];
-  var data = VIDEO_DATA[id] || {};
-  for (var i=0;i<langs.length;i++) if (data[langs[i]] && data[langs[i]].length>0) return langs[i];
+  for (var i=0;i<langs.length;i++) if (hasAnyVideos(id, langs[i])) return langs[i];
   return 'sub';
 }
 
@@ -809,12 +856,11 @@ function renderBreadcrumb() {
 
 function renderLangTabs() {
   var tabs = document.getElementById('langTabs');
-  var data = VIDEO_DATA[watchAnime.mal_id] || {};
   var langs = ['sub','dub','hindi','bangla'];
   var html = '';
   for (var i=0;i<langs.length;i++) {
     var l = langs[i];
-    var available = data[l] && data[l].length>0;
+    var available = hasAnyVideos(watchAnime.mal_id, l);
     var activeClass = (watchCurrentLang===l) ? ' active' : '';
     var disabledAttr = available ? '' : ' disabled style="opacity:0.35;cursor:not-allowed;"';
     var clickAttr = available ? ' onclick="switchLang(\''+l+'\')"' : '';
@@ -828,27 +874,33 @@ function renderLangTabs() {
 function switchLang(l) {
   watchCurrentLang = l;
   watchCurrentServer = 0;
+  /* Reset to first available episode for this language */
+  var available = getAvailableEpisodes(watchAnime.mal_id, l);
+  if (available && available.length > 0) {
+    /* If current episode not available, jump to first available */
+    if (available.indexOf(watchCurrentEp) === -1) watchCurrentEp = available[0];
+  }
   renderLangTabs();
   renderServerTabs();
+  renderEpisodeGrid();
   loadVideo();
 }
 
 function renderServerTabs() {
   var row = document.getElementById('serverTabs');
-  var data = VIDEO_DATA[watchAnime.mal_id] || {};
-  var servers = data[watchCurrentLang] || [];
+  var servers = getServersForEpisode(watchAnime.mal_id, watchCurrentLang, watchCurrentEp);
   var html = '';
+  if (servers.length === 0) {
+    html = '<div style="color:var(--muted);font-size:0.85rem;padding:10px;">Episode '+watchCurrentEp+' — ei language e paoa gelo na.</div>';
+    row.innerHTML = html;
+    return;
+  }
   for (var i=0;i<servers.length;i++) {
     html += '<button class="server-tab'+(watchCurrentServer===i?' active':'')+'" onclick="switchServer('+i+')">'+servers[i].name+'</button>';
   }
-  /* Add download icon button */
-  if (servers.length > 0) {
-    var current = servers[watchCurrentServer] || servers[0];
-    var dlUrl = getDownloadUrl(current.embed);
-    if (dlUrl) {
-      html += '<a class="dl-icon-btn" href="'+dlUrl+'" target="_blank" title="Download">⬇</a>';
-    }
-  }
+  var current = servers[watchCurrentServer] || servers[0];
+  var dlUrl = getDownloadUrl(current.embed);
+  if (dlUrl) html += '<a class="dl-icon-btn" href="'+dlUrl+'" target="_blank" title="Download">⬇</a>';
   row.innerHTML = html;
 }
 
@@ -859,10 +911,13 @@ function switchServer(i) {
 }
 
 function loadVideo() {
-  var data = VIDEO_DATA[watchAnime.mal_id] || {};
-  var servers = data[watchCurrentLang] || [];
+  var servers = getServersForEpisode(watchAnime.mal_id, watchCurrentLang, watchCurrentEp);
   var player = document.getElementById('watchPlayer');
-  if (!servers.length) { player.innerHTML = '<div class="player-empty">Ei language e video paoa gelo na.</div>'; return; }
+  if (!servers.length) {
+    player.innerHTML = '<div class="player-empty">Ei language e Episode '+watchCurrentEp+' er video paoa gelo na.</div>';
+    document.getElementById('watchingEpText').textContent = 'Episode '+watchCurrentEp;
+    return;
+  }
   var s = servers[watchCurrentServer] || servers[0];
   var embed = s.embed;
   if (!disclaimerAccepted) {
@@ -902,7 +957,9 @@ function selectEpisode(n) {
   if (n < watchRangeStart || n >= watchRangeStart + watchRangeSize) {
     watchRangeStart = Math.floor((n-1)/watchRangeSize)*watchRangeSize + 1;
   }
+  watchCurrentServer = 0;
   renderEpisodeGrid();
+  renderServerTabs();
   loadVideo();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -972,4 +1029,4 @@ loadTop();
 setTimeout(showWelcome, 1500);
 </script>
 </body>
-  </html>
+        </html>
