@@ -12,30 +12,33 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="AnbuKai">
 <style>
-  :root { --bg:#0a0a0f; --bg2:#101018; --card:#15151f; --card2:#1c1c28; --text:#f5f5f5; --muted:#8b8b9a; --accent:#ff4d6d; --accent2:#22c55e; --orange:#f97316; --border:#22222e; --input-bg:#12121a; --score:#f5c518; }
+  :root { --bg:#0a0a0f; --bg2:#101018; --card:#16161f; --card2:#1e1e2a; --text:#f5f5f5; --muted:#8b8b9a; --accent:#ff4d6d; --accent2:#22c55e; --orange:#ff6633; --border:#232330; --input-bg:#12121a; --score:#f5c518; }
   body.light { --bg:#f7f7fa; --bg2:#fff; --card:#fff; --card2:#f0f0f5; --text:#1a1a1a; --muted:#6b6b76; --border:#e0e0e8; --input-bg:#f2f2f7; --score:#d4a017; }
   * { box-sizing: border-box; margin:0; padding:0; }
   body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; padding-bottom: 30px; }
 
-  header { padding: 12px 16px; background: var(--bg); display: flex; align-items: center; justify-content: space-between; gap: 10px; position: sticky; top: 0; z-index: 50; }
+  /* HEADER */
+  header { padding: 12px 16px; background: var(--bg); display: flex; align-items: center; justify-content: space-between; gap: 10px; position: sticky; top: 0; z-index: 50; border-bottom: 1px solid transparent; }
   .logo-wrap { display: flex; align-items: center; gap: 8px; cursor: pointer; }
-  .logo-icon { width: 36px; height: 36px; border-radius: 10px; overflow: hidden; flex-shrink: 0; background:#000; }
+  .logo-icon { width: 38px; height: 38px; border-radius: 10px; overflow: hidden; flex-shrink: 0; background:#000; }
   .logo-icon img { width: 100%; height: 100%; display: block; }
-  .logo-text { display: flex; align-items: baseline; font-size: 1.3rem; font-weight: 900; letter-spacing: -0.5px; }
+  .logo-text { display: flex; align-items: baseline; font-size: 1.35rem; font-weight: 900; letter-spacing: -0.5px; }
   .logo-text .w { color: var(--text); }
   .logo-text .g { color: var(--accent2); }
-  .header-right { display: flex; gap: 6px; align-items: center; }
-  .icon-btn { background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 9px 12px; border-radius: 999px; cursor: pointer; font-size: 1rem; font-weight: 600; }
+  .header-right { display: flex; gap: 8px; align-items: center; }
+  .icon-btn { background: var(--card); border: 1px solid var(--border); color: var(--text); width: 42px; height: 42px; border-radius: 50%; cursor: pointer; font-size: 1.15rem; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+  .icon-btn:hover { background: var(--card2); }
   .icon-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
 
-  .search-bar { padding: 0 16px 14px; max-width: 900px; margin: 0 auto; display: none; }
+  /* SEARCH */
+  .search-bar { padding: 0 16px 14px; max-width: 1000px; margin: 0 auto; display: none; }
   .search-bar.active { display: block; }
-  .search-box { display: flex; gap: 8px; align-items: center; background: var(--input-bg); border: 1px solid var(--border); border-radius: 12px; padding: 4px 4px 4px 14px; }
-  .search-box input { flex: 1; background: transparent; border: none; color: var(--text); padding: 10px 0; outline: none; font-size: 0.9rem; font-family: inherit; }
+  .search-box { display: flex; gap: 8px; align-items: center; background: var(--input-bg); border: 1px solid var(--border); border-radius: 14px; padding: 6px 6px 6px 16px; }
+  .search-box input { flex: 1; background: transparent; border: none; color: var(--text); padding: 10px 0; outline: none; font-size: 0.92rem; font-family: inherit; }
   .search-box input::placeholder { color: var(--muted); }
-  .filter-btn { background: var(--card); border: none; color: var(--muted); padding: 9px 14px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 0.78rem; display: flex; align-items: center; gap: 6px; }
+  .filter-btn { background: var(--card); border: none; color: var(--muted); padding: 10px 16px; border-radius: 10px; font-weight: 800; cursor: pointer; font-size: 0.78rem; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px; }
   .search-wrap { position: relative; flex: 1; }
-  .suggestions { position: absolute; top: 100%; left: 0; right: 0; background: var(--card); border: 1px solid var(--border); border-radius: 12px; margin-top: 6px; max-height: 350px; overflow-y: auto; display: none; z-index: 60; box-shadow: 0 12px 30px rgba(0,0,0,0.5); }
+  .suggestions { position: absolute; top: 100%; left: 0; right: 0; background: var(--card); border: 1px solid var(--border); border-radius: 12px; margin-top: 6px; max-height: 350px; overflow-y: auto; display: none; z-index: 60; box-shadow: 0 12px 30px rgba(0,0,0,0.6); }
   .suggestions.active { display: block; }
   .sug-item { display: flex; gap: 10px; padding: 10px 12px; cursor: pointer; align-items: center; border-bottom: 1px solid var(--border); }
   .sug-item:hover { background: var(--card2); }
@@ -46,169 +49,179 @@
   .sug-loading { padding: 12px; text-align: center; color: var(--muted); font-size: 0.8rem; }
 
   /* HERO */
-  .hero { position: relative; width: 100%; height: 420px; overflow: hidden; margin-bottom: 12px; }
+  .hero { position: relative; width: 100%; height: 440px; overflow: hidden; margin-bottom: 12px; }
   .hero-slide { position: absolute; inset: 0; opacity: 0; transition: opacity 0.6s ease; }
   .hero-slide.active { opacity: 1; }
   .hero-slide img { width: 100%; height: 100%; object-fit: cover; }
   .hero-slide::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 0%, rgba(10,10,15,0.6) 55%, var(--bg) 100%); }
-  .hero-content { position: absolute; left: 0; right: 0; bottom: 0; padding: 24px 20px 20px; z-index: 2; }
-  .hero-title { font-size: 1.6rem; font-weight: 900; line-height: 1.2; margin-bottom: 8px; text-shadow: 0 2px 12px rgba(0,0,0,0.9); }
-  .hero-meta { display: flex; gap: 8px; font-size: 0.75rem; color: #ddd; margin-bottom: 14px; flex-wrap: wrap; }
-  .hero-meta span { background: rgba(255,255,255,0.15); padding: 3px 10px; border-radius: 999px; backdrop-filter: blur(6px); }
+  .hero-content { position: absolute; left: 0; right: 0; bottom: 0; padding: 26px 20px 20px; z-index: 2; }
+  .hero-title { font-size: 1.8rem; font-weight: 900; line-height: 1.15; margin-bottom: 10px; text-shadow: 0 2px 14px rgba(0,0,0,0.95); letter-spacing: -0.5px; }
+  .hero-meta { display: flex; gap: 8px; font-size: 0.78rem; color: #ddd; margin-bottom: 16px; flex-wrap: wrap; }
+  .hero-meta span { background: rgba(255,255,255,0.15); padding: 4px 12px; border-radius: 999px; backdrop-filter: blur(8px); font-weight: 600; }
   .hero-actions { display: flex; gap: 10px; }
-  .btn-play { background: var(--orange); color: white; border: none; padding: 11px 24px; border-radius: 10px; font-weight: 800; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 6px; }
-  .btn-bookmark { background: var(--accent2); color: white; border: none; padding: 11px 18px; border-radius: 10px; font-weight: 800; cursor: pointer; font-size: 1rem; }
-  .hero-dots { display: flex; justify-content: center; gap: 8px; position: absolute; top: 16px; right: 16px; z-index: 5; }
+  .btn-play { background: var(--orange); color: white; border: none; padding: 13px 28px; border-radius: 12px; font-weight: 900; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 6px 20px rgba(255,102,51,0.4); }
+  .btn-bookmark { background: var(--accent2); color: white; border: none; padding: 13px 20px; border-radius: 12px; font-weight: 900; cursor: pointer; font-size: 1.1rem; box-shadow: 0 6px 20px rgba(34,197,94,0.3); }
+  .hero-dots { display: flex; justify-content: center; gap: 8px; position: absolute; top: 20px; right: 20px; z-index: 5; }
   .hero-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.4); border: none; cursor: pointer; padding: 0; }
-  .hero-dot.active { background: var(--accent); width: 22px; border-radius: 999px; }
+  .hero-dot.active { background: var(--orange); width: 24px; border-radius: 999px; }
 
-  .section-head { display: flex; align-items: center; justify-content: space-between; padding: 18px 16px 10px; max-width: 1200px; margin: 0 auto; gap: 10px; }
-  .section-head h2 { font-size: 1.05rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px; }
-  .section-head .clear-btn { background: transparent; border: 1px solid #ef4444; color: #ef4444; padding: 5px 12px; border-radius: 999px; cursor: pointer; font-size: 0.7rem; font-weight: bold; }
-  .tag-on { background: var(--accent); color: white; padding: 2px 7px; border-radius: 4px; font-size: 0.6rem; font-weight: 900; }
+  .section-head { display: flex; align-items: center; justify-content: space-between; padding: 20px 16px 12px; max-width: 1200px; margin: 0 auto; gap: 10px; }
+  .section-head h2 { font-size: 1.1rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.8px; display: flex; align-items: center; gap: 8px; }
+  .section-head .clear-btn { background: transparent; border: 1px solid #ef4444; color: #ef4444; padding: 6px 14px; border-radius: 999px; cursor: pointer; font-size: 0.72rem; font-weight: 800; }
+  .tag-on { background: var(--accent); color: white; padding: 2px 8px; border-radius: 5px; font-size: 0.6rem; font-weight: 900; letter-spacing: 0.5px; }
 
-  .hscroll { display: flex; gap: 10px; overflow-x: auto; padding: 4px 16px 18px; max-width: 1200px; margin: 0 auto; scrollbar-width: none; }
+  .hscroll { display: flex; gap: 12px; overflow-x: auto; padding: 4px 16px 20px; max-width: 1200px; margin: 0 auto; scrollbar-width: none; }
   .hscroll::-webkit-scrollbar { display: none; }
 
-  .card { flex-shrink: 0; width: 140px; cursor: pointer; position: relative; }
+  .card { flex-shrink: 0; width: 145px; cursor: pointer; position: relative; }
   .card-img { position: relative; width: 100%; aspect-ratio: 2/3; border-radius: 12px; overflow: hidden; background: var(--card2); }
-  .card-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .card-badge { position: absolute; top: 6px; left: 6px; background: var(--accent); color: white; padding: 3px 8px; border-radius: 6px; font-size: 0.6rem; font-weight: 900; letter-spacing: 0.5px; }
-  .card-score { position: absolute; bottom: 6px; left: 6px; background: rgba(0,0,0,0.8); color: var(--score); padding: 3px 8px; border-radius: 6px; font-size: 0.68rem; font-weight: bold; backdrop-filter: blur(4px); }
-  .card-play { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 44px; height: 44px; background: rgba(249,115,22,0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; }
+  .card-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.3s; }
+  .card:hover .card-img img { transform: scale(1.05); }
+  .card-badge { position: absolute; top: 8px; left: 8px; background: var(--accent); color: white; padding: 3px 9px; border-radius: 6px; font-size: 0.6rem; font-weight: 900; letter-spacing: 0.5px; }
+  .card-score { position: absolute; bottom: 8px; left: 8px; background: rgba(0,0,0,0.85); color: var(--score); padding: 4px 9px; border-radius: 6px; font-size: 0.7rem; font-weight: 800; backdrop-filter: blur(4px); }
+  .card-play { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 48px; height: 48px; background: rgba(255,102,51,0.95); border-radius: 50%; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; }
   .card:hover .card-play { opacity: 1; }
-  .card-play::after { content: ''; width: 0; height: 0; border-left: 12px solid white; border-top: 8px solid transparent; border-bottom: 8px solid transparent; margin-left: 3px; }
-  .card-title { font-size: 0.8rem; font-weight: 700; margin-top: 8px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-  .card-sub { font-size: 0.68rem; color: var(--muted); margin-top: 3px; }
-  .hist-time { position: absolute; top: 6px; right: 6px; background: rgba(245,158,11,0.95); color: white; padding: 3px 7px; border-radius: 6px; font-size: 0.6rem; font-weight: bold; }
+  .card-play::after { content: ''; width: 0; height: 0; border-left: 13px solid white; border-top: 8px solid transparent; border-bottom: 8px solid transparent; margin-left: 4px; }
+  .card-title { font-size: 0.82rem; font-weight: 700; margin-top: 9px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .card-sub { font-size: 0.7rem; color: var(--muted); margin-top: 3px; }
+  .hist-time { position: absolute; top: 8px; right: 8px; background: rgba(245,158,11,0.95); color: white; padding: 4px 8px; border-radius: 6px; font-size: 0.6rem; font-weight: 800; }
 
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 14px; padding: 6px 16px 20px; max-width: 1200px; margin: 0 auto; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); gap: 14px; padding: 6px 16px 20px; max-width: 1200px; margin: 0 auto; }
   .grid .card { width: auto; }
 
   #status { text-align: center; color: var(--muted); margin: 20px; font-size: 0.9rem; }
 
-  /* ====== WATCH PAGE ====== */
+  /* WATCH PAGE */
   .watch-page { display: none; }
   .watch-page.active { display: block; }
-  .breadcrumb { max-width: 1200px; margin: 0 auto; padding: 6px 16px 12px; font-size: 0.8rem; color: var(--muted); display: flex; gap: 8px; flex-wrap: wrap; }
-  .breadcrumb a { color: var(--muted); text-decoration: none; }
-  .breadcrumb a:hover { color: var(--accent); }
-  .breadcrumb .sep { color: var(--border); }
-  .breadcrumb .current { color: var(--text); font-weight: 700; }
+  .breadcrumb { max-width: 1200px; margin: 0 auto; padding: 8px 16px 14px; font-size: 0.82rem; color: var(--muted); display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .breadcrumb a { color: var(--muted); text-decoration: none; display: flex; align-items: center; gap: 4px; }
+  .breadcrumb a:hover { color: var(--orange); }
+  .breadcrumb .sep { color: var(--border); font-weight: 900; }
+  .breadcrumb .current { color: var(--text); font-weight: 800; }
 
   .player-wrap { max-width: 1200px; margin: 0 auto; padding: 0 16px; }
-  .player { aspect-ratio: 16/9; width: 100%; background: #000; border-radius: 12px; overflow: hidden; margin-bottom: 12px; position: relative; }
+  .player { aspect-ratio: 16/9; width: 100%; background: #000; border-radius: 14px; overflow: hidden; margin-bottom: 14px; position: relative; }
   .player iframe { width: 100%; height: 100%; border: none; display: block; }
   .player-empty { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 0.85rem; text-align: center; padding: 20px; }
 
-  .player-controls { display: flex; justify-content: center; gap: 18px; padding: 14px 16px; background: var(--bg2); border-radius: 12px; margin-bottom: 12px; }
-  .ctrl-btn { background: transparent; border: none; color: var(--text); font-size: 1.4rem; cursor: pointer; padding: 4px 8px; border-radius: 8px; }
-  .ctrl-btn:hover { background: var(--card); }
-  .ctrl-btn.play { color: var(--orange); font-size: 1.7rem; }
+  .player-controls { display: flex; justify-content: center; gap: 14px; padding: 16px; background: var(--card); border-radius: 14px; margin-bottom: 16px; border: 1px solid var(--border); }
+  .ctrl-btn { background: var(--card2); border: 1px solid var(--border); color: var(--text); font-size: 1.15rem; cursor: pointer; width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+  .ctrl-btn:hover { background: var(--orange); border-color: var(--orange); color: white; transform: translateY(-2px); }
+  .ctrl-btn.play { background: var(--orange); border-color: var(--orange); color: white; font-size: 1.3rem; }
 
-  .lang-tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
-  .lang-tab { background: transparent; border: 1px solid var(--border); color: var(--muted); padding: 8px 16px; border-radius: 999px; cursor: pointer; font-size: 0.82rem; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+  .lang-tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+  .lang-tab { background: transparent; border: 1.5px solid var(--border); color: var(--muted); padding: 9px 18px; border-radius: 999px; cursor: pointer; font-size: 0.85rem; font-weight: 800; display: flex; align-items: center; gap: 7px; transition: all 0.15s; }
+  .lang-tab:hover { border-color: var(--muted); }
   .lang-tab.active { background: var(--bg2); color: var(--text); border-color: var(--text); }
-  .lang-tab .cc-icon { background: #333; color: #fff; padding: 1px 5px; border-radius: 4px; font-size: 0.6rem; font-weight: 900; }
-  .lang-tab.active .cc-icon { background: var(--accent); }
+  .lang-tab .cc-icon { background: #444; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 0.62rem; font-weight: 900; letter-spacing: 0.5px; }
+  .lang-tab.active .cc-icon { background: var(--orange); }
+  .lang-tab.flag { font-size: 1.05rem; }
 
-  .server-tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
-  .server-tab { background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 9px 20px; border-radius: 10px; cursor: pointer; font-size: 0.85rem; font-weight: 800; }
+  .server-tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+  .server-tab { background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 11px 24px; border-radius: 10px; cursor: pointer; font-size: 0.9rem; font-weight: 800; transition: all 0.15s; }
+  .server-tab:hover { background: var(--card2); }
   .server-tab.active { background: var(--accent2); color: white; border-color: var(--accent2); }
 
-  .watching-info { text-align: center; margin-bottom: 20px; padding: 0 16px; }
-  .watching-info .ep { font-size: 0.9rem; margin-bottom: 6px; }
-  .watching-info .ep b { color: var(--text); }
+  .watching-info { text-align: center; margin-bottom: 24px; padding: 0 16px; }
+  .watching-info .ep { font-size: 0.95rem; margin-bottom: 8px; }
+  .watching-info .ep b { color: var(--text); font-weight: 900; }
   .watching-info .ep .label { color: var(--muted); font-weight: 400; }
-  .watching-info .hint { font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
+  .watching-info .hint { font-size: 0.8rem; color: var(--muted); line-height: 1.55; max-width: 500px; margin: 0 auto; }
 
-  .episodes-panel { max-width: 1200px; margin: 0 auto; padding: 16px; background: var(--bg2); border-radius: 12px; }
-  .ep-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
-  .ep-head h3 { font-size: 1.1rem; font-weight: 900; }
-  .ep-tools { display: flex; gap: 6px; }
-  .ep-tool { background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; }
+  .episodes-panel { max-width: 1200px; margin: 0 auto; padding: 20px 16px; background: var(--bg2); border-radius: 14px; border: 1px solid var(--border); }
+  .ep-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+  .ep-head h3 { font-size: 1.25rem; font-weight: 900; letter-spacing: -0.3px; }
+  .ep-tools { display: flex; gap: 8px; }
+  .ep-tool { background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 9px 14px; border-radius: 9px; cursor: pointer; font-size: 0.9rem; font-weight: 700; display: flex; align-items: center; gap: 6px; transition: all 0.15s; }
+  .ep-tool:hover { background: var(--card2); }
+  .ep-tool.active { background: var(--orange); border-color: var(--orange); color: white; }
+  .ep-tool .find-label { font-weight: 800; }
+  .ep-tool .find-input { background: transparent; border: none; color: inherit; font-family: inherit; font-size: 0.9rem; font-weight: 800; width: 0; padding: 0; outline: none; transition: width 0.25s, padding 0.25s; }
+  .ep-tool.expanded .find-input { width: 60px; padding-left: 4px; }
+  .ep-tool.expanded .find-hash { display: none; }
 
-  .range-selector { display: flex; align-items: center; justify-content: center; gap: 8px; background: var(--card2); border-radius: 10px; padding: 8px; margin-bottom: 14px; }
-  .range-selector button { background: transparent; border: none; color: var(--text); font-size: 1.1rem; cursor: pointer; padding: 4px 10px; }
-  .range-selector .range-label { flex: 1; text-align: center; font-weight: 700; color: var(--text); font-size: 0.9rem; }
+  .range-selector { display: flex; align-items: center; justify-content: center; gap: 10px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 10px; margin-bottom: 18px; }
+  .range-selector button { background: transparent; border: none; color: var(--text); font-size: 1.3rem; cursor: pointer; padding: 4px 14px; border-radius: 8px; font-weight: 900; }
+  .range-selector button:hover { background: var(--card2); }
+  .range-selector .range-label { flex: 1; text-align: center; font-weight: 800; color: var(--text); font-size: 1rem; }
 
-  .ep-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 8px; }
-  .ep-cell { background: var(--card); color: var(--text); padding: 12px 6px; text-align: center; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: 700; border: 1px solid transparent; }
+  .ep-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(58px, 1fr)); gap: 8px; }
+  .ep-cell { background: var(--card); color: var(--text); padding: 14px 6px; text-align: center; border-radius: 9px; cursor: pointer; font-size: 0.88rem; font-weight: 800; border: 1px solid transparent; transition: all 0.15s; }
   .ep-cell:hover { background: var(--card2); border-color: var(--border); }
-  .ep-cell.active { background: var(--orange); color: white; border-color: var(--orange); }
-  .ep-cell.disabled { opacity: 0.35; cursor: not-allowed; }
+  .ep-cell.active { background: var(--orange); color: white; border-color: var(--orange); box-shadow: 0 4px 12px rgba(255,102,51,0.4); }
 
-  /* ====== MODAL ====== */
+  /* MODAL */
   .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 100; padding: 16px; overflow-y: auto; }
   .modal-overlay.active { display: block; }
   .modal { background: var(--bg2); border-radius: 16px; max-width: 900px; margin: 10px auto; overflow: hidden; }
   .modal-header { position: relative; }
-  .modal-header img { width: 100%; height: 220px; object-fit: cover; display: block; }
+  .modal-header img { width: 100%; height: 240px; object-fit: cover; display: block; }
   .modal-header::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 0%, var(--bg2) 100%); }
-  .modal-close { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.8); color: white; border: none; width: 38px; height: 38px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; z-index: 5; }
-  .modal-body { padding: 18px; margin-top: -40px; position: relative; z-index: 2; }
-  .modal-body h2 { font-size: 1.3rem; font-weight: 900; margin-bottom: 12px; }
-  .modal-info { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; font-size: 0.75rem; color: var(--muted); }
-  .modal-info span { background: var(--card); padding: 4px 10px; border-radius: 6px; border: 1px solid var(--border); }
-  .modal-info span.score { color: var(--score); font-weight: 900; border-color: var(--score); }
-  .genres { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
-  .genre-tag { background: var(--card2); color: var(--text); padding: 4px 12px; border-radius: 6px; font-size: 0.72rem; border: 1px solid var(--border); }
-  .synopsis { font-size: 0.87rem; line-height: 1.6; margin-bottom: 18px; color: #d0d0d8; }
-  .section-title { font-size: 0.95rem; margin: 20px 0 10px; color: var(--accent); border-bottom: 1px solid var(--border); padding-bottom: 8px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; }
-  .watch-now-btn { width: 100%; padding: 14px; border-radius: 10px; background: var(--orange); color: white; border: none; font-weight: 900; font-size: 1rem; cursor: pointer; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; }
-  .watch-links { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
-  .watch-link-btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 16px; border-radius: 8px; text-decoration: none; color: white; font-weight: 800; font-size: 0.8rem; }
+  .modal-close { position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.85); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; z-index: 5; display: flex; align-items: center; justify-content: center; }
+  .modal-body { padding: 20px; margin-top: -50px; position: relative; z-index: 2; }
+  .modal-body h2 { font-size: 1.4rem; font-weight: 900; margin-bottom: 14px; }
+  .modal-info { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; font-size: 0.78rem; color: var(--muted); }
+  .modal-info span { background: var(--card); padding: 5px 12px; border-radius: 8px; border: 1px solid var(--border); font-weight: 700; }
+  .modal-info span.score { color: var(--score); border-color: var(--score); font-weight: 900; }
+  .genres { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+  .genre-tag { background: var(--card2); color: var(--text); padding: 5px 14px; border-radius: 8px; font-size: 0.74rem; border: 1px solid var(--border); font-weight: 700; }
+  .synopsis { font-size: 0.88rem; line-height: 1.65; margin-bottom: 20px; color: #d0d0d8; }
+  .section-title { font-size: 0.95rem; margin: 22px 0 12px; color: var(--orange); border-bottom: 1px solid var(--border); padding-bottom: 8px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.8px; }
+  .watch-now-btn { width: 100%; padding: 16px; border-radius: 12px; background: var(--orange); color: white; border: none; font-weight: 900; font-size: 1rem; cursor: pointer; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 6px 20px rgba(255,102,51,0.4); letter-spacing: 0.5px; }
+  .watch-links { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+  .watch-link-btn { display: inline-flex; align-items: center; gap: 6px; padding: 11px 18px; border-radius: 9px; text-decoration: none; color: white; font-weight: 800; font-size: 0.82rem; }
   .wl-crunchyroll { background: #f47521; }
   .wl-netflix { background: #e50914; }
   .wl-hulu { background: #1ce783; color: #000; }
   .wl-prime { background: #00a8e1; }
   .wl-youtube { background: #ff0000; }
   .wl-muse { background: #ff0050; }
-  .watchlist-btn { padding: 12px 16px; border-radius: 10px; border: 1px solid var(--accent); background: transparent; color: var(--accent); font-weight: 800; cursor: pointer; width: 100%; font-size: 0.9rem; margin-bottom: 8px; }
+  .watchlist-btn { padding: 14px 16px; border-radius: 12px; border: 1.5px solid var(--accent); background: transparent; color: var(--accent); font-weight: 900; cursor: pointer; width: 100%; font-size: 0.92rem; margin-bottom: 10px; }
   .watchlist-btn.in-list { background: var(--accent); color: white; }
   .review-form { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
-  .review-form input, .review-form textarea { padding: 12px 14px; border-radius: 10px; border: 1px solid var(--border); background: var(--card); color: var(--text); font-family: inherit; font-size: 0.85rem; width: 100%; }
-  .review-form textarea { min-height: 60px; resize: vertical; }
-  .review-form button { padding: 10px 18px; border-radius: 10px; border: none; background: var(--accent); color: white; font-weight: 800; cursor: pointer; align-self: flex-end; font-size: 0.82rem; }
-  .review-item { background: var(--card); padding: 12px 14px; border-radius: 10px; margin-bottom: 8px; font-size: 0.85rem; border: 1px solid var(--border); }
-  .review-item strong { color: var(--accent); }
-  .review-item .date { color: var(--muted); font-size: 0.7rem; display: block; margin-top: 4px; }
+  .review-form input, .review-form textarea { padding: 13px 16px; border-radius: 10px; border: 1px solid var(--border); background: var(--card); color: var(--text); font-family: inherit; font-size: 0.85rem; width: 100%; }
+  .review-form textarea { min-height: 70px; resize: vertical; }
+  .review-form button { padding: 12px 20px; border-radius: 10px; border: none; background: var(--accent); color: white; font-weight: 900; cursor: pointer; align-self: flex-end; font-size: 0.85rem; }
+  .review-item { background: var(--card); padding: 14px 16px; border-radius: 10px; margin-bottom: 10px; font-size: 0.85rem; border: 1px solid var(--border); }
+  .review-item strong { color: var(--orange); }
+  .review-item .date { color: var(--muted); font-size: 0.7rem; display: block; margin-top: 6px; }
 
   .disc-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 200; padding: 16px; overflow-y: auto; }
   .disc-overlay.active { display: flex; align-items: center; justify-content: center; }
-  .disc-box { background: var(--card); border-radius: 20px; max-width: 500px; width: 100%; padding: 24px; border: 2px solid var(--accent); }
-  .disc-icon { text-align: center; font-size: 3rem; margin-bottom: 12px; }
-  .disc-title { text-align: center; font-size: 1.15rem; color: var(--accent); font-weight: 900; margin-bottom: 14px; }
-  .disc-text { font-size: 0.88rem; line-height: 1.6; margin-bottom: 16px; }
-  .disc-list { background: var(--bg); padding: 12px 16px; border-radius: 10px; margin-bottom: 16px; font-size: 0.82rem; line-height: 1.7; }
-  .disc-list a { color: var(--orange); text-decoration: none; font-weight: bold; }
-  .disc-btn { padding: 12px 18px; border-radius: 10px; border: none; font-weight: 800; font-size: 0.88rem; cursor: pointer; width: 100%; margin-bottom: 8px; }
+  .disc-box { background: var(--card); border-radius: 20px; max-width: 500px; width: 100%; padding: 26px; border: 2px solid var(--accent); }
+  .disc-icon { text-align: center; font-size: 3rem; margin-bottom: 14px; }
+  .disc-title { text-align: center; font-size: 1.2rem; color: var(--accent); font-weight: 900; margin-bottom: 16px; }
+  .disc-text { font-size: 0.9rem; line-height: 1.65; margin-bottom: 18px; }
+  .disc-list { background: var(--bg); padding: 14px 18px; border-radius: 12px; margin-bottom: 18px; font-size: 0.85rem; line-height: 1.8; }
+  .disc-list a { color: var(--orange); text-decoration: none; font-weight: 800; }
+  .disc-btn { padding: 14px 20px; border-radius: 12px; border: none; font-weight: 900; font-size: 0.9rem; cursor: pointer; width: 100%; margin-bottom: 10px; }
   .disc-btn-primary { background: var(--accent); color: white; }
   .disc-btn-secondary { background: var(--card2); color: var(--text); border: 1px solid var(--border); }
 
-  footer { text-align: center; padding: 24px 20px; color: var(--muted); font-size: 0.78rem; border-top: 1px solid var(--border); margin-top: 30px; }
-  footer a { color: var(--accent); }
+  footer { text-align: center; padding: 28px 20px; color: var(--muted); font-size: 0.8rem; border-top: 1px solid var(--border); margin-top: 40px; }
+  footer a { color: var(--orange); }
 
   .welcome-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 300; padding: 16px; overflow-y: auto; align-items: center; justify-content: center; }
   .welcome-overlay.active { display: flex; }
   .welcome-box { border-radius: 20px; max-width: 440px; width: 100%; border: 2px solid #f59e0b; overflow: hidden; background: linear-gradient(135deg, #1a0f2e 0%, #0a0a0f 100%); }
-  .welcome-inner { padding: 24px; }
-  .welcome-icon { text-align: center; font-size: 3rem; margin-bottom: 8px; }
-  .welcome-title { text-align: center; font-size: 1.2rem; color: #ffd166; font-weight: 900; margin-bottom: 14px; }
-  .welcome-main-text { text-align: center; font-size: 0.95rem; color: #ffffff; font-weight: 700; line-height: 1.7; margin-bottom: 18px; padding: 14px 12px; background: rgba(0,0,0,0.5); border-radius: 12px; border: 1px solid rgba(245,158,11,0.4); }
+  .welcome-inner { padding: 26px; }
+  .welcome-icon { text-align: center; font-size: 3rem; margin-bottom: 10px; }
+  .welcome-title { text-align: center; font-size: 1.25rem; color: #ffd166; font-weight: 900; margin-bottom: 16px; }
+  .welcome-main-text { text-align: center; font-size: 0.95rem; color: #ffffff; font-weight: 700; line-height: 1.7; margin-bottom: 20px; padding: 14px 12px; background: rgba(0,0,0,0.5); border-radius: 12px; border: 1px solid rgba(245,158,11,0.4); }
   .welcome-main-text .hl { color: #ffd166; font-weight: 900; }
-  .welcome-section { background: rgba(0,0,0,0.5); padding: 12px 14px; border-radius: 12px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.1); }
-  .welcome-section h4 { font-size: 0.78rem; color: #ffd166; margin-bottom: 10px; font-weight: 800; }
-  .browser-btn { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 10px; background: rgba(255,255,255,0.06); color: #ffffff; text-decoration: none; margin-bottom: 8px; font-size: 0.85rem; font-weight: 700; }
-  .browser-btn .icon { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
+  .welcome-section { background: rgba(0,0,0,0.5); padding: 14px; border-radius: 12px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.1); }
+  .welcome-section h4 { font-size: 0.78rem; color: #ffd166; margin-bottom: 12px; font-weight: 800; letter-spacing: 0.5px; }
+  .browser-btn { display: flex; align-items: center; gap: 10px; padding: 11px 14px; border-radius: 10px; background: rgba(255,255,255,0.06); color: #ffffff; text-decoration: none; margin-bottom: 8px; font-size: 0.85rem; font-weight: 700; }
+  .browser-btn .icon { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
   .browser-btn .name { flex: 1; }
   .browser-btn .arrow { color: #ffd166; font-weight: bold; }
   .b-icon-brave { background: #fb542b; } .b-icon-firefox { background: #ff7139; } .b-icon-opera { background: #ff1b2d; } .b-icon-ublock { background: #800000; }
-  .welcome-check { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: rgba(0,0,0,0.5); border-radius: 12px; margin-bottom: 14px; cursor: pointer; border: 1px solid rgba(245,158,11,0.4); }
+  .welcome-check { display: flex; align-items: center; gap: 10px; padding: 13px 14px; background: rgba(0,0,0,0.5); border-radius: 12px; margin-bottom: 14px; cursor: pointer; border: 1px solid rgba(245,158,11,0.4); }
   .welcome-check input[type="checkbox"] { width: 20px; height: 20px; accent-color: #f59e0b; cursor: pointer; }
   .welcome-check label { font-size: 0.85rem; color: #fff; cursor: pointer; flex: 1; font-weight: 700; }
-  .welcome-btn-done { padding: 13px 18px; border-radius: 10px; border: none; background: linear-gradient(135deg, #f59e0b, #ff4d6d); color: white; font-weight: 900; font-size: 0.92rem; cursor: pointer; width: 100%; }
-  .welcome-btn-skip { padding: 10px 18px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2); background: transparent; color: rgba(255,255,255,0.7); font-weight: 700; font-size: 0.8rem; cursor: pointer; width: 100%; margin-top: 8px; }
+  .welcome-btn-done { padding: 14px 18px; border-radius: 12px; border: none; background: linear-gradient(135deg, #f59e0b, #ff4d6d); color: white; font-weight: 900; font-size: 0.92rem; cursor: pointer; width: 100%; }
+  .welcome-btn-skip { padding: 11px 18px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2); background: transparent; color: rgba(255,255,255,0.7); font-weight: 700; font-size: 0.82rem; cursor: pointer; width: 100%; margin-top: 8px; }
 </style>
 </head>
 <body>
@@ -219,18 +232,18 @@
     <div class="logo-text"><span class="w">Anbu</span><span class="g">Kai</span></div>
   </div>
   <div class="header-right">
-    <button class="icon-btn" id="homeBtn" onclick="goHome()">🏠</button>
-    <button class="icon-btn" id="searchToggleBtn" onclick="toggleSearchBar()">🔍</button>
-    <button class="icon-btn" id="watchlistBtn" onclick="showWatchlist()">⭐</button>
-    <button class="icon-btn" id="historyBtn" onclick="showHistory()">🕐</button>
-    <button class="icon-btn" id="themeBtn" onclick="toggleTheme()">🌙</button>
+    <button class="icon-btn" id="homeBtn" onclick="goHome()" title="Home">🏠</button>
+    <button class="icon-btn" id="searchToggleBtn" onclick="toggleSearchBar()" title="Search">🔍</button>
+    <button class="icon-btn" id="watchlistBtn" onclick="showWatchlist()" title="Watchlist">⭐</button>
+    <button class="icon-btn" id="historyBtn" onclick="showHistory()" title="History">🕐</button>
+    <button class="icon-btn" id="themeBtn" onclick="toggleTheme()" title="Theme">🌙</button>
   </div>
 </header>
 
 <div class="search-bar" id="searchBar">
   <div class="search-box">
     <div class="search-wrap">
-      <input id="searchInput" type="text" placeholder="Search anime" autocomplete="off">
+      <input id="searchInput" type="text" placeholder="Search anime..." autocomplete="off">
       <div class="suggestions" id="suggestions"></div>
     </div>
     <button class="filter-btn" onclick="openFilter()">▼ FILTER</button>
@@ -248,7 +261,6 @@
   </select>
 </div>
 
-<!-- HOME VIEW -->
 <div id="homeView">
   <div class="hero" id="heroSlider">
     <div class="hero-dots" id="heroDots"></div>
@@ -270,7 +282,6 @@
   <div class="grid" id="animeGrid"></div>
 </div>
 
-<!-- WATCH VIEW -->
 <div class="watch-page" id="watchPage">
   <div class="breadcrumb" id="breadcrumb"></div>
   <div class="player-wrap">
@@ -278,9 +289,9 @@
       <div class="player-empty">Video load hocche...</div>
     </div>
     <div class="player-controls">
-      <button class="ctrl-btn" onclick="prevEpisode()" title="Previous">⏪</button>
-      <button class="ctrl-btn play" onclick="replayVideo()" title="Play">▶</button>
-      <button class="ctrl-btn" onclick="nextEpisode()" title="Next">⏩</button>
+      <button class="ctrl-btn" onclick="prevEpisode()" title="Previous">⏮</button>
+      <button class="ctrl-btn play" onclick="replayVideo()" title="Replay">▶</button>
+      <button class="ctrl-btn" onclick="nextEpisode()" title="Next">⏭</button>
       <button class="ctrl-btn" onclick="randomEpisode()" title="Random">🔀</button>
     </div>
     <div class="lang-tabs" id="langTabs"></div>
@@ -294,7 +305,11 @@
     <div class="ep-head">
       <h3>Episodes</h3>
       <div class="ep-tools">
-        <button class="ep-tool" onclick="alert('Search coming soon')"># Find</button>
+        <button class="ep-tool" id="findBtn" onclick="toggleFindInput(event)">
+          <span class="find-hash">#</span>
+          <span class="find-label">Find</span>
+          <input class="find-input" id="findInput" type="number" min="1" placeholder="1" onkeypress="handleFindKey(event)">
+        </button>
         <button class="ep-tool">CC</button>
         <button class="ep-tool">🎤</button>
         <button class="ep-tool">☰</button>
@@ -314,7 +329,7 @@
   <small>All anime content belongs to their respective owners. <a href="#" onclick="showDisclaimer();return false;">Full Disclaimer</a></small>
 </footer>
 
-<!-- DISCLAIMER MODAL -->
+<!-- DISCLAIMER -->
 <div class="disc-overlay" id="discModal">
   <div class="disc-box">
     <div class="disc-icon">⚠️</div>
@@ -331,7 +346,7 @@
   </div>
 </div>
 
-<!-- WELCOME MODAL -->
+<!-- WELCOME -->
 <div class="welcome-overlay" id="welcomeModal">
   <div class="welcome-box">
     <div class="welcome-inner">
@@ -370,7 +385,6 @@ var statusEl = document.getElementById('status');
 var input = document.getElementById('searchInput');
 var suggestionsEl = document.getElementById('suggestions');
 var currentList = [];
-var currentView = 'browse';
 var suggestTimer = null;
 var pendingVideoEmbed = null;
 var disclaimerAccepted = false;
@@ -378,32 +392,20 @@ var heroAnimeList = [];
 var heroIndex = 0;
 var heroTimer = null;
 
-/* ============ WATCH STATE ============ */
-var watchAnime = null;        // currently open anime
-var watchEpsCount = 0;        // total episodes
-var watchCurrentEp = 1;       // current episode number
-var watchCurrentLang = 'sub'; // sub | dub | hindi | bangla
-var watchCurrentServer = 0;   // index
-var watchRangeStart = 1;      // range start
-var watchRangeSize = 100;     // per page
+var watchAnime = null;
+var watchEpsCount = 0;
+var watchCurrentEp = 1;
+var watchCurrentLang = 'sub';
+var watchCurrentServer = 0;
+var watchRangeStart = 1;
+var watchRangeSize = 100;
 
 var ANILIST_URL = 'https://graphql.anilist.co';
 var QUERY = 'query ($search: String, $genre: String, $sort: [MediaSort], $perPage: Int) { Page(page: 1, perPage: $perPage) { media(type: ANIME, search: $search, genre: $genre, sort: $sort, isAdult: false) { id title { romaji english } description(asHtml: false) coverImage { extraLarge large } bannerImage episodes nextAiringEpisode { episode } averageScore format startDate { year } genres trailer { id site } } } }';
 
-/* ========================================================
-   ⭐⭐ VIDEO_DATA — Multi-language + Multi-server structure
-   
-   প্রতিটা anime id-র জন্য:
-   {
-     sub:    [ { name: "Server 1", embed: "https://..." }, ... ],
-     dub:    [ { name: "Server 1", embed: "https://..." }, ... ],
-     hindi:  [ { name: "Server 1", embed: "https://..." }, ... ],
-     bangla: [ { name: "Server 1", embed: "https://..." }, ... ]
-   }
-   
-   ⚠️ ডেমো: সব এপিসোডে একই ভিডিও চলবে
-   পরবর্তীতে তুমি প্রতি এপিসোডের আলাদা লিংক যোগ করতে পারবে।
-   ======================================================== */
+/* ============================================================
+   ⭐⭐ VIDEO_DATA — প্রতিটা language-এ ২টা করে Server ⭐⭐
+   ============================================================ */
 var VIDEO_DATA = {
   97940: {
     sub: [
@@ -411,13 +413,16 @@ var VIDEO_DATA = {
       { name: "Server 2", embed: "https://streamtape.com/e/PDyGxboGa3u03pq/" }
     ],
     dub: [
-      { name: "Server 1", embed: "https://bysefujedu.com/e/k6659hlcqjod" }
+      { name: "Server 1", embed: "https://bysefujedu.com/e/k6659hlcqjod" },
+      { name: "Server 2", embed: "https://streamtape.com/e/JKKxw2xeQ0sj0R0/" }
     ],
     hindi: [
-      { name: "Server 1", embed: "https://streamtape.com/e/JKKxw2xeQ0sj0R0/" }
+      { name: "Server 1", embed: "https://streamtape.com/e/JKKxw2xeQ0sj0R0/" },
+      { name: "Server 2", embed: "https://streamtape.com/e/PDyGxboGa3u03pq/" }
     ],
     bangla: [
-      { name: "Server 1", embed: "https://streamtape.com/e/JKKxw2xeQ0sj0R0/" }
+      { name: "Server 1", embed: "https://streamtape.com/e/JKKxw2xeQ0sj0R0/" },
+      { name: "Server 2", embed: "https://streamtape.com/e/PDyGxboGa3u03pq/" }
     ]
   }
 };
@@ -432,14 +437,8 @@ var WATCH_LINKS = {
 
 function platformLabel(p) { var m={crunchyroll:"Crunchyroll",netflix:"Netflix",hulu:"Hulu",prime:"Prime Video",youtube:"YouTube",muse:"Muse Asia"}; return m[p]||p; }
 function platformIcon(p) { var m={crunchyroll:"🟠",netflix:"🔴",hulu:"🟢",prime:"🔵",youtube:"▶️",muse:"🟣"}; return m[p]||"▶"; }
-function langIcon(l) {
-  var m = { sub: '<span class="cc-icon">CC</span>', dub: '🎤', hindi: '🇮🇳', bangla: '🇧🇩' };
-  return m[l] || '';
-}
-function langLabel(l) {
-  var m = { sub: "Soft Sub", dub: "Dub", hindi: "Hindi", bangla: "Bangla" };
-  return m[l] || l;
-}
+function langIcon(l) { var m = { sub: '<span class="cc-icon">CC</span>', dub: '🎤', hindi: '🇮🇳', bangla: '🇧🇩' }; return m[l] || ''; }
+function langLabel(l) { var m = { sub: "Soft Sub", dub: "Dub", hindi: "Hindi", bangla: "Bangla" }; return m[l] || l; }
 
 var fallbackAnime = [
   { mal_id: 21, title: "One Piece", score: 8.7, type: "TV", episodes: "1100+", img: "https://cdn.myanimelist.net/images/anime/6/73245.jpg", banner: "https://cdn.myanimelist.net/images/anime/6/73245.jpg", synopsis: "Monkey D. Luffy sets off on an adventure to find the legendary One Piece treasure and become Pirate King.", genres: ["Action","Adventure","Fantasy"], trailer: "https://www.youtube.com/embed/MCb13lbVGE0", year: 1999 },
@@ -461,9 +460,7 @@ function cleanText(s) { if(!s) return ''; return String(s).replace(/<br\s*\/?>/g
 
 function mapAniList(a) {
   var trailer = null;
-  if (a.trailer && a.trailer.id) {
-    if (a.trailer.site === 'youtube') trailer = 'https://www.youtube.com/embed/' + a.trailer.id;
-  }
+  if (a.trailer && a.trailer.id && a.trailer.site === 'youtube') trailer = 'https://www.youtube.com/embed/' + a.trailer.id;
   var eps = a.episodes;
   if (!eps && a.nextAiringEpisode && a.nextAiringEpisode.episode) eps = (a.nextAiringEpisode.episode - 1) + '+';
   if (!eps) eps = '?';
@@ -502,7 +499,6 @@ if(localStorage.getItem('anbikai_theme')==='light'){ document.body.classList.add
 function toggleSearchBar(){ var b=document.getElementById('searchBar'); b.classList.toggle('active'); if(b.classList.contains('active')) input.focus(); }
 function openFilter(){ var s=document.getElementById('genreSelect'); s.style.display = s.style.display==='none' ? 'inline-block' : 'none'; if(s.style.display==='inline-block') s.focus(); }
 function setActiveBtn(id){ ['homeBtn','watchlistBtn','historyBtn','searchToggleBtn'].forEach(function(b){ var el=document.getElementById(b); if(el) el.classList.remove('active'); }); if(id){ var el=document.getElementById(id); if(el) el.classList.add('active'); } }
-
 function showHomeView(){ document.getElementById('homeView').style.display='block'; document.getElementById('watchPage').classList.remove('active'); }
 function showWatchView(){ document.getElementById('homeView').style.display='none'; document.getElementById('watchPage').classList.add('active'); }
 
@@ -513,14 +509,13 @@ function goHome(){
   loadTop();
 }
 
-/* ============ HOME ============ */
+/* HOME */
 function loadTop() {
   document.getElementById('heroSlider').style.display = 'block';
   document.getElementById('continueSection').style.display = 'none';
   trendingHeader.style.display = 'flex';
   trendingText.textContent = '🔥 Trending Now';
-  statusEl.textContent='';
-  grid.innerHTML='';
+  statusEl.textContent=''; grid.innerHTML='';
   anilistFetch({ sort:['TRENDING_DESC'], perPage: 30 }).then(function(res){
     if(res && res.data && res.data.Page && res.data.Page.media && res.data.Page.media.length>0){
       var mapped = res.data.Page.media.map(mapAniList);
@@ -623,7 +618,7 @@ function updateContinueRow() {
 }
 function makeContinueCard(h) {
   var score = (h.score && h.score!=='N/A') ? '<div class="card-score">★ '+h.score+'</div>' : '';
-  return '<div class="card" onclick="openDetails('+h.mal_id+')"><div class="card-img"><img src="'+h.img+'" loading="lazy" onerror="this.style.opacity=0.2">'+score+'<div class="hist-time">🕐 '+timeAgo(h.watchedAt)+'</div><div class="card-play"></div></div><div class="card-title">'+h.title+'</div><div class="card-sub" style="color:var(--accent);font-weight:700;">▶ '+h.episode+'</div></div>';
+  return '<div class="card" onclick="openDetails('+h.mal_id+')"><div class="card-img"><img src="'+h.img+'" loading="lazy" onerror="this.style.opacity=0.2">'+score+'<div class="hist-time">🕐 '+timeAgo(h.watchedAt)+'</div><div class="card-play"></div></div><div class="card-title">'+h.title+'</div><div class="card-sub" style="color:var(--orange);font-weight:700;">▶ '+h.episode+'</div></div>';
 }
 function makeCard(a) {
   var badge = (a.episodes && String(a.episodes).indexOf('+')>=0) ? '<div class="card-badge">ONGOING</div>' : '';
@@ -632,7 +627,7 @@ function makeCard(a) {
 }
 function renderAnime(list){ currentList=list; if(!list||list.length===0){ statusEl.textContent='Kono anime paoa gelo na.'; grid.innerHTML=''; return; } statusEl.textContent=''; var h=''; for(var i=0;i<list.length;i++) h += makeCard(list[i]); grid.innerHTML=h; }
 
-/* ============ SUGGESTIONS ============ */
+/* SUGGESTIONS */
 function hideSuggestions(){ suggestionsEl.classList.remove('active'); suggestionsEl.innerHTML=''; }
 function showSuggestions(items) {
   if(!items||items.length===0){ hideSuggestions(); return; }
@@ -648,18 +643,15 @@ function fetchSuggestions(q) {
   }).catch(function(){ var ql=q.toLowerCase(); var m=fallbackAnime.filter(function(a){return a.title.toLowerCase().indexOf(ql)>=0;}); if(m.length>0) showSuggestions(m); else hideSuggestions(); });
 }
 
-/* ============ DETAILS MODAL ============ */
-var currentAnimeId = null;
+/* MODAL */
 function openDetails(id) {
-  currentAnimeId = id;
   var a = null;
   for(var i=0;i<currentList.length;i++) if(currentList[i].mal_id===id){a=currentList[i];break;}
   if(!a) for(var j=0;j<fallbackAnime.length;j++) if(fallbackAnime[j].mal_id===id){a=fallbackAnime[j];break;}
   if(!a) for(var k=0;k<heroAnimeList.length;k++) if(heroAnimeList[k].mal_id===id){a=heroAnimeList[k];break;}
   if(!a){ var h=getHistory(); for(var m=0;m<h.length;m++) if(h[m].mal_id===id){a=h[m];break;} }
   if(!a) return;
-  var modal = document.getElementById('discModal');
-  /* use custom modal */
+  window._currentModalAnime = a;
   showAnimeModal(a);
 }
 
@@ -669,7 +661,6 @@ function showAnimeModal(a) {
   var watchLinks = WATCH_LINKS[a.mal_id] || [];
   var ytSearch = 'https://www.youtube.com/results?search_query='+encodeURIComponent(a.title+' trailer');
 
-  /* Build modal HTML (reuse modal overlay we don't have - create one) */
   var overlay = document.getElementById('animeModalOverlay');
   if (!overlay) {
     overlay = document.createElement('div');
@@ -690,7 +681,7 @@ function showAnimeModal(a) {
   if (hasVideoData) {
     html += '<button class="watch-now-btn" onclick="startWatching()">▶ Watch Now</button>';
   } else {
-    html += '<div class="no-video" style="padding:20px;background:var(--card);border-radius:10px;text-align:center;color:var(--muted);margin-bottom:14px;font-size:0.85rem;">😔 Ei anime er video ekhono add kora hoyni.</div>';
+    html += '<div style="padding:22px;background:var(--card);border-radius:12px;text-align:center;color:var(--muted);margin-bottom:16px;font-size:0.88rem;">😔 Ei anime er video ekhono add kora hoyni.</div>';
   }
 
   if(watchLinks.length>0){
@@ -702,8 +693,8 @@ function showAnimeModal(a) {
   html += '<button class="watchlist-btn '+(inList?'in-list':'')+'" onclick="toggleWlFromModal('+a.mal_id+')">'+(inList?'✓ In Watchlist — Remove':'+ Add to Watchlist')+'</button>';
 
   html += '<h3 class="section-title">📺 Trailer</h3>';
-  if(a.trailer) html += '<div style="aspect-ratio:16/9;border-radius:10px;overflow:hidden;margin-bottom:8px;"><iframe src="'+a.trailer+'" style="width:100%;height:100%;border:none;" allowfullscreen></iframe></div>';
-  else html += '<div class="no-video">Trailer paoa gelo na. <a href="'+ytSearch+'" target="_blank" style="color:var(--accent);">YouTube e dekho</a></div>';
+  if(a.trailer) html += '<div style="aspect-ratio:16/9;border-radius:12px;overflow:hidden;margin-bottom:8px;"><iframe src="'+a.trailer+'" style="width:100%;height:100%;border:none;" allowfullscreen></iframe></div>';
+  else html += '<div style="padding:22px;background:var(--card);border-radius:12px;text-align:center;color:var(--muted);font-size:0.85rem;">Trailer paoa gelo na. <a href="'+ytSearch+'" target="_blank" style="color:var(--orange);font-weight:800;">YouTube e dekho</a></div>';
 
   html += '<h3 class="section-title">📝 Reviews ('+reviews.length+')</h3>';
   html += '<div class="review-form"><input id="revName" type="text" placeholder="Tomar naam..."><textarea id="revText" placeholder="Tomar review likho..."></textarea><button onclick="submitReview('+a.mal_id+')">Post Review</button></div>';
@@ -712,7 +703,6 @@ function showAnimeModal(a) {
   document.getElementById('animeModalBody').innerHTML = html;
   overlay.classList.add('active');
   document.body.style.overflow = 'hidden';
-  window._currentModalAnime = a;
 }
 
 function closeAnimeModal(){
@@ -740,7 +730,7 @@ function submitReview(id) {
 
 function escapeHtml(s){ return String(s).replace(/[&<>"']/g,function(c){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]);}); }
 
-/* ============ DISCLAIMER ============ */
+/* DISCLAIMER */
 function showDisclaimer(e){ pendingVideoEmbed=e||null; document.getElementById('discModal').classList.add('active'); document.body.style.overflow='hidden'; }
 function closeDisclaimer(){ document.getElementById('discModal').classList.remove('active'); document.body.style.overflow=''; pendingVideoEmbed=null; }
 function acceptDisclaimer(){ disclaimerAccepted=true; document.getElementById('discModal').classList.remove('active'); document.body.style.overflow=''; if(pendingVideoEmbed){ var p=document.getElementById('watchPlayer'); if(p) p.innerHTML='<iframe src="'+pendingVideoEmbed+'" allowfullscreen allow="autoplay; encrypted-media" scrolling="no" frameborder="0"></iframe>'; pendingVideoEmbed=null; } }
@@ -750,7 +740,7 @@ function toggleWelcomeCheck(e){ if(e && e.target && e.target.tagName!=='INPUT' &
 function closeWelcome(){ var cb=document.getElementById('dontShowAgain'); if(cb.checked) localStorage.setItem('anbikai_welcome_off','yes'); document.getElementById('welcomeModal').classList.remove('active'); }
 function skipWelcome(){ localStorage.setItem('anbikai_welcome_off','yes'); document.getElementById('welcomeModal').classList.remove('active'); }
 
-/* ============ WATCH PAGE LOGIC ============ */
+/* WATCH PAGE */
 function startWatching() {
   var a = window._currentModalAnime;
   if (!a) return;
@@ -800,10 +790,11 @@ function renderLangTabs() {
   for (var i=0;i<langs.length;i++) {
     var l = langs[i];
     var available = data[l] && data[l].length>0;
-    html += '<button class="lang-tab'+(watchCurrentLang===l?' active':'')+'"'+
-            (available?' onclick="switchLang(\''+l+'\')"':'')+
-            (available?'':' disabled style="opacity:0.35;cursor:not-allowed;"')+'>'+
-            langIcon(l)+' '+langLabel(l)+
+    var activeClass = (watchCurrentLang===l) ? ' active' : '';
+    var disabledAttr = available ? '' : ' disabled style="opacity:0.35;cursor:not-allowed;"';
+    var clickAttr = available ? ' onclick="switchLang(\''+l+'\')"' : '';
+    html += '<button class="lang-tab'+activeClass+'"'+clickAttr+disabledAttr+'>'+
+            langIcon(l)+' <span>'+langLabel(l)+'</span>'+
             '</button>';
   }
   tabs.innerHTML = html;
@@ -876,8 +867,14 @@ function changeRange(dir) {
 function selectEpisode(n) {
   if (n < 1 || n > watchEpsCount) return;
   watchCurrentEp = n;
+  // Adjust range if outside current view
+  if (n < watchRangeStart || n >= watchRangeStart + watchRangeSize) {
+    watchRangeStart = Math.floor((n-1)/watchRangeSize)*watchRangeSize + 1;
+  }
   renderEpisodeGrid();
   loadVideo();
+  // Scroll to top so user sees video change
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function prevEpisode() { if (watchCurrentEp > 1) selectEpisode(watchCurrentEp - 1); }
@@ -894,7 +891,43 @@ function replayVideo() {
   }
 }
 
-/* ============ INIT ============ */
+/* ============ EPISODE SEARCH (FIND) ============ */
+function toggleFindInput(e) {
+  if (e) e.stopPropagation();
+  var btn = document.getElementById('findBtn');
+  var input = document.getElementById('findInput');
+  btn.classList.add('expanded');
+  setTimeout(function(){ input.focus(); }, 100);
+}
+
+function handleFindKey(e) {
+  if (e.key !== 'Enter') return;
+  var input = document.getElementById('findInput');
+  var val = parseInt(input.value);
+  if (isNaN(val) || val < 1) {
+    alert('Ekta valid episode number dao (1-' + watchEpsCount + ')');
+    return;
+  }
+  if (val > watchEpsCount) {
+    alert('Ei anime e matro ' + watchEpsCount + ' ta episode ache.');
+    return;
+  }
+  selectEpisode(val);
+  input.value = '';
+  document.getElementById('findBtn').classList.remove('expanded');
+  input.blur();
+}
+
+/* Close find input when clicking elsewhere */
+document.addEventListener('click', function(e) {
+  var btn = document.getElementById('findBtn');
+  if (!btn) return;
+  if (!e.target.closest('#findBtn')) {
+    btn.classList.remove('expanded');
+  }
+});
+
+/* INIT */
 input.addEventListener('input', function(){ var q=input.value.trim(); clearTimeout(suggestTimer); if(q.length<1){hideSuggestions();return;} suggestTimer=setTimeout(function(){fetchSuggestions(q);},300); });
 input.addEventListener('keypress', function(e){ if(e.key==='Enter'){ hideSuggestions(); searchAnime(); } });
 document.addEventListener('click', function(e){ if(!e.target.closest('.search-wrap') && !e.target.closest('#searchBar')) hideSuggestions(); });
