@@ -7,6 +7,10 @@
 <meta name="google-site-verification" content="OK1razUv1UOsWUr0ZHZYsJ2lZ4-r21DB4BDC9Wf1e4E" />
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#ff4d6d">
+<link rel="apple-touch-icon" href="https://cdn.myanimelist.net/images/anime/2/88336.jpg">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="AnbiKai">
 <style>
   :root { --bg:#0f0f13; --card:#1b1b22; --text:#f5f5f5; --muted:#a1a1aa; --accent:#ff4d6d; --border:#2a2a35; --input-bg:#15151c; --score:#f5c518; }
   body.light { --bg:#f7f7fa; --card:#fff; --text:#1a1a1a; --muted:#6b6b76; --border:#e0e0e8; --input-bg:#f2f2f7; --score:#d4a017; }
@@ -483,7 +487,6 @@ function sortSearchResults(list, query) {
   return list;
 }
 
-/* ===== WATCHLIST ===== */
 function getWatchlist() { try { return JSON.parse(localStorage.getItem('anbikai_watchlist') || '[]'); } catch(e) { return []; } }
 function saveWatchlist(list) { localStorage.setItem('anbikai_watchlist', JSON.stringify(list)); updateWlCount(); }
 function updateWlCount() { document.getElementById('wlCount').textContent = getWatchlist().length; }
@@ -495,7 +498,6 @@ function toggleWatchlist(anime) {
   saveWatchlist(list);
 }
 
-/* ===== HISTORY ===== */
 function getHistory() { try { return JSON.parse(localStorage.getItem('anbikai_history') || '[]'); } catch(e) { return []; } }
 function saveHistory(list) { localStorage.setItem('anbikai_history', JSON.stringify(list)); updateHistCount(); }
 function updateHistCount() { document.getElementById('histCount').textContent = getHistory().length; }
@@ -544,7 +546,6 @@ if (localStorage.getItem('anbikai_theme') === 'light') {
   document.getElementById('themeBtn').textContent = '☀️';
 }
 
-/* ===== DISCLAIMER ===== */
 function showDisclaimer(embed) {
   pendingVideoEmbed = embed || null;
   document.getElementById('discModal').classList.add('active');
@@ -566,7 +567,6 @@ function acceptDisclaimer() {
   }
 }
 
-/* ===== WELCOME POPUP ===== */
 function showWelcome() {
   if (localStorage.getItem('anbikai_welcome_off') === 'yes') return;
   if (sessionStorage.getItem('anbikai_welcome_shown') === 'yes') return;
@@ -597,7 +597,6 @@ function skipWelcome() {
   document.body.style.overflow = '';
 }
 
-/* ===== CARDS ===== */
 function hasVideo(id) { return VIDEO_DATA[id] && VIDEO_DATA[id].length > 0; }
 
 function makeCard(a) {
@@ -927,6 +926,7 @@ document.addEventListener('click', function(e) {
   if (!e.target.closest('.search-wrap')) hideSuggestions();
 });
 
+/* ===== Service Worker Register (PWA) ===== */
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('service-worker.js').catch(function(e) {});
 }
