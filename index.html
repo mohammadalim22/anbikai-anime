@@ -17,7 +17,6 @@
   * { box-sizing: border-box; margin:0; padding:0; -webkit-tap-highlight-color: transparent; }
   body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; padding-bottom: 30px; }
 
-  /* ===== TOUCH-FRIENDLY: সব button এবং iframe এ single tap ===== */
   button, a, .card, .icon-btn, .ctrl-btn, .lang-tab, .server-tab, .ep-cell, .btn-play, .btn-bookmark, .watch-now-btn, .watch-link-btn, .watchlist-btn, .dl-icon-btn, .sug-item, .ep-tool, .range-selector button, .filter-btn, .search-btn, iframe, video {
     touch-action: manipulation !important;
     -webkit-tap-highlight-color: transparent !important;
@@ -251,7 +250,6 @@
   .welcome-btn-skip { padding: 11px 18px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2); background: transparent; color: rgba(255,255,255,0.7); font-weight: 700; font-size: 0.82rem; cursor: pointer; width: 100%; margin-top: 8px; }
   .welcome-btn-skip:active { background: rgba(255,255,255,0.08); }
 
-  /* ===== Desktop এ hover effect ===== */
   @media (hover: hover) and (pointer: fine) {
     .icon-btn:hover { background: var(--card2); }
     .card:hover { transform: translateY(-2px); }
@@ -425,15 +423,6 @@
 </div>
 
 <script>
-// ==== SINGLE TAP FIX START ====
-// ১. iframe ফোকাস ফিক্স: মোবাইলে প্রথম ট্যাপে যাতে ভিডিও প্লে হয়
-document.addEventListener('pointerdown', function(e) {
-    if (e.target.tagName === 'IFRAME') {
-        e.target.focus();
-    }
-}, true);
-// ==== SINGLE TAP FIX END ====
-
 var grid = document.getElementById('animeGrid');
 var trendingHeader = document.getElementById('trendingHeader');
 var trendingText = document.getElementById('trendingText');
@@ -868,12 +857,18 @@ function escapeHtml(s){ return String(s).replace(/[&<>"']/g,function(c){return (
 
 function showDisclaimer(e){ pendingVideoEmbed=e||null; document.getElementById('discModal').classList.add('active'); document.body.style.overflow='hidden'; }
 function closeDisclaimer(){ document.getElementById('discModal').classList.remove('active'); document.body.style.overflow=''; pendingVideoEmbed=null; }
-function acceptDisclaimer(){ disclaimerAccepted=true; document.getElementById('discModal').classList.remove('active'); document.body.style.overflow=''; if(pendingVideoEmbed){ var p=document.getElementById('watchPlayer'); if(p) p.innerHTML='<iframe src="'+pendingVideoEmbed+'" style="width:100%;height:100%;border:none;touch-action:manipulation;" allowfullscreen allow="autoplay; encrypted-media" scrolling="no" frameborder="0"></iframe>'; pendingVideoEmbed=null; } }
+function acceptDisclaimer(){ disclaimerAccepted=true; document.getElementById('discModal').classList.remove('active'); document.body.style.overflow=''; if(pendingVideoEmbed){ var p=document.getElementById('watchPlayer'); if(p) p.innerHTML=makeIframeHTML(pendingVideoEmbed); pendingVideoEmbed=null; } }
 
 function showWelcome(){ if(localStorage.getItem('anbikai_welcome_off')==='yes') return; if(sessionStorage.getItem('anbikai_welcome_shown')==='yes') return; sessionStorage.setItem('anbikai_welcome_shown','yes'); document.getElementById('welcomeModal').classList.add('active'); }
 function toggleWelcomeCheck(e){ if(e && e.target && e.target.tagName!=='INPUT' && e.target.tagName!=='LABEL'){ var cb=document.getElementById('dontShowAgain'); cb.checked=!cb.checked; } }
 function closeWelcome(){ var cb=document.getElementById('dontShowAgain'); if(cb.checked) localStorage.setItem('anbikai_welcome_off','yes'); document.getElementById('welcomeModal').classList.remove('active'); }
 function skipWelcome(){ localStorage.setItem('anbikai_welcome_off','yes'); document.getElementById('welcomeModal').classList.remove('active'); }
+
+// ===== SINGLE TAP FIX: iframe age theke focus kore rakha =====
+function makeIframeHTML(embed) {
+  return '<iframe src="'+embed+'" tabindex="0" allowfullscreen allow="autoplay; encrypted-media; fullscreen" scrolling="no" frameborder="0" style="width:100%;height:100%;border:none;touch-action:manipulation;" '+
+    'onload="var f=this;setTimeout(function(){try{f.focus();}catch(e){}},50);setTimeout(function(){try{f.focus();}catch(e){}},600);setTimeout(function(){try{f.focus();}catch(e){}},1500);"></iframe>';
+}
 
 function startWatching() {
   var a = window._currentModalAnime;
@@ -989,8 +984,7 @@ function loadVideo() {
     showDisclaimer(embed);
     player.innerHTML = '<div class="player-empty">Loading...</div>';
   } else {
-    // Single Tap Fix: iframe e touch-action add kora hoyeche
-    player.innerHTML = '<iframe src="'+embed+'" style="width:100%;height:100%;border:none;touch-action:manipulation;" allowfullscreen allow="autoplay; encrypted-media" scrolling="no" frameborder="0"></iframe>';
+    player.innerHTML = makeIframeHTML(embed);
   }
   document.getElementById('watchingEpText').textContent = 'Episode '+watchCurrentEp;
   if (watchAnime) addToHistory(watchAnime, 'Episode '+watchCurrentEp+' ('+langLabel(watchCurrentLang)+')');
@@ -1095,4 +1089,4 @@ loadTop();
 setTimeout(showWelcome, 1500);
 </script>
 </body>
-    </html>
+  </html>
