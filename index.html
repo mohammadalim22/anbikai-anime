@@ -110,7 +110,23 @@
   .server-row { display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
   .server-tab { background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 11px 22px; border-radius: 10px; cursor: pointer; font-size: 0.9rem; font-weight: 800; }
   .server-tab.active { background: var(--accent2); color: white; border-color: var(--accent2); }
-  .dl-icon-btn { background: var(--card); border: 1px solid var(--border); color: var(--accent); width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 1.1rem; }
+  .dl-icon-btn {
+    background: linear-gradient(135deg, #ff6633, #ff4d6d);
+    border: none;
+    color: white;
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-size: 1.5rem;
+    font-weight: 900;
+    box-shadow: 0 4px 12px rgba(255,102,51,0.4);
+    line-height: 1;
+  }
+  .dl-icon-btn svg { width: 22px; height: 22px; fill: white; }
 
   .watching-info { text-align: center; margin-bottom: 24px; padding: 0 16px; }
   .watching-info .ep { font-size: 0.95rem; margin-bottom: 8px; }
@@ -384,11 +400,7 @@ var ANILIST_URL = 'https://graphql.anilist.co';
 var QUERY = 'query ($search: String, $genre: String, $sort: [MediaSort], $perPage: Int) { Page(page: 1, perPage: $perPage) { media(type: ANIME, search: $search, genre: $genre, sort: $sort, isAdult: false) { id title { romaji english } description(asHtml: false) coverImage { extraLarge large } bannerImage episodes nextAiringEpisode { episode } averageScore format startDate { year } genres trailer { id site } } } }';
 
 /* ============================================================
-   ⭐⭐ VIDEO_DATA — Episode-based for Solo Leveling ⭐⭐
-   
-   Format:
-   - Plain array: same video plays for ALL episodes
-   - Object with {epNum: [...]}: specific video per episode
+   ⭐⭐ VIDEO_DATA — Server 1 = Streamtape (default) ⭐⭐
    ============================================================ */
 var VIDEO_DATA = {
   97940: {
@@ -397,8 +409,8 @@ var VIDEO_DATA = {
       { name: "Server 2", embed: "https://streamtape.com/e/PDyGxboGa3u03pq/" }
     ],
     dub: [
-      { name: "Server 1", embed: "https://bysefujedu.com/e/k6659hlcqjod" },
-      { name: "Server 2", embed: "https://streamtape.com/e/JKKxw2xeQ0sj0R0/" }
+      { name: "Server 1", embed: "https://streamtape.com/e/JKKxw2xeQ0sj0R0/" },
+      { name: "Server 2", embed: "https://bysefujedu.com/e/k6659hlcqjod" }
     ],
     hindi: [
       { name: "Server 1", embed: "https://streamtape.com/e/JKKxw2xeQ0sj0R0/" },
@@ -411,46 +423,62 @@ var VIDEO_DATA = {
   },
 
   1735: {
-    sub: [
-      { name: "Server 1", embed: "https://streamtape.com/e/PW4m8D2oGeI0ORJ/" }
-    ],
-    dub: [
-      { name: "Server 1", embed: "https://streamtape.com/e/M9aW9kwMdOIYRa/" }
-    ],
-    hindi: [
-      { name: "Server 1", embed: "https://streamtape.com/e/kb9DQGkLoVHOoLG/" }
-    ],
-    bangla: [
-      { name: "Server 1", embed: "https://streamtape.com/e/eoYOmAJ6LoTZjM/" }
-    ]
+    sub: [{ name: "Server 1", embed: "https://streamtape.com/e/PW4m8D2oGeI0ORJ/" }],
+    dub: [{ name: "Server 1", embed: "https://streamtape.com/e/M9aW9kwMdOIYRa/" }],
+    hindi: [{ name: "Server 1", embed: "https://streamtape.com/e/kb9DQGkLoVHOoLG/" }],
+    bangla: [{ name: "Server 1", embed: "https://streamtape.com/e/eoYOmAJ6LoTZjM/" }]
   },
 
-  /* ⭐⭐ Solo Leveling — Episode-based Hindi ⭐⭐ */
+  /* ⭐⭐ Solo Leveling — Episode-based, Streamtape = Server 1 ⭐⭐ */
   151807: {
     sub: [
-      { name: "Server 1", embed: "https://bysefujedu.com/e/3r4nyti9w1d0/" },
-      { name: "Server 2", embed: "https://streamtape.com/e/2a3KAG3bXJIZXm4/" }
+      { name: "Server 1", embed: "https://streamtape.com/e/2a3KAG3bXJIZXm4/" },
+      { name: "Server 2", embed: "https://bysefujedu.com/e/3r4nyti9w1d0/" }
     ],
     dub: [
-      { name: "Server 1", embed: "https://bysefujedu.com/e/759arii02xep/" },
-      { name: "Server 2", embed: "https://streamtape.com/e/xqAMwoYg6khkbXV/" }
+      { name: "Server 1", embed: "https://streamtape.com/e/xqAMwoYg6khkbXV/" },
+      { name: "Server 2", embed: "https://bysefujedu.com/e/759arii02xep/" }
     ],
     hindi: {
       1: [
-        { name: "Server 1", embed: "https://bysefujedu.com/e/n2aanl7bpp5u/" },
-        { name: "Server 2", embed: "https://streamtape.com/e/dpjZ9KbK4GSk8Wl/" }
+        { name: "Server 1", embed: "https://streamtape.com/e/dpjZ9KbK4GSk8Wl/" },
+        { name: "Server 2", embed: "https://bysefujedu.com/e/n2aanl7bpp5u/" }
       ],
       2: [
-        { name: "Server 1", embed: "https://bysefujedu.com/e/ayawbozdtk23/" }
+        { name: "Server 1", embed: "https://streamtape.com/e/LOl9QR8AqjUR14p/" },
+        { name: "Server 2", embed: "https://bysefujedu.com/e/ayawbozdtk23/" }
       ],
       3: [
         { name: "Server 1", embed: "https://streamtape.com/e/qxdL08gR1Liab6/" }
       ],
       4: [
-        { name: "Server 1", embed: "https://bysefujedu.com/e/kk06tmtp0btu/" }
+        { name: "Server 1", embed: "https://streamtape.com/e/kpoQYAgX9ZtYyJ/" },
+        { name: "Server 2", embed: "https://bysefujedu.com/e/kk06tmtp0btu/" }
       ],
       5: [
-        { name: "Server 1", embed: "https://bysefujedu.com/e/5ntowatrpmx1/" }
+        { name: "Server 1", embed: "https://streamtape.com/e/kqy0V4XrVytOkbq/" },
+        { name: "Server 2", embed: "https://bysefujedu.com/e/5ntowatrpmx1/" }
+      ],
+      6: [
+        { name: "Server 1", embed: "https://streamtape.com/e/rbrqAwkB7vibmK7/" }
+      ],
+      7: [
+        { name: "Server 1", embed: "https://streamtape.com/e/myo68lGoL6TbooQ/" }
+      ],
+      8: [
+        { name: "Server 1", embed: "https://streamtape.com/e/Jegdz9ApDPUjYjP/" }
+      ],
+      9: [
+        { name: "Server 1", embed: "https://streamtape.com/e/D0A2kx0z2kTklp7/" }
+      ],
+      10: [
+        { name: "Server 1", embed: "https://streamtape.com/e/4D4GX2VX3lFpDK/" }
+      ],
+      11: [
+        { name: "Server 1", embed: "https://streamtape.com/e/4AYAKV39gmcKlvV/" }
+      ],
+      12: [
+        { name: "Server 1", embed: "https://streamtape.com/e/0B9AYqBXqgFbbvW/" }
       ]
     },
     bangla: []
@@ -481,11 +509,6 @@ function getDownloadUrl(embed) {
   return '';
 }
 
-/* ============================================================
-   Helper: Get servers for a specific episode
-   - If lang data is Array → return it (applies to all episodes)
-   - If lang data is Object → return servers for that episode
-   ============================================================ */
 function getServersForEpisode(animeId, lang, epNum) {
   var data = VIDEO_DATA[animeId] || {};
   var langData = data[lang];
@@ -494,7 +517,6 @@ function getServersForEpisode(animeId, lang, epNum) {
   return langData[epNum] || [];
 }
 
-/* Check if a language has any videos at all */
 function hasAnyVideos(animeId, lang) {
   var data = VIDEO_DATA[animeId] || {};
   var langData = data[lang];
@@ -503,12 +525,11 @@ function hasAnyVideos(animeId, lang) {
   return Object.keys(langData).length > 0;
 }
 
-/* Get total available episodes for a language (or null if array = all episodes) */
 function getAvailableEpisodes(animeId, lang) {
   var data = VIDEO_DATA[animeId] || {};
   var langData = data[lang];
   if (!langData) return null;
-  if (Array.isArray(langData)) return null; // applies to all
+  if (Array.isArray(langData)) return null;
   return Object.keys(langData).map(Number).sort(function(a,b){return a-b;});
 }
 
@@ -874,10 +895,8 @@ function renderLangTabs() {
 function switchLang(l) {
   watchCurrentLang = l;
   watchCurrentServer = 0;
-  /* Reset to first available episode for this language */
   var available = getAvailableEpisodes(watchAnime.mal_id, l);
   if (available && available.length > 0) {
-    /* If current episode not available, jump to first available */
     if (available.indexOf(watchCurrentEp) === -1) watchCurrentEp = available[0];
   }
   renderLangTabs();
@@ -900,7 +919,11 @@ function renderServerTabs() {
   }
   var current = servers[watchCurrentServer] || servers[0];
   var dlUrl = getDownloadUrl(current.embed);
-  if (dlUrl) html += '<a class="dl-icon-btn" href="'+dlUrl+'" target="_blank" title="Download">⬇</a>';
+  if (dlUrl) {
+    html += '<a class="dl-icon-btn" href="'+dlUrl+'" target="_blank" title="Download">'+
+      '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 3a1 1 0 0 1 1 1v9.586l3.293-3.293a1 1 0 1 1 1.414 1.414l-5 5a1 1 0 0 1-1.414 0l-5-5a1 1 0 1 1 1.414-1.414L11 13.586V4a1 1 0 0 1 1-1zM5 19a1 1 0 0 1 1-1h12a1 1 0 1 1 0 2H6a1 1 0 0 1-1-1z"/></svg>'+
+    '</a>';
+  }
   row.innerHTML = html;
 }
 
@@ -1029,4 +1052,4 @@ loadTop();
 setTimeout(showWelcome, 1500);
 </script>
 </body>
-        </html>
+  </html>
