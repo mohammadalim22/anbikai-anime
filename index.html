@@ -107,9 +107,10 @@
   .lang-tab .cc-icon { background: #444; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 0.62rem; font-weight: 900; }
   .lang-tab.active .cc-icon { background: var(--orange); }
 
-  .server-tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
-  .server-tab { background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 11px 24px; border-radius: 10px; cursor: pointer; font-size: 0.9rem; font-weight: 800; }
+  .server-row { display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+  .server-tab { background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 11px 22px; border-radius: 10px; cursor: pointer; font-size: 0.9rem; font-weight: 800; }
   .server-tab.active { background: var(--accent2); color: white; border-color: var(--accent2); }
+  .dl-icon-btn { background: var(--card); border: 1px solid var(--border); color: var(--accent); width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 1.1rem; }
 
   .watching-info { text-align: center; margin-bottom: 24px; padding: 0 16px; }
   .watching-info .ep { font-size: 0.95rem; margin-bottom: 8px; }
@@ -276,7 +277,7 @@
       <button class="ctrl-btn" onclick="randomEpisode()">🔀</button>
     </div>
     <div class="lang-tabs" id="langTabs"></div>
-    <div class="server-tabs" id="serverTabs"></div>
+    <div class="server-row" id="serverTabs"></div>
     <div class="watching-info">
       <div class="ep"><span class="label">You are watching</span> <b id="watchingEpText">Episode 1</b></div>
       <div class="hint">If the current server is not working, please try switching to other servers.</div>
@@ -383,10 +384,9 @@ var ANILIST_URL = 'https://graphql.anilist.co';
 var QUERY = 'query ($search: String, $genre: String, $sort: [MediaSort], $perPage: Int) { Page(page: 1, perPage: $perPage) { media(type: ANIME, search: $search, genre: $genre, sort: $sort, isAdult: false) { id title { romaji english } description(asHtml: false) coverImage { extraLarge large } bannerImage episodes nextAiringEpisode { episode } averageScore format startDate { year } genres trailer { id site } } } }';
 
 /* ========================================================
-   ⭐⭐ VIDEO_DATA — সব anime + language ভিত্তিক ভিডিও ⭐⭐
+   ⭐⭐ VIDEO_DATA — Server 1 (Filemoon) always first ⭐⭐
    ======================================================== */
 var VIDEO_DATA = {
-  /* Black Clover (ID: 97940) */
   97940: {
     sub: [
       { name: "Server 1", embed: "https://streamtape.com/e/JKKxw2xeQ0sj0R0/" },
@@ -406,35 +406,34 @@ var VIDEO_DATA = {
     ]
   },
 
-  /* Naruto Shippuden (ID: 1735) */
   1735: {
     sub: [
-      { name: "Japanese", embed: "https://streamtape.com/e/PW4m8D2oGeI0ORJ/" }
+      { name: "Server 1", embed: "https://streamtape.com/e/PW4m8D2oGeI0ORJ/" }
     ],
     dub: [
-      { name: "English", embed: "https://streamtape.com/e/M9aW9kwMdOIYRa/" }
+      { name: "Server 1", embed: "https://streamtape.com/e/M9aW9kwMdOIYRa/" }
     ],
     hindi: [
-      { name: "Hindi", embed: "https://streamtape.com/e/kb9DQGkLoVHOoLG/" }
+      { name: "Server 1", embed: "https://streamtape.com/e/kb9DQGkLoVHOoLG/" }
     ],
     bangla: [
-      { name: "Bengali", embed: "https://streamtape.com/e/eoYOmAJ6LoTZjM/" }
+      { name: "Server 1", embed: "https://streamtape.com/e/eoYOmAJ6LoTZjM/" }
     ]
   },
 
-  /* Solo Leveling (ID: 151807) — Filemoon + Streamtape */
+  /* Solo Leveling — Filemoon always Server 1 */
   151807: {
     sub: [
-      { name: "Filemoon", embed: "https://bysefujedu.com/e/3r4nyti9w1d0/" },
-      { name: "Streamtape", embed: "https://streamtape.com/e/2a3KAG3bXJIZXm4/" }
+      { name: "Server 1", embed: "https://bysefujedu.com/e/3r4nyti9w1d0/" },
+      { name: "Server 2", embed: "https://streamtape.com/e/2a3KAG3bXJIZXm4/" }
     ],
     dub: [
-      { name: "Filemoon", embed: "https://bysefujedu.com/e/759arii02xep/" },
-      { name: "Streamtape", embed: "https://streamtape.com/e/xqAMwoYg6khkbXV/" }
+      { name: "Server 1", embed: "https://bysefujedu.com/e/759arii02xep/" },
+      { name: "Server 2", embed: "https://streamtape.com/e/xqAMwoYg6khkbXV/" }
     ],
     hindi: [
-      { name: "Filemoon", embed: "https://bysefujedu.com/e/n2aanl7bpp5u/" },
-      { name: "Streamtape", embed: "https://streamtape.com/e/dpjZ9KbK4GSk8Wl/" }
+      { name: "Server 1", embed: "https://bysefujedu.com/e/n2aanl7bpp5u/" },
+      { name: "Server 2", embed: "https://streamtape.com/e/dpjZ9KbK4GSk8Wl/" }
     ],
     bangla: []
   }
@@ -454,6 +453,16 @@ function platformLabel(p) { var m={crunchyroll:"Crunchyroll",netflix:"Netflix",h
 function platformIcon(p) { var m={crunchyroll:"🟠",netflix:"🔴",hulu:"🟢",prime:"🔵",youtube:"▶️",muse:"🟣"}; return m[p]||"▶"; }
 function langIcon(l) { var m = { sub: '<span class="cc-icon">CC</span>', dub: '🎤', hindi: '🇮🇳', bangla: '🇧🇩' }; return m[l] || ''; }
 function langLabel(l) { var m = { sub: "Soft Sub", dub: "Dub", hindi: "Hindi", bangla: "Bangla" }; return m[l] || l; }
+
+/* Download link auto-detect */
+function getDownloadUrl(embed) {
+  if (!embed) return '';
+  if (embed.indexOf('streamtape.com/e/') >= 0) return embed.replace('/e/', '/v/');
+  if (embed.indexOf('bysefujedu.com/e/') >= 0) return embed.replace('/e/', '/d/');
+  if (embed.indexOf('filemoon.sx/e/') >= 0) return embed.replace('/e/', '/d/');
+  if (embed.indexOf('dood.li/e/') >= 0) return embed.replace('/e/', '/d/');
+  return '';
+}
 
 var fallbackAnime = [
   { mal_id: 151807, title: "Solo Leveling", score: 8.3, type: "TV", episodes: 12, img: "https://cdn.myanimelist.net/images/anime/1779/141555.jpg", banner: "https://cdn.myanimelist.net/images/anime/1779/141555.jpg", synopsis: "In a world of hunters and monsters, the weakest hunter Sung Jinwoo gains a mysterious power to level up endlessly.", genres: ["Action","Adventure","Fantasy"], trailer: "https://www.youtube.com/embed/I6MQB0ELRsA", year: 2024 },
@@ -825,14 +834,22 @@ function switchLang(l) {
 }
 
 function renderServerTabs() {
-  var tabs = document.getElementById('serverTabs');
+  var row = document.getElementById('serverTabs');
   var data = VIDEO_DATA[watchAnime.mal_id] || {};
   var servers = data[watchCurrentLang] || [];
   var html = '';
   for (var i=0;i<servers.length;i++) {
     html += '<button class="server-tab'+(watchCurrentServer===i?' active':'')+'" onclick="switchServer('+i+')">'+servers[i].name+'</button>';
   }
-  tabs.innerHTML = html;
+  /* Add download icon button */
+  if (servers.length > 0) {
+    var current = servers[watchCurrentServer] || servers[0];
+    var dlUrl = getDownloadUrl(current.embed);
+    if (dlUrl) {
+      html += '<a class="dl-icon-btn" href="'+dlUrl+'" target="_blank" title="Download">⬇</a>';
+    }
+  }
+  row.innerHTML = html;
 }
 
 function switchServer(i) {
@@ -955,4 +972,4 @@ loadTop();
 setTimeout(showWelcome, 1500);
 </script>
 </body>
-      </html>
+  </html>
