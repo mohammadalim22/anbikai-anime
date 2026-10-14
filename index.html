@@ -499,7 +499,6 @@ var VIDEO_DATA = {
     ],
     hindi: {
       "Season 1": {
-        // TODO: Replace these with actual Season 1 Hindi links
         1: [{ name: "Server 1", embed: "https://streamtape.com/e/VWl90p4GZGiKMB6" }],
         2: [{ name: "Server 1", embed: "https://streamtape.com/e/AX7LPAJeKLuwpZ" }],
         3: [{ name: "Server 1", embed: "https://streamtape.com/e/VXr6degMKzsKMvr" }],
@@ -558,7 +557,7 @@ function getDownloadUrl(embed) {
   return '';
 }
 
-// UPDATED: getServersForEpisode with Season
+// UPDATED: getServersForEpisode with Season FIX
 function getServersForEpisode(animeId, lang, season, epNum) {
   var data = VIDEO_DATA[animeId] || {};
   var langData = data[lang];
@@ -567,9 +566,10 @@ function getServersForEpisode(animeId, lang, season, epNum) {
   // If language data is an array (no seasons), return as is
   if (Array.isArray(langData)) return langData;
 
-  // If language data has season keys
-  if (season && langData[season]) {
-    return langData[season][epNum] || [];
+  // If language data has season keys (e.g. "Season 1")
+  var seasonKey = "Season " + season;
+  if (langData[seasonKey]) {
+    return langData[seasonKey][epNum] || [];
   }
 
   // Fallback: direct episode mapping
@@ -584,17 +584,18 @@ function hasAnyVideos(animeId, lang) {
   return Object.keys(langData).length > 0;
 }
 
-// UPDATED: getAvailableEpisodes with Season
+// UPDATED: getAvailableEpisodes with Season FIX
 function getAvailableEpisodes(animeId, lang, season) {
   var data = VIDEO_DATA[animeId] || {};
   var langData = data[lang];
   if (!langData) return null;
   if (Array.isArray(langData)) return null;
 
-  if (season && langData[season]) {
-    return Object.keys(langData[season]).map(Number).sort(function(a,b){return a-b;});
+  var seasonKey = "Season " + season;
+  if (langData[seasonKey]) {
+    return Object.keys(langData[seasonKey]).map(Number).filter(function(n){ return !isNaN(n); }).sort(function(a,b){return a-b;});
   }
-  return Object.keys(langData).map(Number).sort(function(a,b){return a-b;});
+  return Object.keys(langData).map(Number).filter(function(n){ return !isNaN(n); }).sort(function(a,b){return a-b;});
 }
 
 var fallbackAnime = [
@@ -1187,4 +1188,4 @@ loadTop();
 setTimeout(showWelcome, 1500);
 </script>
 </body>
-  </html>
+                                                                </html>
