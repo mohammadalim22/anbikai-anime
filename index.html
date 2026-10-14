@@ -109,6 +109,7 @@
   .player-wrap { max-width: 1200px; margin: 0 auto; padding: 0 16px; }
   .player { aspect-ratio: 16/9; width: 100%; background: #000; border-radius: 14px; overflow: hidden; margin-bottom: 14px; position: relative; }
   .player iframe { width: 100%; height: 100%; border: none; display: block; touch-action: manipulation !important; }
+  .player video { width: 100%; height: 100%; display: block; background: #000; touch-action: manipulation !important; }
   .player-empty { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 0.85rem; text-align: center; padding: 20px; }
 
   .player-controls { display: flex; justify-content: center; gap: 14px; padding: 16px; background: var(--card); border-radius: 14px; margin-bottom: 16px; border: 1px solid var(--border); }
@@ -342,6 +343,7 @@
     <div class="player" id="watchPlayer">
       <div class="player-empty">Video load hocche...</div>
     </div>
+    
     <div class="player-controls">
       <button class="ctrl-btn" onclick="prevEpisode()">⏮</button>
       <button class="ctrl-btn play" onclick="replayVideo()">▶</button>
@@ -349,7 +351,6 @@
       <button class="ctrl-btn" onclick="randomEpisode()">🔀</button>
     </div>
     
-    <!-- SEASON TABS ADD KORA HOYECHE -->
     <div class="season-tabs" id="seasonTabs" style="display:none;"></div>
     
     <div class="lang-tabs" id="langTabs"></div>
@@ -452,7 +453,7 @@ var watchAnime = null;
 var watchEpsCount = 0;
 var watchCurrentEp = 1;
 var watchCurrentLang = 'sub';
-var watchCurrentSeason = 1; // Default season
+var watchCurrentSeason = 1;
 var watchCurrentServer = 0;
 var watchRangeStart = 1;
 var watchRangeSize = 100;
@@ -460,72 +461,48 @@ var watchRangeSize = 100;
 var ANILIST_URL = 'https://graphql.anilist.co';
 var QUERY = 'query ($search: String, $genre: String, $sort: [MediaSort], $perPage: Int) { Page(page: 1, perPage: $perPage) { media(type: ANIME, search: $search, genre: $genre, sort: $sort, isAdult: false) { id title { romaji english } description(asHtml: false) coverImage { extraLarge large } bannerImage episodes nextAiringEpisode { episode } averageScore format startDate { year } genres trailer { id site } } } }';
 
-// VIDEO_DATA EI KHANE SEASON ADD KORA HOYECHE
+// ====== VIDEO DATA ======
+// Death Note er ID holo 1535. Ekhane Pixeldrain er Direct Link (api/file) bosano hoyeche.
 var VIDEO_DATA = {
-  97940: {
-    sub: [
-      { name: "Server 1", embed: "https://streamtape.com/e/JKKxw2xeQ0sj0R0/" },
-      { name: "Server 2", embed: "https://streamtape.com/e/PDyGxboGa3u03pq/" }
-    ],
-    dub: [
-      { name: "Server 1", embed: "https://streamtape.com/e/JKKxw2xeQ0sj0R0/" },
-      { name: "Server 2", embed: "https://bysefujedu.com/e/k6659hlcqjod" }
-    ],
-    hindi: [
-      { name: "Server 1", embed: "https://streamtape.com/e/JKKxw2xeQ0sj0R0/" },
-      { name: "Server 2", embed: "https://streamtape.com/e/PDyGxboGa3u03pq/" }
-    ],
-    bangla: [
-      { name: "Server 1", embed: "https://streamtape.com/e/JKKxw2xeQ0sj0R0/" },
-      { name: "Server 2", embed: "https://streamtape.com/e/PDyGxboGa3u03pq/" }
-    ]
+  1535: {
+    hindi: {
+      "Season 1": {
+        1: [{ name: "Server 1", embed: "https://pixeldrain.com/api/file/SPapJ1HP" }]
+      }
+    }
   },
-
+  97940: {
+    sub: [{ name: "Server 1", embed: "https://streamtape.com/e/JKKxw2xeQ0sj0R0/" },{ name: "Server 2", embed: "https://streamtape.com/e/PDyGxboGa3u03pq/" }],
+    dub: [{ name: "Server 1", embed: "https://streamtape.com/e/JKKxw2xeQ0sj0R0/" },{ name: "Server 2", embed: "https://bysefujedu.com/e/k6659hlcqjod" }],
+    hindi: [{ name: "Server 1", embed: "https://streamtape.com/e/JKKxw2xeQ0sj0R0/" },{ name: "Server 2", embed: "https://streamtape.com/e/PDyGxboGa3u03pq/" }],
+    bangla: [{ name: "Server 1", embed: "https://streamtape.com/e/JKKxw2xeQ0sj0R0/" },{ name: "Server 2", embed: "https://streamtape.com/e/PDyGxboGa3u03pq/" }]
+  },
   1735: {
     sub: [{ name: "Server 1", embed: "https://streamtape.com/e/PW4m8D2oGeI0ORJ/" }],
     dub: [{ name: "Server 1", embed: "https://streamtape.com/e/M9aW9kwMdOIYRa/" }],
     hindi: [{ name: "Server 1", embed: "https://streamtape.com/e/kb9DQGkLoVHOoLG/" }],
     bangla: [{ name: "Server 1", embed: "https://streamtape.com/e/eoYOmAJ6LoTZjM/" }]
   },
-
   151807: {
-    sub: [
-      { name: "Server 1", embed: "https://streamtape.com/e/2a3KAG3bXJIZXm4/" },
-      { name: "Server 2", embed: "https://bysefujedu.com/e/3r4nyti9w1d0/" }
-    ],
-    dub: [
-      { name: "Server 1", embed: "https://streamtape.com/e/xqAMwoYg6khkbXV/" },
-      { name: "Server 2", embed: "https://bysefujedu.com/e/759arii02xep/" }
-    ],
+    sub: [{ name: "Server 1", embed: "https://streamtape.com/e/2a3KAG3bXJIZXm4/" },{ name: "Server 2", embed: "https://bysefujedu.com/e/3r4nyti9w1d0/" }],
+    dub: [{ name: "Server 1", embed: "https://streamtape.com/e/xqAMwoYg6khkbXV/" },{ name: "Server 2", embed: "https://bysefujedu.com/e/759arii02xep/" }],
     hindi: {
       "Season 1": {
-        1: [{ name: "Server 1", embed: "https://streamtape.com/e/VWl90p4GZGiKMB6" }],
-        2: [{ name: "Server 1", embed: "https://streamtape.com/e/AX7LPAJeKLuwpZ" }],
-        3: [{ name: "Server 1", embed: "https://streamtape.com/e/VXr6degMKzsKMvr" }],
-        4: [{ name: "Server 1", embed: "https://streamtape.com/e/kbpbaLlve0sOOkb" }],
-        5: [{ name: "Server 1", embed: "https://streamtape.com/e/xvkzKjOKxaCk2XW" }],
-        6: [{ name: "Server 1", embed: "https://streamtape.com/e/6qGYklr67dU9k6x" }],
-        7: [{ name: "Server 1", embed: "https://streamtape.com/e/zKGerDa4D4uYr8A" }],
-        8: [{ name: "Server 1", embed: "https://streamtape.com/e/3Pa21e14YBTdJZM" }],
-        9: [{ name: "Server 1", embed: "https://streamtape.com/e/3Oq8zRRVkvsd170" }],
-        10: [{ name: "Server 1", embed: "https://streamtape.com/e/0WWxJAgDqlSbpAl" }],
-        11: [{ name: "Server 1", embed: "https://streamtape.com/e/mrjMWpqY9yUbxzd" }],
-        12: [{ name: "Server 1", embed: "https://streamtape.com/e/ewdM81jYbdhJBA" }],
+        1: [{ name: "Server 1", embed: "https://streamtape.com/e/VWl90p4GZGiKMB6" }], 2: [{ name: "Server 1", embed: "https://streamtape.com/e/AX7LPAJeKLuwpZ" }],
+        3: [{ name: "Server 1", embed: "https://streamtape.com/e/VXr6degMKzsKMvr" }], 4: [{ name: "Server 1", embed: "https://streamtape.com/e/kbpbaLlve0sOOkb" }],
+        5: [{ name: "Server 1", embed: "https://streamtape.com/e/xvkzKjOKxaCk2XW" }], 6: [{ name: "Server 1", embed: "https://streamtape.com/e/6qGYklr67dU9k6x" }],
+        7: [{ name: "Server 1", embed: "https://streamtape.com/e/zKGerDa4D4uYr8A" }], 8: [{ name: "Server 1", embed: "https://streamtape.com/e/3Pa21e14YBTdJZM" }],
+        9: [{ name: "Server 1", embed: "https://streamtape.com/e/3Oq8zRRVkvsd170" }], 10: [{ name: "Server 1", embed: "https://streamtape.com/e/0WWxJAgDqlSbpAl" }],
+        11: [{ name: "Server 1", embed: "https://streamtape.com/e/mrjMWpqY9yUbxzd" }], 12: [{ name: "Server 1", embed: "https://streamtape.com/e/ewdM81jYbdhJBA" }],
         13: [{ name: "Server 1", embed: "https://streamtape.com/e/b1rX02992gIPZ4d" }]
       },
       "Season 2": {
-        1: [{ name: "Server 1", embed: "https://streamtape.com/e/VWl90p4GZGiKMB6" }],
-        2: [{ name: "Server 1", embed: "https://streamtape.com/e/AX7LPAJeKLuwpZ" }],
-        3: [{ name: "Server 1", embed: "https://streamtape.com/e/VXr6degMKzsKMvr" }],
-        4: [{ name: "Server 1", embed: "https://streamtape.com/e/kbpbaLlve0sOOkb" }],
-        5: [{ name: "Server 1", embed: "https://streamtape.com/e/xvkzKjOKxaCk2XW" }],
-        6: [{ name: "Server 1", embed: "https://streamtape.com/e/6qGYklr67dU9k6x" }],
-        7: [{ name: "Server 1", embed: "https://streamtape.com/e/zKGerDa4D4uYr8A" }],
-        8: [{ name: "Server 1", embed: "https://streamtape.com/e/3Pa21e14YBTdJZM" }],
-        9: [{ name: "Server 1", embed: "https://streamtape.com/e/3Oq8zRRVkvsd170" }],
-        10: [{ name: "Server 1", embed: "https://streamtape.com/e/0WWxJAgDqlSbpAl" }],
-        11: [{ name: "Server 1", embed: "https://streamtape.com/e/mrjMWpqY9yUbxzd" }],
-        12: [{ name: "Server 1", embed: "https://streamtape.com/e/ewdM81jYbdhJBA" }],
+        1: [{ name: "Server 1", embed: "https://streamtape.com/e/VWl90p4GZGiKMB6" }], 2: [{ name: "Server 1", embed: "https://streamtape.com/e/AX7LPAJeKLuwpZ" }],
+        3: [{ name: "Server 1", embed: "https://streamtape.com/e/VXr6degMKzsKMvr" }], 4: [{ name: "Server 1", embed: "https://streamtape.com/e/kbpbaLlve0sOOkb" }],
+        5: [{ name: "Server 1", embed: "https://streamtape.com/e/xvkzKjOKxaCk2XW" }], 6: [{ name: "Server 1", embed: "https://streamtape.com/e/6qGYklr67dU9k6x" }],
+        7: [{ name: "Server 1", embed: "https://streamtape.com/e/zKGerDa4D4uYr8A" }], 8: [{ name: "Server 1", embed: "https://streamtape.com/e/3Pa21e14YBTdJZM" }],
+        9: [{ name: "Server 1", embed: "https://streamtape.com/e/3Oq8zRRVkvsd170" }], 10: [{ name: "Server 1", embed: "https://streamtape.com/e/0WWxJAgDqlSbpAl" }],
+        11: [{ name: "Server 1", embed: "https://streamtape.com/e/mrjMWpqY9yUbxzd" }], 12: [{ name: "Server 1", embed: "https://streamtape.com/e/ewdM81jYbdhJBA" }],
         13: [{ name: "Server 1", embed: "https://streamtape.com/e/b1rX02992gIPZ4d" }]
       }
     },
@@ -533,114 +510,48 @@ var VIDEO_DATA = {
   }
 };
 
-var WATCH_LINKS = {
-  97940: [{ platform: "crunchyroll", url: "https://www.crunchyroll.com/series/GRE50VZWR/black-clover" }, { platform: "netflix", url: "https://www.netflix.com/title/80238012" }],
-  1735: [{ platform: "crunchyroll", url: "https://www.crunchyroll.com/naruto-shippuden" }],
-  151807: [{ platform: "crunchyroll", url: "https://www.crunchyroll.com/series/GDKHZEJ0K/solo-leveling" }],
-  21: [{ platform: "crunchyroll", url: "https://www.crunchyroll.com/one-piece" }, { platform: "netflix", url: "https://www.netflix.com/title/80107103" }],
-  20: [{ platform: "crunchyroll", url: "https://www.crunchyroll.com/naruto" }, { platform: "netflix", url: "https://www.netflix.com/title/70205012" }],
-  38000: [{ platform: "crunchyroll", url: "https://www.crunchyroll.com/demon-slayer-kimetsu-no-yaiba" }, { platform: "netflix", url: "https://www.netflix.com/title/81091393" }],
-  16498: [{ platform: "crunchyroll", url: "https://www.crunchyroll.com/attack-on-titan" }, { platform: "hulu", url: "https://www.hulu.com/series/attack-on-titan" }]
-};
+var WATCH_LINKS = { 151807: [{ platform: "crunchyroll", url: "https://www.crunchyroll.com/series/GDKHZEJ0K/solo-leveling" }] };
 
 function platformLabel(p) { var m={crunchyroll:"Crunchyroll",netflix:"Netflix",hulu:"Hulu",prime:"Prime Video",youtube:"YouTube",muse:"Muse Asia"}; return m[p]||p; }
 function platformIcon(p) { var m={crunchyroll:"🟠",netflix:"🔴",hulu:"🟢",prime:"🔵",youtube:"▶️",muse:"🟣"}; return m[p]||"▶"; }
 function langIcon(l) { var m = { sub: '<span class="cc-icon">CC</span>', dub: '🎤', hindi: '🇮🇳', bangla: '🇧🇩' }; return m[l] || ''; }
 function langLabel(l) { var m = { sub: "Soft Sub", dub: "Dub", hindi: "Hindi", bangla: "Bangla" }; return m[l] || l; }
 
-function getDownloadUrl(embed) {
-  if (!embed) return '';
-  if (embed.indexOf('streamtape.com/e/') >= 0) return embed.replace('/e/', '/v/');
-  if (embed.indexOf('bysefujedu.com/e/') >= 0) return embed.replace('/e/', '/d/');
-  if (embed.indexOf('filemoon.sx/e/') >= 0) return embed.replace('/e/', '/d/');
-  if (embed.indexOf('dood.li/e/') >= 0) return embed.replace('/e/', '/d/');
-  return '';
-}
+function getDownloadUrl(embed) { if (!embed) return ''; if (embed.indexOf('streamtape.com/e/') >= 0) return embed.replace('/e/', '/v/'); if (embed.indexOf('bysefujedu.com/e/') >= 0) return embed.replace('/e/', '/d/'); return ''; }
 
-// UPDATED: getServersForEpisode with Season FIX
 function getServersForEpisode(animeId, lang, season, epNum) {
-  var data = VIDEO_DATA[animeId] || {};
-  var langData = data[lang];
-  if (!langData) return [];
-
-  // If language data is an array (no seasons), return as is
+  var data = VIDEO_DATA[animeId] || {}; var langData = data[lang]; if (!langData) return [];
   if (Array.isArray(langData)) return langData;
-
-  // If language data has season keys (e.g. "Season 1")
   var seasonKey = "Season " + season;
-  if (langData[seasonKey]) {
-    return langData[seasonKey][epNum] || [];
-  }
-
-  // Fallback: direct episode mapping
+  if (langData[seasonKey]) return langData[seasonKey][epNum] || [];
   return langData[epNum] || [];
 }
 
-function hasAnyVideos(animeId, lang) {
-  var data = VIDEO_DATA[animeId] || {};
-  var langData = data[lang];
-  if (!langData) return false;
-  if (Array.isArray(langData)) return langData.length > 0;
-  return Object.keys(langData).length > 0;
-}
+function hasAnyVideos(animeId, lang) { var data = VIDEO_DATA[animeId] || {}; var langData = data[lang]; if (!langData) return false; if (Array.isArray(langData)) return langData.length > 0; return Object.keys(langData).length > 0; }
 
-// UPDATED: getAvailableEpisodes with Season FIX
 function getAvailableEpisodes(animeId, lang, season) {
-  var data = VIDEO_DATA[animeId] || {};
-  var langData = data[lang];
-  if (!langData) return null;
-  if (Array.isArray(langData)) return null;
-
+  var data = VIDEO_DATA[animeId] || {}; var langData = data[lang]; if (!langData) return null; if (Array.isArray(langData)) return null;
   var seasonKey = "Season " + season;
-  if (langData[seasonKey]) {
-    return Object.keys(langData[seasonKey]).map(Number).filter(function(n){ return !isNaN(n); }).sort(function(a,b){return a-b;});
-  }
+  if (langData[seasonKey]) return Object.keys(langData[seasonKey]).map(Number).filter(function(n){ return !isNaN(n); }).sort(function(a,b){return a-b;});
   return Object.keys(langData).map(Number).filter(function(n){ return !isNaN(n); }).sort(function(a,b){return a-b;});
 }
 
-var fallbackAnime = [
-  { mal_id: 151807, title: "Solo Leveling", score: 8.3, type: "TV", episodes: 12, img: "https://cdn.myanimelist.net/images/anime/1779/141555.jpg", banner: "https://cdn.myanimelist.net/images/anime/1779/141555.jpg", synopsis: "In a world of hunters and monsters, the weakest hunter Sung Jinwoo gains a mysterious power to level up endlessly.", genres: ["Action","Adventure","Fantasy"], trailer: "https://www.youtube.com/embed/I6MQB0ELRsA", year: 2024 },
-  { mal_id: 1735, title: "Naruto Shippuden", score: 8.3, type: "TV", episodes: 500, img: "https://cdn.myanimelist.net/images/anime/5/17407.jpg", banner: "https://cdn.myanimelist.net/images/anime/5/17407.jpg", synopsis: "Naruto returns from training with Jiraiya to face the Akatsuki.", genres: ["Action","Adventure"], trailer: "https://www.youtube.com/embed/1M3H1yL2QeE", year: 2007 },
-  { mal_id: 21, title: "One Piece", score: 8.7, type: "TV", episodes: "1100+", img: "https://cdn.myanimelist.net/images/anime/6/73245.jpg", banner: "https://cdn.myanimelist.net/images/anime/6/73245.jpg", synopsis: "Monkey D. Luffy sets off on an adventure to find the legendary One Piece treasure.", genres: ["Action","Adventure","Fantasy"], trailer: "https://www.youtube.com/embed/MCb13lbVGE0", year: 1999 },
-  { mal_id: 20, title: "Naruto", score: 8.0, type: "TV", episodes: 220, img: "https://cdn.myanimelist.net/images/anime/13/17405.jpg", banner: "https://cdn.myanimelist.net/images/anime/13/17405.jpg", synopsis: "Naruto Uzumaki, a young ninja with a sealed demon fox inside him.", genres: ["Action","Adventure"], trailer: "https://www.youtube.com/embed/QczGoCmX-pI", year: 2002 },
-  { mal_id: 38000, title: "Demon Slayer", score: 8.5, type: "TV", episodes: 55, img: "https://cdn.myanimelist.net/images/anime/1286/99889.jpg", banner: "https://cdn.myanimelist.net/images/anime/1286/99889.jpg", synopsis: "Tanjiro becomes a demon slayer to avenge his family.", genres: ["Action","Supernatural"], trailer: "https://www.youtube.com/embed/VQGCKyvzIM4", year: 2019 },
-  { mal_id: 97940, title: "Black Clover", score: 8.1, type: "TV", episodes: 170, img: "https://cdn.myanimelist.net/images/anime/2/88336.jpg", banner: "https://cdn.myanimelist.net/images/anime/2/88336.jpg", synopsis: "Asta, a boy born without magic, aims to become the Wizard King.", genres: ["Action","Adventure","Comedy","Fantasy"], trailer: "https://www.youtube.com/embed/PDyGxboGa3u", year: 2017 }
+var fallbackAnime = [ 
+  { mal_id: 1535, title: "Death Note", score: 8.6, type: "TV", episodes: 37, img: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx1535-b5y5Y1jN0F0e.jpg", banner: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/1535.jpg", synopsis: "A shinigami, as a god of death, can kill any person—provided they see their victim's face and write their victim's name in a notebook called a Death Note.", genres: ["Mystery","Psychological","Supernatural","Thriller"], trailer: "https://www.youtube.com/embed/NlJZ-YgAt-c", year: 2006 },
+  { mal_id: 151807, title: "Solo Leveling", score: 8.3, type: "TV", episodes: 12, img: "https://cdn.myanimelist.net/images/anime/1779/141555.jpg", banner: "https://cdn.myanimelist.net/images/anime/1779/141555.jpg", synopsis: "In a world of hunters and monsters, the weakest hunter Sung Jinwoo gains a mysterious power to level up endlessly.", genres: ["Action","Adventure","Fantasy"], trailer: "https://www.youtube.com/embed/I6MQB0ELRsA", year: 2024 } 
 ];
 
-function fetchWithTimeout(url, opt, ms) {
-  opt = opt || {}; ms = ms || 8000;
-  return new Promise(function(res, rej) {
-    var c = new AbortController(); opt.signal = c.signal;
-    var t = setTimeout(function(){ c.abort(); rej(new Error('timeout')); }, ms);
-    fetch(url, opt).then(function(r){ clearTimeout(t); if(!r.ok) rej(new Error('fail')); else res(r); }).catch(function(e){ clearTimeout(t); rej(e); });
-  });
-}
+function fetchWithTimeout(url, opt, ms) { opt = opt || {}; ms = ms || 8000; return new Promise(function(res, rej) { var c = new AbortController(); opt.signal = c.signal; var t = setTimeout(function(){ c.abort(); rej(new Error('timeout')); }, ms); fetch(url, opt).then(function(r){ clearTimeout(t); if(!r.ok) rej(new Error('fail')); else res(r); }).catch(function(e){ clearTimeout(t); rej(e); }); }); }
 function anilistFetch(v) { return fetchWithTimeout(ANILIST_URL, { method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'}, body: JSON.stringify({ query: QUERY, variables: v }) }, 8000).then(function(r){ return r.json(); }); }
 function cleanText(s) { if(!s) return ''; return String(s).replace(/<br\s*\/?>/gi,' ').replace(/<[^>]+>/g,'').replace(/&quot;/g,'"').replace(/&#039;/g,"'").replace(/&amp;/g,'&').replace(/\s+/g,' ').trim(); }
 
 function mapAniList(a) {
-  var trailer = null;
-  if (a.trailer && a.trailer.id && a.trailer.site === 'youtube') trailer = 'https://www.youtube.com/embed/' + a.trailer.id;
-  var eps = a.episodes;
-  if (!eps && a.nextAiringEpisode && a.nextAiringEpisode.episode) eps = (a.nextAiringEpisode.episode - 1) + '+';
-  if (!eps) eps = '?';
-  return {
-    mal_id: a.id, title: (a.title && (a.title.english || a.title.romaji)) || 'Unknown',
-    score: a.averageScore ? (a.averageScore/10).toFixed(1) : 'N/A',
-    type: (a.format||'').replace('_',' '), episodes: eps,
-    img: (a.coverImage && (a.coverImage.extraLarge || a.coverImage.large)) || '',
-    banner: a.bannerImage || (a.coverImage && (a.coverImage.extraLarge || a.coverImage.large)) || '',
-    synopsis: cleanText(a.description), genres: a.genres || [], trailer: trailer,
-    year: (a.startDate && a.startDate.year) || ''
-  };
+  var trailer = null; if (a.trailer && a.trailer.id && a.trailer.site === 'youtube') trailer = 'https://www.youtube.com/embed/' + a.trailer.id;
+  var eps = a.episodes; if (!eps && a.nextAiringEpisode && a.nextAiringEpisode.episode) eps = (a.nextAiringEpisode.episode - 1) + '+'; if (!eps) eps = '?';
+  return { mal_id: a.id, title: (a.title && (a.title.english || a.title.romaji)) || 'Unknown', score: a.averageScore ? (a.averageScore/10).toFixed(1) : 'N/A', type: (a.format||'').replace('_',' '), episodes: eps, img: (a.coverImage && (a.coverImage.extraLarge || a.coverImage.large)) || '', banner: a.bannerImage || (a.coverImage && (a.coverImage.extraLarge || a.coverImage.large)) || '', synopsis: cleanText(a.description), genres: a.genres || [], trailer: trailer, year: (a.startDate && a.startDate.year) || '' };
 }
 
-function sortSearchResults(list, q) {
-  q = String(q).toLowerCase().trim();
-  function tS(a){ var t=String(a.title).toLowerCase(); if(t===q)return 100; if(t.startsWith(q+' '))return 80; if(t.startsWith(q))return 60; if(t.indexOf(q)>=0)return 40; return 20; }
-  list.sort(function(a,b){ return tS(b)-tS(a) || (a.year||9999)-(b.year||9999); });
-  return list;
-}
+function sortSearchResults(list, q) { q = String(q).toLowerCase().trim(); function tS(a){ var t=String(a.title).toLowerCase(); if(t===q)return 100; if(t.startsWith(q+' '))return 80; if(t.startsWith(q))return 60; if(t.indexOf(q)>=0)return 40; return 20; } list.sort(function(a,b){ return tS(b)-tS(a) || (a.year||9999)-(b.year||9999); }); return list; }
 
 function getWatchlist(){ try{return JSON.parse(localStorage.getItem('anbikai_watchlist')||'[]');}catch(e){return[];} }
 function saveWatchlist(l){ localStorage.setItem('anbikai_watchlist', JSON.stringify(l)); }
@@ -662,520 +573,175 @@ function setActiveBtn(id){ ['homeBtn','watchlistBtn','historyBtn','searchToggleB
 function showHomeView(){ document.getElementById('homeView').style.display='block'; document.getElementById('watchPage').classList.remove('active'); }
 function showWatchView(){ document.getElementById('homeView').style.display='none'; document.getElementById('watchPage').classList.add('active'); }
 
-function goHome(){
-  setActiveBtn('homeBtn');
-  document.getElementById('searchBar').classList.remove('active');
-  hideAnimeModal();
-  showHomeView();
-  loadTop();
-}
-
+function goHome(){ setActiveBtn('homeBtn'); document.getElementById('searchBar').classList.remove('active'); hideAnimeModal(); showHomeView(); loadTop(); }
 function hideAnimeModal(){ var overlay = document.getElementById('animeModalOverlay'); if(overlay) overlay.classList.remove('active'); document.body.style.overflow = ''; }
-
-function findAnimeById(id) {
-  for(var i=0;i<currentList.length;i++) if(currentList[i].mal_id===id) return currentList[i];
-  for(var j=0;j<fallbackAnime.length;j++) if(fallbackAnime[j].mal_id===id) return fallbackAnime[j];
-  for(var k=0;k<heroAnimeList.length;k++) if(heroAnimeList[k].mal_id===id) return heroAnimeList[k];
-  var h = getHistory();
-  for(var m=0;m<h.length;m++) if(h[m].mal_id===id) return h[m];
-  return null;
-}
+function findAnimeById(id) { for(var i=0;i<currentList.length;i++) if(currentList[i].mal_id===id) return currentList[i]; for(var j=0;j<fallbackAnime.length;j++) if(fallbackAnime[j].mal_id===id) return fallbackAnime[j]; for(var k=0;k<heroAnimeList.length;k++) if(heroAnimeList[k].mal_id===id) return heroAnimeList[k]; var h = getHistory(); for(var m=0;m<h.length;m++) if(h[m].mal_id===id) return h[m]; return null; }
 
 function loadTop() {
-  document.getElementById('heroSlider').style.display = 'block';
-  document.getElementById('continueSection').style.display = 'none';
-  trendingHeader.style.display = 'flex';
-  trendingText.textContent = '🔥 Trending Now';
-  statusEl.textContent=''; grid.innerHTML='';
+  document.getElementById('heroSlider').style.display = 'block'; document.getElementById('continueSection').style.display = 'none'; trendingHeader.style.display = 'flex'; trendingText.textContent = '🔥 Trending Now'; statusEl.textContent=''; grid.innerHTML='';
   anilistFetch({ sort:['TRENDING_DESC'], perPage: 30 }).then(function(res){
-    if(res && res.data && res.data.Page && res.data.Page.media && res.data.Page.media.length>0){
-      var mapped = res.data.Page.media.map(mapAniList);
-      renderHero(mapped); renderAnime(mapped);
-    } else { renderHero(fallbackAnime); renderAnime(fallbackAnime); }
+    if(res && res.data && res.data.Page && res.data.Page.media && res.data.Page.media.length>0){ var mapped = res.data.Page.media.map(mapAniList); renderHero(mapped); renderAnime(mapped); } else { renderHero(fallbackAnime); renderAnime(fallbackAnime); }
   }).catch(function(){ renderHero(fallbackAnime); renderAnime(fallbackAnime); });
 }
 
 function renderHero(list) {
-  heroAnimeList = list.slice(0, 5); heroIndex = 0;
-  var slides = document.getElementById('heroSlides'); var dots = document.getElementById('heroDots');
-  slides.innerHTML = ''; dots.innerHTML = '';
+  heroAnimeList = list.slice(0, 5); heroIndex = 0; var slides = document.getElementById('heroSlides'); var dots = document.getElementById('heroDots'); slides.innerHTML = ''; dots.innerHTML = '';
   heroAnimeList.forEach(function(a, i){
-    var bg = a.banner || a.img;
-    var div = document.createElement('div');
-    div.className = 'hero-slide' + (i===0?' active':'');
-    div.innerHTML = '<img src="'+bg+'" alt="" onerror="this.style.display=\'none\'">'+
-      '<div class="hero-content">'+
-        '<div class="hero-title">'+a.title+'</div>'+
-        '<div class="hero-meta"><span>★ '+a.score+'</span><span>'+(a.type||'TV')+'</span><span>'+a.episodes+' eps</span>'+(a.year?'<span>'+a.year+'</span>':'')+'</div>'+
-        '<div class="hero-actions">'+
-          '<button class="btn-play" onclick="event.stopPropagation();openDetails('+a.mal_id+')">▶ Play Now</button>'+
-          '<button class="btn-bookmark" onclick="event.stopPropagation();addHeroToWatchlist('+a.mal_id+')">🔖</button>'+
-        '</div>'+
-      '</div>';
-    div.onclick = function(){ openDetails(a.mal_id); };
-    slides.appendChild(div);
-    var dot = document.createElement('button');
-    dot.className = 'hero-dot' + (i===0?' active':'');
-    dot.onclick = function(e){ e.stopPropagation(); gotoHero(i); };
-    dots.appendChild(dot);
-  });
-  startHeroAuto();
+    var bg = a.banner || a.img; var div = document.createElement('div'); div.className = 'hero-slide' + (i===0?' active':'');
+    div.innerHTML = '<img src="'+bg+'" alt="" onerror="this.style.display=\'none\'"><div class="hero-content"><div class="hero-title">'+a.title+'</div><div class="hero-meta"><span>★ '+a.score+'</span><span>'+(a.type||'TV')+'</span><span>'+a.episodes+' eps</span>'+(a.year?'<span>'+a.year+'</span>':'')+'</div><div class="hero-actions"><button class="btn-play" onclick="event.stopPropagation();openDetails('+a.mal_id+')">▶ Play Now</button><button class="btn-bookmark" onclick="event.stopPropagation();addHeroToWatchlist('+a.mal_id+')">🔖</button></div></div>';
+    div.onclick = function(){ openDetails(a.mal_id); }; slides.appendChild(div);
+    var dot = document.createElement('button'); dot.className = 'hero-dot' + (i===0?' active':''); dot.onclick = function(e){ e.stopPropagation(); gotoHero(i); }; dots.appendChild(dot);
+  }); startHeroAuto();
 }
 function gotoHero(i){ heroIndex=i; var s=document.querySelectorAll('.hero-slide'), d=document.querySelectorAll('.hero-dot'); for(var j=0;j<s.length;j++) s[j].classList.toggle('active',j===i); for(var k=0;k<d.length;k++) d[k].classList.toggle('active',k===i); startHeroAuto(); }
 function startHeroAuto(){ if(heroTimer) clearInterval(heroTimer); heroTimer = setInterval(function(){ if(heroAnimeList.length<=1) return; heroIndex=(heroIndex+1)%heroAnimeList.length; gotoHero(heroIndex); }, 5000); }
 function addHeroToWatchlist(id){ var a=null; for(var i=0;i<heroAnimeList.length;i++) if(heroAnimeList[i].mal_id===id){a=heroAnimeList[i];break;} if(!a) return; toggleWatchlist(a); alert(isInWatchlist(id)?'✅ Watchlist e add holo!':'❌ Watchlist theke remove holo'); }
 
 function searchAnime() {
-  var q = input.value.trim(); hideSuggestions();
-  if(!q){ goHome(); return; }
-  showHomeView();
-  document.getElementById('heroSlider').style.display='none';
-  document.getElementById('continueSection').style.display='none';
-  trendingHeader.style.display='flex';
-  trendingText.textContent = '🔍 Search: '+q;
-  statusEl.textContent='Searching...'; grid.innerHTML='';
-  anilistFetch({ search:q, perPage:30 }).then(function(res){
-    if(res && res.data && res.data.Page && res.data.Page.media && res.data.Page.media.length>0){ var l=res.data.Page.media.map(mapAniList); l=sortSearchResults(l,q); renderAnime(l); }
-    else statusEl.textContent='Kichu paoa gelo na.';
-  }).catch(function(){ statusEl.textContent='Search fail.'; });
+  var q = input.value.trim(); hideSuggestions(); if(!q){ goHome(); return; } showHomeView(); document.getElementById('heroSlider').style.display='none'; document.getElementById('continueSection').style.display='none'; trendingHeader.style.display='flex'; trendingText.textContent = '🔍 Search: '+q; statusEl.textContent='Searching...'; grid.innerHTML='';
+  anilistFetch({ search:q, perPage:30 }).then(function(res){ if(res && res.data && res.data.Page && res.data.Page.media && res.data.Page.media.length>0){ var l=res.data.Page.media.map(mapAniList); l=sortSearchResults(l,q); renderAnime(l); } else statusEl.textContent='Kichu paoa gelo na.'; }).catch(function(){ statusEl.textContent='Search fail.'; });
 }
 
 function filterGenre() {
-  var g = document.getElementById('genreSelect').value;
-  if(!g){ goHome(); return; }
-  showHomeView();
-  document.getElementById('heroSlider').style.display='none';
-  document.getElementById('continueSection').style.display='none';
-  trendingHeader.style.display='flex';
-  trendingText.textContent = '🎭 '+g;
-  statusEl.textContent='Loading...'; grid.innerHTML='';
-  anilistFetch({ genre:g, sort:['POPULARITY_DESC'], perPage:30 }).then(function(res){
-    if(res && res.data && res.data.Page && res.data.Page.media) renderAnime(res.data.Page.media.map(mapAniList));
-  }).catch(function(){ statusEl.textContent='Filter fail.'; });
+  var g = document.getElementById('genreSelect').value; if(!g){ goHome(); return; } showHomeView(); document.getElementById('heroSlider').style.display='none'; document.getElementById('continueSection').style.display='none'; trendingHeader.style.display='flex'; trendingText.textContent = '🎭 '+g; statusEl.textContent='Loading...'; grid.innerHTML='';
+  anilistFetch({ genre:g, sort:['POPULARITY_DESC'], perPage:30 }).then(function(res){ if(res && res.data && res.data.Page && res.data.Page.media) renderAnime(res.data.Page.media.map(mapAniList)); }).catch(function(){ statusEl.textContent='Filter fail.'; });
 }
 
-function showWatchlist() {
-  setActiveBtn('watchlistBtn');
-  document.getElementById('searchBar').classList.remove('active');
-  showHomeView();
-  document.getElementById('heroSlider').style.display='none';
-  document.getElementById('continueSection').style.display='none';
-  var l = getWatchlist();
-  trendingHeader.style.display='flex';
-  trendingText.textContent = '⭐ Watchlist ('+l.length+')';
-  if(l.length===0){ statusEl.textContent='Watchlist khali.'; grid.innerHTML=''; return; }
-  statusEl.textContent=''; renderAnime(l);
-}
+function showWatchlist() { setActiveBtn('watchlistBtn'); document.getElementById('searchBar').classList.remove('active'); showHomeView(); document.getElementById('heroSlider').style.display='none'; document.getElementById('continueSection').style.display='none'; var l = getWatchlist(); trendingHeader.style.display='flex'; trendingText.textContent = '⭐ Watchlist ('+l.length+')'; if(l.length===0){ statusEl.textContent='Watchlist khali.'; grid.innerHTML=''; return; } statusEl.textContent=''; renderAnime(l); }
 
-function showHistory() {
-  setActiveBtn('historyBtn');
-  document.getElementById('searchBar').classList.remove('active');
-  showHomeView();
-  document.getElementById('heroSlider').style.display='none';
-  var l = getHistory();
-  if(l.length===0){ trendingHeader.style.display='flex'; trendingText.textContent='🕐 History (0)'; statusEl.textContent='History khali.'; grid.innerHTML=''; document.getElementById('continueSection').style.display='none'; return; }
-  document.getElementById('continueSection').style.display='block';
-  trendingHeader.style.display='none';
-  grid.innerHTML=''; statusEl.textContent='';
-  updateContinueRow();
-}
+function showHistory() { setActiveBtn('historyBtn'); document.getElementById('searchBar').classList.remove('active'); showHomeView(); document.getElementById('heroSlider').style.display='none'; var l = getHistory(); if(l.length===0){ trendingHeader.style.display='flex'; trendingText.textContent='🕐 History (0)'; statusEl.textContent='History khali.'; grid.innerHTML=''; document.getElementById('continueSection').style.display='none'; return; } document.getElementById('continueSection').style.display='block'; trendingHeader.style.display='none'; grid.innerHTML=''; statusEl.textContent=''; updateContinueRow(); }
 
-function updateContinueRow() {
-  var row = document.getElementById('continueRow'); if(!row) return;
-  var l = getHistory(); var sec = document.getElementById('continueSection');
-  if(l.length===0){ sec.style.display='none'; return; }
-  var html=''; for(var i=0;i<Math.min(l.length,15);i++) html += makeContinueCard(l[i]);
-  row.innerHTML = html;
-}
-function makeContinueCard(h) {
-  var score = (h.score && h.score!=='N/A') ? '<div class="card-score">★ '+h.score+'</div>' : '';
-  return '<div class="card" onclick="openDetails('+h.mal_id+')"><div class="card-img"><img src="'+h.img+'" loading="lazy" onerror="this.style.opacity=0.2">'+score+'<div class="hist-time">🕐 '+timeAgo(h.watchedAt)+'</div></div><div class="card-title">'+h.title+'</div><div class="card-sub" style="color:var(--orange);font-weight:700;">▶ '+h.episode+'</div></div>';
-}
-function makeCard(a) {
-  var badge = (a.episodes && String(a.episodes).indexOf('+')>=0) ? '<div class="card-badge">ONGOING</div>' : '';
-  var score = (a.score && a.score!=='N/A') ? '<div class="card-score">★ '+a.score+'</div>' : '';
-  return '<div class="card" onclick="openDetails('+a.mal_id+')"><div class="card-img"><img src="'+a.img+'" loading="lazy" onerror="this.style.opacity=0.2">'+badge+score+'</div><div class="card-title">'+a.title+'</div><div class="card-sub">'+((a.type||'TV')+' • '+(a.episodes||'?')+' eps')+'</div></div>';
-}
+function updateContinueRow() { var row = document.getElementById('continueRow'); if(!row) return; var l = getHistory(); var sec = document.getElementById('continueSection'); if(l.length===0){ sec.style.display='none'; return; } var html=''; for(var i=0;i<Math.min(l.length,15);i++) html += makeContinueCard(l[i]); row.innerHTML = html; }
+function makeContinueCard(h) { var score = (h.score && h.score!=='N/A') ? '<div class="card-score">★ '+h.score+'</div>' : ''; return '<div class="card" onclick="openDetails('+h.mal_id+')"><div class="card-img"><img src="'+h.img+'" loading="lazy" onerror="this.style.opacity=0.2">'+score+'<div class="hist-time">🕐 '+timeAgo(h.watchedAt)+'</div></div><div class="card-title">'+h.title+'</div><div class="card-sub" style="color:var(--orange);font-weight:700;">▶ '+h.episode+'</div></div>'; }
+function makeCard(a) { var badge = (a.episodes && String(a.episodes).indexOf('+')>=0) ? '<div class="card-badge">ONGOING</div>' : ''; var score = (a.score && a.score!=='N/A') ? '<div class="card-score">★ '+a.score+'</div>' : ''; return '<div class="card" onclick="openDetails('+a.mal_id+')"><div class="card-img"><img src="'+a.img+'" loading="lazy" onerror="this.style.opacity=0.2">'+badge+score+'</div><div class="card-title">'+a.title+'</div><div class="card-sub">'+((a.type||'TV')+' • '+(a.episodes||'?')+' eps')+'</div></div>'; }
 function renderAnime(list){ currentList=list; if(!list||list.length===0){ statusEl.textContent='Kono anime paoa gelo na.'; grid.innerHTML=''; return; } statusEl.textContent=''; var h=''; for(var i=0;i<list.length;i++) h += makeCard(list[i]); grid.innerHTML=h; }
 
 function hideSuggestions(){ suggestionsEl.classList.remove('active'); suggestionsEl.innerHTML=''; }
-function showSuggestions(items) {
-  if(!items||items.length===0){ hideSuggestions(); return; }
-  var h=''; for(var i=0;i<items.length;i++){ var a=items[i]; h+='<div class="sug-item" onclick="pickSuggestion('+a.mal_id+')"><img src="'+a.img+'" onerror="this.style.visibility=\'hidden\'"><div class="sug-item-info"><h4>'+a.title+'</h4><p>★ '+a.score+' • '+(a.type||'')+' • '+(a.episodes||'?')+' eps'+(a.year?' • '+a.year:'')+'</p></div></div>'; }
-  suggestionsEl.innerHTML=h; suggestionsEl.classList.add('active');
-}
+function showSuggestions(items) { if(!items||items.length===0){ hideSuggestions(); return; } var h=''; for(var i=0;i<items.length;i++){ var a=items[i]; h+='<div class="sug-item" onclick="pickSuggestion('+a.mal_id+')"><img src="'+a.img+'" onerror="this.style.visibility=\'hidden\'"><div class="sug-item-info"><h4>'+a.title+'</h4><p>★ '+a.score+' • '+(a.type||'')+' • '+(a.episodes||'?')+' eps'+(a.year?' • '+a.year:'')+'</p></div></div>'; } suggestionsEl.innerHTML=h; suggestionsEl.classList.add('active'); }
 function pickSuggestion(id){ var a=null; for(var i=0;i<currentList.length;i++) if(currentList[i].mal_id===id){a=currentList[i];break;} if(!a) for(var j=0;j<fallbackAnime.length;j++) if(fallbackAnime[j].mal_id===id){a=fallbackAnime[j];break;} hideSuggestions(); if(a) openDetails(a.mal_id); }
-function fetchSuggestions(q) {
-  if(!q||q.length<1){ hideSuggestions(); return; }
-  suggestionsEl.classList.add('active'); suggestionsEl.innerHTML='<div class="sug-loading">Loading...</div>';
-  anilistFetch({ search:q, perPage:8 }).then(function(res){
-    if(res && res.data && res.data.Page && res.data.Page.media && res.data.Page.media.length>0){ var l=res.data.Page.media.map(mapAniList); l=sortSearchResults(l,q); showSuggestions(l); } else hideSuggestions();
-  }).catch(function(){ var ql=q.toLowerCase(); var m=fallbackAnime.filter(function(a){return a.title.toLowerCase().indexOf(ql)>=0;}); if(m.length>0) showSuggestions(m); else hideSuggestions(); });
-}
+function fetchSuggestions(q) { if(!q||q.length<1){ hideSuggestions(); return; } suggestionsEl.classList.add('active'); suggestionsEl.innerHTML='<div class="sug-loading">Loading...</div>'; anilistFetch({ search:q, perPage:8 }).then(function(res){ if(res && res.data && res.data.Page && res.data.Page.media && res.data.Page.media.length>0){ var l=res.data.Page.media.map(mapAniList); l=sortSearchResults(l,q); showSuggestions(l); } else hideSuggestions(); }).catch(function(){ var ql=q.toLowerCase(); var m=fallbackAnime.filter(function(a){return a.title.toLowerCase().indexOf(ql)>=0;}); if(m.length>0) showSuggestions(m); else hideSuggestions(); }); }
 
-function openDetails(id) {
-  var a = findAnimeById(id);
-  if(!a) return;
-  window._currentModalAnime = a;
-  showAnimeModal(a);
-  try { history.pushState({ view: 'details', animeId: a.mal_id }, '', location.pathname + location.search + '#anime-' + a.mal_id); } catch(e) {}
-}
+function openDetails(id) { var a = findAnimeById(id); if(!a) return; window._currentModalAnime = a; showAnimeModal(a); try { history.pushState({ view: 'details', animeId: a.mal_id }, '', location.pathname + location.search + '#anime-' + a.mal_id); } catch(e) {} }
 
 function showAnimeModal(a) {
-  var inList = isInWatchlist(a.mal_id);
-  var reviews = getReviews(a.mal_id);
-  var watchLinks = WATCH_LINKS[a.mal_id] || [];
-  var ytSearch = 'https://www.youtube.com/results?search_query='+encodeURIComponent(a.title+' trailer');
-
+  var inList = isInWatchlist(a.mal_id); var reviews = getReviews(a.mal_id); var watchLinks = WATCH_LINKS[a.mal_id] || []; var ytSearch = 'https://www.youtube.com/results?search_query='+encodeURIComponent(a.title+' trailer');
   var overlay = document.getElementById('animeModalOverlay');
-  if (!overlay) {
-    overlay = document.createElement('div');
-    overlay.id = 'animeModalOverlay';
-    overlay.className = 'modal-overlay';
-    overlay.innerHTML = '<div class="modal"><div class="modal-header"><img id="mImg" src=""></div><div class="modal-body" id="animeModalBody"></div></div>';
-    document.body.appendChild(overlay);
-  }
+  if (!overlay) { overlay = document.createElement('div'); overlay.id = 'animeModalOverlay'; overlay.className = 'modal-overlay'; overlay.innerHTML = '<div class="modal"><div class="modal-header"><img id="mImg" src=""></div><div class="modal-body" id="animeModalBody"></div></div>'; document.body.appendChild(overlay); }
   document.getElementById('mImg').src = a.banner || a.img;
-
-  var html = '<h2>'+a.title+'</h2>';
-  html += '<div class="modal-info"><span class="score">★ '+a.score+'</span><span>'+(a.type||'TV')+'</span><span>'+a.episodes+' eps</span>'+(a.year?'<span>'+a.year+'</span>':'')+'</div>';
+  var html = '<h2>'+a.title+'</h2><div class="modal-info"><span class="score">★ '+a.score+'</span><span>'+(a.type||'TV')+'</span><span>'+a.episodes+' eps</span>'+(a.year?'<span>'+a.year+'</span>':'')+'</div>';
   if(a.genres && a.genres.length){ html += '<div class="genres">'; for(var i=0;i<a.genres.length;i++) html += '<span class="genre-tag">'+a.genres[i]+'</span>'; html += '</div>'; }
   html += '<p class="synopsis">'+(a.synopsis||'No description available.')+'</p>';
-
   var hasVideoData = VIDEO_DATA[a.mal_id] && (hasAnyVideos(a.mal_id, 'sub') || hasAnyVideos(a.mal_id, 'dub') || hasAnyVideos(a.mal_id, 'hindi') || hasAnyVideos(a.mal_id, 'bangla'));
-  if (hasVideoData) {
-    html += '<button class="watch-now-btn" onclick="startWatching()">▶ Watch Now</button>';
-  } else {
-    html += '<div style="padding:22px;background:var(--card);border-radius:12px;text-align:center;color:var(--muted);margin-bottom:16px;font-size:0.88rem;">😔 Ei anime er video ekhono add kora hoyni.</div>';
-  }
-
-  if(watchLinks.length>0){
-    html += '<h3 class="section-title">🌐 Official Streaming</h3><div class="watch-links">';
-    for(var w=0;w<watchLinks.length;w++){ var wl=watchLinks[w]; html += '<a class="watch-link-btn wl-'+wl.platform+'" href="'+wl.url+'" target="_blank">'+platformIcon(wl.platform)+' '+platformLabel(wl.platform)+'</a>'; }
-    html += '</div>';
-  }
-
-  html += '<button class="watchlist-btn '+(inList?'in-list':'')+'" onclick="toggleWlFromModal('+a.mal_id+')">'+(inList?'✓ In Watchlist — Remove':'+ Add to Watchlist')+'</button>';
-
-  html += '<h3 class="section-title">📺 Trailer</h3>';
-  if(a.trailer) html += '<div style="aspect-ratio:16/9;border-radius:12px;overflow:hidden;margin-bottom:8px;"><iframe src="'+a.trailer+'" style="width:100%;height:100%;border:none;touch-action:manipulation;" allowfullscreen></iframe></div>';
-  else html += '<div style="padding:22px;background:var(--card);border-radius:12px;text-align:center;color:var(--muted);font-size:0.85rem;">Trailer paoa gelo na. <a href="'+ytSearch+'" target="_blank" style="color:var(--orange);font-weight:800;">YouTube e dekho</a></div>';
-
-  html += '<h3 class="section-title">📝 Reviews ('+reviews.length+')</h3>';
-  html += '<div class="review-form"><input id="revName" type="text" placeholder="Tomar naam..."><textarea id="revText" placeholder="Tomar review likho..."></textarea><button onclick="submitReview('+a.mal_id+')">Post Review</button></div>';
+  if (hasVideoData) { html += '<button class="watch-now-btn" onclick="startWatching()">▶ Watch Now</button>'; } else { html += '<div style="padding:22px;background:var(--card);border-radius:12px;text-align:center;color:var(--muted);margin-bottom:16px;font-size:0.88rem;">😔 Ei anime er video ekhono add kora hoyni.</div>'; }
+  if(watchLinks.length>0){ html += '<h3 class="section-title">🌐 Official Streaming</h3><div class="watch-links">'; for(var w=0;w<watchLinks.length;w++){ var wl=watchLinks[w]; html += '<a class="watch-link-btn wl-'+wl.platform+'" href="'+wl.url+'" target="_blank">'+platformIcon(wl.platform)+' '+platformLabel(wl.platform)+'</a>'; } html += '</div>'; }
+  html += '<button class="watchlist-btn '+(inList?'in-list':'')+'" onclick="toggleWlFromModal('+a.mal_id+')">'+(inList?'✓ In Watchlist — Remove':'+ Add to Watchlist')+'</button><h3 class="section-title">📺 Trailer</h3>';
+  if(a.trailer) html += '<div style="aspect-ratio:16/9;border-radius:12px;overflow:hidden;margin-bottom:8px;"><iframe src="'+a.trailer+'" style="width:100%;height:100%;border:none;touch-action:manipulation;" allowfullscreen></iframe></div>'; else html += '<div style="padding:22px;background:var(--card);border-radius:12px;text-align:center;color:var(--muted);font-size:0.85rem;">Trailer paoa gelo na. <a href="'+ytSearch+'" target="_blank" style="color:var(--orange);font-weight:800;">YouTube e dekho</a></div>';
+  html += '<h3 class="section-title">📝 Reviews ('+reviews.length+')</h3><div class="review-form"><input id="revName" type="text" placeholder="Tomar naam..."><textarea id="revText" placeholder="Tomar review likho..."></textarea><button onclick="submitReview('+a.mal_id+')">Post Review</button></div>';
   for(var k=0;k<reviews.length;k++) html += '<div class="review-item"><strong>'+escapeHtml(reviews[k].name)+'</strong><p style="margin-top:4px;">'+escapeHtml(reviews[k].text)+'</p><span class="date">'+reviews[k].date+'</span></div>';
-
-  document.getElementById('animeModalBody').innerHTML = html;
-  overlay.classList.add('active');
-  document.body.style.overflow = 'hidden';
+  document.getElementById('animeModalBody').innerHTML = html; overlay.classList.add('active'); document.body.style.overflow = 'hidden';
 }
 
-function toggleWlFromModal(id) {
-  var a = window._currentModalAnime;
-  if(!a || a.mal_id!==id) return;
-  toggleWatchlist(a);
-  showAnimeModal(a);
-}
-
+function toggleWlFromModal(id) { var a = window._currentModalAnime; if(!a || a.mal_id!==id) return; toggleWatchlist(a); showAnimeModal(a); }
 function getReviews(id){ try{return JSON.parse(localStorage.getItem('anbikai_reviews_'+id)||'[]');}catch(e){return[];} }
 function saveReviews(id,l){ localStorage.setItem('anbikai_reviews_'+id, JSON.stringify(l)); }
-function submitReview(id) {
-  var name = document.getElementById('revName').value.trim() || 'Anonymous';
-  var text = document.getElementById('revText').value.trim();
-  if(!text){ alert('Review lekho age!'); return; }
-  var l = getReviews(id); l.unshift({ name:name, text:text, date:new Date().toLocaleString() }); saveReviews(id,l);
-  showAnimeModal(window._currentModalAnime);
-}
-
+function submitReview(id) { var name = document.getElementById('revName').value.trim() || 'Anonymous'; var text = document.getElementById('revText').value.trim(); if(!text){ alert('Review lekho age!'); return; } var l = getReviews(id); l.unshift({ name:name, text:text, date:new Date().toLocaleString() }); saveReviews(id,l); showAnimeModal(window._currentModalAnime); }
 function escapeHtml(s){ return String(s).replace(/[&<>"']/g,function(c){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]);}); }
 
 function showDisclaimer(e){ pendingVideoEmbed=e||null; document.getElementById('discModal').classList.add('active'); document.body.style.overflow='hidden'; }
 function closeDisclaimer(){ document.getElementById('discModal').classList.remove('active'); document.body.style.overflow=''; pendingVideoEmbed=null; }
-function acceptDisclaimer(){ disclaimerAccepted=true; document.getElementById('discModal').classList.remove('active'); document.body.style.overflow=''; if(pendingVideoEmbed){ var p=document.getElementById('watchPlayer'); if(p) p.innerHTML=makeIframeHTML(pendingVideoEmbed); pendingVideoEmbed=null; } }
+function acceptDisclaimer(){ disclaimerAccepted=true; document.getElementById('discModal').classList.remove('active'); document.body.style.overflow=''; if(pendingVideoEmbed){ var p=document.getElementById('watchPlayer'); if(p) p.innerHTML=makePlayerHTML(pendingVideoEmbed); pendingVideoEmbed=null; } }
 
 function showWelcome(){ if(localStorage.getItem('anbikai_welcome_off')==='yes') return; if(sessionStorage.getItem('anbikai_welcome_shown')==='yes') return; sessionStorage.setItem('anbikai_welcome_shown','yes'); document.getElementById('welcomeModal').classList.add('active'); }
 function toggleWelcomeCheck(e){ if(e && e.target && e.target.tagName!=='INPUT' && e.target.tagName!=='LABEL'){ var cb=document.getElementById('dontShowAgain'); cb.checked=!cb.checked; } }
 function closeWelcome(){ var cb=document.getElementById('dontShowAgain'); if(cb.checked) localStorage.setItem('anbikai_welcome_off','yes'); document.getElementById('welcomeModal').classList.remove('active'); }
 function skipWelcome(){ localStorage.setItem('anbikai_welcome_off','yes'); document.getElementById('welcomeModal').classList.remove('active'); }
 
-// ===== SINGLE TAP FIX: iframe age theke focus kore rakha =====
-function makeIframeHTML(embed) {
+// ===== NEW FUNCTION: DIRECT MP4 FILE HOLE <video>, NA HOLE <iframe> =====
+function makePlayerHTML(embed) {
+  // Pixeldrain ba direct .mp4 link check kora hocche
+  if (embed.indexOf('pixeldrain.com/api/file/') >= 0 || embed.toLowerCase().endsWith('.mp4')) {
+    return '<video src="'+embed+'" controls autoplay playsinline style="width:100%;height:100%;object-fit:contain;background:#000;touch-action:manipulation;"></video>';
+  }
+  // Onno kono link (Streamtape/Bysufujedu) hole iframe use hobe
   return '<iframe src="'+embed+'" tabindex="0" allowfullscreen allow="autoplay; encrypted-media; fullscreen" scrolling="no" frameborder="0" style="width:100%;height:100%;border:none;touch-action:manipulation;" '+
     'onload="var f=this;setTimeout(function(){try{f.focus();}catch(e){}},50);setTimeout(function(){try{f.focus();}catch(e){}},600);setTimeout(function(){try{f.focus();}catch(e){}},1500);"></iframe>';
 }
 
 function startWatching() {
-  var a = window._currentModalAnime;
-  if (!a) return;
-  if (!VIDEO_DATA[a.mal_id]) { alert('Video paoa gelo na.'); return; }
-
-  watchAnime = a;
-  watchCurrentEp = 1;
-  watchCurrentLang = pickFirstAvailableLang(a.mal_id);
-  watchCurrentSeason = 1; // Reset to Season 1 on start
-  watchCurrentServer = 0;
-  watchRangeStart = 1;
-  watchRangeSize = 100;
-
+  var a = window._currentModalAnime; if (!a) return; if (!VIDEO_DATA[a.mal_id]) { alert('Video paoa gelo na.'); return; }
+  watchAnime = a; watchCurrentEp = 1; watchCurrentLang = pickFirstAvailableLang(a.mal_id); watchCurrentSeason = 1; watchCurrentServer = 0; watchRangeStart = 1; watchRangeSize = 100;
   var available = getAvailableEpisodes(a.mal_id, watchCurrentLang, watchCurrentSeason);
-  if (available && available.length > 0) {
-    watchEpsCount = available[available.length - 1];
-  } else {
-    var epsNum = parseInt(a.episodes);
-    watchEpsCount = (isNaN(epsNum) || epsNum < 1) ? 12 : epsNum;
-  }
-
+  if (available && available.length > 0) { watchEpsCount = available[available.length - 1]; } else { var epsNum = parseInt(a.episodes); watchEpsCount = (isNaN(epsNum) || epsNum < 1) ? 12 : epsNum; }
   try { history.pushState({ view: 'watch', animeId: a.mal_id }, '', location.pathname + location.search + '#watch-' + a.mal_id); } catch(e) {}
-
-  hideAnimeModal();
-  showWatchView();
-  renderBreadcrumb();
-  renderSeasonTabs(); // Render Season Tabs
-  renderLangTabs();
-  renderServerTabs();
-  renderEpisodeGrid();
-  loadVideo();
-  window.scrollTo(0,0);
+  hideAnimeModal(); showWatchView(); renderBreadcrumb(); renderSeasonTabs(); renderLangTabs(); renderServerTabs(); renderEpisodeGrid(); loadVideo(); window.scrollTo(0,0);
 }
 
-function pickFirstAvailableLang(id) {
-  var langs = ['sub','dub','hindi','bangla'];
-  for (var i=0;i<langs.length;i++) if (hasAnyVideos(id, langs[i])) return langs[i];
-  return 'sub';
-}
+function pickFirstAvailableLang(id) { var langs = ['sub','dub','hindi','bangla']; for (var i=0;i<langs.length;i++) if (hasAnyVideos(id, langs[i])) return langs[i]; return 'sub'; }
+function renderBreadcrumb() { document.getElementById('breadcrumb').innerHTML = '<a href="#" onclick="goHome();return false;">🏠 Home</a><span class="sep">/</span><a href="#" onclick="goHome();return false;">'+(watchAnime.type||'TV')+'</a><span class="sep">/</span><span class="current">'+watchAnime.title+'</span>'; }
 
-function renderBreadcrumb() {
-  document.getElementById('breadcrumb').innerHTML =
-    '<a href="#" onclick="goHome();return false;">🏠 Home</a>' +
-    '<span class="sep">/</span>' +
-    '<a href="#" onclick="goHome();return false;">'+(watchAnime.type||'TV')+'</a>' +
-    '<span class="sep">/</span>' +
-    '<span class="current">'+watchAnime.title+'</span>';
-}
-
-// ===== NEW FUNCTION: RENDER SEASON TABS =====
 function renderSeasonTabs() {
-  var tabs = document.getElementById('seasonTabs');
-  if (!tabs) return;
-
-  var data = VIDEO_DATA[watchAnime.mal_id] || {};
-  var langData = data[watchCurrentLang];
-
-  if (!langData || Array.isArray(langData) || !langData['Season 1']) {
-    tabs.innerHTML = '';
-    tabs.style.display = 'none';
-    return;
-  }
-
-  tabs.style.display = 'flex';
-  var html = '';
-  var seasons = Object.keys(langData).filter(function(k) { return k.indexOf('Season') === 0; });
-  seasons.forEach(function(s) {
-    var seasonNum = s.replace('Season ', '');
-    var active = (watchCurrentSeason == seasonNum) ? ' active' : '';
-    html += '<button class="season-tab' + active + '" onclick="switchSeason(\'' + seasonNum + '\')">' + s + '</button>';
-  });
-  tabs.innerHTML = html;
+  var tabs = document.getElementById('seasonTabs'); if (!tabs) return; var data = VIDEO_DATA[watchAnime.mal_id] || {}; var langData = data[watchCurrentLang];
+  if (!langData || Array.isArray(langData) || !langData['Season 1']) { tabs.innerHTML = ''; tabs.style.display = 'none'; return; }
+  tabs.style.display = 'flex'; var html = ''; var seasons = Object.keys(langData).filter(function(k) { return k.indexOf('Season') === 0; });
+  seasons.forEach(function(s) { var seasonNum = s.replace('Season ', ''); var active = (watchCurrentSeason == seasonNum) ? ' active' : ''; html += '<button class="season-tab' + active + '" onclick="switchSeason(\'' + seasonNum + '\')">' + s + '</button>'; }); tabs.innerHTML = html;
 }
 
-// ===== NEW FUNCTION: SWITCH SEASON =====
 function switchSeason(s) {
-  watchCurrentSeason = parseInt(s);
-  watchCurrentEp = 1;
-  watchRangeStart = 1;
-
+  watchCurrentSeason = parseInt(s); watchCurrentEp = 1; watchRangeStart = 1;
   var available = getAvailableEpisodes(watchAnime.mal_id, watchCurrentLang, watchCurrentSeason);
-  if (available && available.length > 0) {
-    watchEpsCount = available[available.length - 1];
-  } else {
-    var epsNum = parseInt(watchAnime.episodes);
-    watchEpsCount = (isNaN(epsNum) || epsNum < 1) ? 12 : epsNum;
-  }
-
-  renderSeasonTabs();
-  renderEpisodeGrid();
-  renderServerTabs();
-  loadVideo();
+  if (available && available.length > 0) { watchEpsCount = available[available.length - 1]; } else { var epsNum = parseInt(watchAnime.episodes); watchEpsCount = (isNaN(epsNum) || epsNum < 1) ? 12 : epsNum; }
+  renderSeasonTabs(); renderEpisodeGrid(); renderServerTabs(); loadVideo();
 }
 
-function renderLangTabs() {
-  var tabs = document.getElementById('langTabs');
-  var langs = ['sub','dub','hindi','bangla'];
-  var html = '';
-  for (var i=0;i<langs.length;i++) {
-    var l = langs[i];
-    var available = hasAnyVideos(watchAnime.mal_id, l);
-    var activeClass = (watchCurrentLang===l) ? ' active' : '';
-    var disabledAttr = available ? '' : ' disabled style="opacity:0.35;cursor:not-allowed;"';
-    var clickAttr = available ? ' onclick="switchLang(\''+l+'\')"' : '';
-    html += '<button class="lang-tab'+activeClass+'"'+clickAttr+disabledAttr+'>'+
-            langIcon(l)+' <span>'+langLabel(l)+'</span>'+
-            '</button>';
-  }
-  tabs.innerHTML = html;
-}
+function renderLangTabs() { var tabs = document.getElementById('langTabs'); var langs = ['sub','dub','hindi','bangla']; var html = ''; for (var i=0;i<langs.length;i++) { var l = langs[i]; var available = hasAnyVideos(watchAnime.mal_id, l); var activeClass = (watchCurrentLang===l) ? ' active' : ''; var disabledAttr = available ? '' : ' disabled style="opacity:0.35;cursor:not-allowed;"'; var clickAttr = available ? ' onclick="switchLang(\''+l+'\')"' : ''; html += '<button class="lang-tab'+activeClass+'"'+clickAttr+disabledAttr+'>'+langIcon(l)+' <span>'+langLabel(l)+'</span></button>'; } tabs.innerHTML = html; }
 
 function switchLang(l) {
-  watchCurrentLang = l;
-  watchCurrentServer = 0;
-  watchCurrentSeason = 1; // Reset season on language change
-
+  watchCurrentLang = l; watchCurrentServer = 0; watchCurrentSeason = 1;
   var available = getAvailableEpisodes(watchAnime.mal_id, watchCurrentLang, watchCurrentSeason);
-  if (available && available.length > 0) {
-    watchEpsCount = available[available.length - 1];
-  } else {
-    var epsNum = parseInt(watchAnime.episodes);
-    watchEpsCount = (isNaN(epsNum) || epsNum < 1) ? 12 : epsNum;
-  }
-
-  renderSeasonTabs(); // Add this
-  renderLangTabs();
-  renderServerTabs();
-  renderEpisodeGrid();
-  loadVideo();
+  if (available && available.length > 0) { watchEpsCount = available[available.length - 1]; } else { var epsNum = parseInt(watchAnime.episodes); watchEpsCount = (isNaN(epsNum) || epsNum < 1) ? 12 : epsNum; }
+  renderSeasonTabs(); renderLangTabs(); renderServerTabs(); renderEpisodeGrid(); loadVideo();
 }
 
 function renderServerTabs() {
-  var row = document.getElementById('serverTabs');
-  var servers = getServersForEpisode(watchAnime.mal_id, watchCurrentLang, watchCurrentSeason, watchCurrentEp);
-  var html = '';
-  if (servers.length === 0) {
-    html = '<div style="color:var(--muted);font-size:0.85rem;padding:10px;">Episode '+watchCurrentEp+' — ei language e paoa gelo na.</div>';
-    row.innerHTML = html;
-    return;
-  }
-  for (var i=0;i<servers.length;i++) {
-    html += '<button class="server-tab'+(watchCurrentServer===i?' active':'')+'" onclick="switchServer('+i+')">'+servers[i].name+'</button>';
-  }
-  var current = servers[watchCurrentServer] || servers[0];
-  var dlUrl = getDownloadUrl(current.embed);
-  if (dlUrl) {
-    html += '<a class="dl-icon-btn" href="'+dlUrl+'" target="_blank" title="Download">'+
-      '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 3a1 1 0 0 1 1 1v9.586l3.293-3.293a1 1 0 1 1 1.414 1.414l-5 5a1 1 0 0 1-1.414 0l-5-5a1 1 0 1 1 1.414-1.414L11 13.586V4a1 1 0 0 1 1-1zM5 19a1 1 0 0 1 1-1h12a1 1 0 1 1 0 2H6a1 1 0 0 1-1-1z"/></svg>'+
-    '</a>';
-  }
+  var row = document.getElementById('serverTabs'); var servers = getServersForEpisode(watchAnime.mal_id, watchCurrentLang, watchCurrentSeason, watchCurrentEp); var html = '';
+  if (servers.length === 0) { html = '<div style="color:var(--muted);font-size:0.85rem;padding:10px;">Episode '+watchCurrentEp+' — ei language e paoa gelo na.</div>'; row.innerHTML = html; return; }
+  for (var i=0;i<servers.length;i++) { html += '<button class="server-tab'+(watchCurrentServer===i?' active':'')+'" onclick="switchServer('+i+')">'+servers[i].name+'</button>'; }
+  var current = servers[watchCurrentServer] || servers[0]; var dlUrl = getDownloadUrl(current.embed);
+  if (dlUrl) { html += '<a class="dl-icon-btn" href="'+dlUrl+'" target="_blank" title="Download"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 3a1 1 0 0 1 1 1v9.586l3.293-3.293a1 1 0 1 1 1.414 1.414l-5 5a1 1 0 0 1-1.414 0l-5-5a1 1 0 1 1 1.414-1.414L11 13.586V4a1 1 0 0 1 1-1zM5 19a1 1 0 0 1 1-1h12a1 1 0 1 1 0 2H6a1 1 0 0 1-1-1z"/></svg></a>'; }
   row.innerHTML = html;
 }
 
-function switchServer(i) {
-  watchCurrentServer = i;
-  renderServerTabs();
-  loadVideo();
-}
+function switchServer(i) { watchCurrentServer = i; renderServerTabs(); loadVideo(); }
 
 function loadVideo() {
-  var servers = getServersForEpisode(watchAnime.mal_id, watchCurrentLang, watchCurrentSeason, watchCurrentEp);
-  var player = document.getElementById('watchPlayer');
-  if (!servers.length) {
-    player.innerHTML = '<div class="player-empty">Ei language e Episode '+watchCurrentEp+' er video paoa gelo na.</div>';
-    document.getElementById('watchingEpText').textContent = 'Episode '+watchCurrentEp;
-    return;
-  }
-  var s = servers[watchCurrentServer] || servers[0];
-  var embed = s.embed;
-  if (!disclaimerAccepted) {
-    showDisclaimer(embed);
-    player.innerHTML = '<div class="player-empty">Loading...</div>';
-  } else {
-    player.innerHTML = makeIframeHTML(embed);
-  }
-  document.getElementById('watchingEpText').textContent = 'Episode '+watchCurrentEp;
-  if (watchAnime) addToHistory(watchAnime, 'Episode '+watchCurrentEp+' ('+langLabel(watchCurrentLang)+')');
+  var servers = getServersForEpisode(watchAnime.mal_id, watchCurrentLang, watchCurrentSeason, watchCurrentEp); var player = document.getElementById('watchPlayer');
+  if (!servers.length) { player.innerHTML = '<div class="player-empty">Ei language e Episode '+watchCurrentEp+' er video paoa gelo na.</div>'; document.getElementById('watchingEpText').textContent = 'Episode '+watchCurrentEp; return; }
+  var s = servers[watchCurrentServer] || servers[0]; var embed = s.embed;
+  if (!disclaimerAccepted) { showDisclaimer(embed); player.innerHTML = '<div class="player-empty">Loading...</div>'; } else { player.innerHTML = makePlayerHTML(embed); }
+  document.getElementById('watchingEpText').textContent = 'Episode '+watchCurrentEp; if (watchAnime) addToHistory(watchAnime, 'Episode '+watchCurrentEp+' ('+langLabel(watchCurrentLang)+')');
 }
 
-function renderEpisodeGrid() {
-  var grid = document.getElementById('epGrid');
-  var from = watchRangeStart;
-  var to = Math.min(from + watchRangeSize - 1, watchEpsCount);
-  document.getElementById('rangeLabel').textContent = from + '-' + to;
-  var html = '';
-  for (var i=from; i<=to; i++) {
-    html += '<div class="ep-cell'+(i===watchCurrentEp?' active':'')+'" onclick="selectEpisode('+i+')">'+i+'</div>';
-  }
-  grid.innerHTML = html;
-}
+function renderEpisodeGrid() { var grid = document.getElementById('epGrid'); var from = watchRangeStart; var to = Math.min(from + watchRangeSize - 1, watchEpsCount); document.getElementById('rangeLabel').textContent = from + '-' + to; var html = ''; for (var i=from; i<=to; i++) { html += '<div class="ep-cell'+(i===watchCurrentEp?' active':'')+'" onclick="selectEpisode('+i+')">'+i+'</div>'; } grid.innerHTML = html; }
 
-function changeRange(dir) {
-  var newStart = watchRangeStart + dir * watchRangeSize;
-  if (newStart < 1) newStart = 1;
-  var maxStart = Math.floor((watchEpsCount-1)/watchRangeSize)*watchRangeSize + 1;
-  if (newStart > maxStart) return;
-  watchRangeStart = newStart;
-  renderEpisodeGrid();
-}
+function changeRange(dir) { var newStart = watchRangeStart + dir * watchRangeSize; if (newStart < 1) newStart = 1; var maxStart = Math.floor((watchEpsCount-1)/watchRangeSize)*watchRangeSize + 1; if (newStart > maxStart) return; watchRangeStart = newStart; renderEpisodeGrid(); }
 
-function selectEpisode(n) {
-  if (n < 1 || n > watchEpsCount) return;
-  watchCurrentEp = n;
-  if (n < watchRangeStart || n >= watchRangeStart + watchRangeSize) {
-    watchRangeStart = Math.floor((n-1)/watchRangeSize)*watchRangeSize + 1;
-  }
-  watchCurrentServer = 0;
-  renderEpisodeGrid();
-  renderServerTabs();
-  loadVideo();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
+function selectEpisode(n) { if (n < 1 || n > watchEpsCount) return; watchCurrentEp = n; if (n < watchRangeStart || n >= watchRangeStart + watchRangeSize) { watchRangeStart = Math.floor((n-1)/watchRangeSize)*watchRangeSize + 1; } watchCurrentServer = 0; renderEpisodeGrid(); renderServerTabs(); loadVideo(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
 
 function prevEpisode() { if (watchCurrentEp > 1) selectEpisode(watchCurrentEp - 1); }
 function nextEpisode() { if (watchCurrentEp < watchEpsCount) selectEpisode(watchCurrentEp + 1); }
 function randomEpisode() { var r = Math.floor(Math.random() * watchEpsCount) + 1; selectEpisode(r); }
 
-function replayVideo() {
-  var player = document.getElementById('watchPlayer');
-  if (!player) return;
+function replayVideo() { var player = document.getElementById('watchPlayer'); if (!player) return; var iframe = player.querySelector('iframe'); var video = player.querySelector('video'); if (video) { video.currentTime = 0; video.play(); } else if (iframe) { iframe.contentWindow?.focus(); iframe.click?.(); } else { loadVideo(); } }
 
-  var iframe = player.querySelector('iframe');
+function toggleFindInput(e) { if (e) e.stopPropagation(); var btn = document.getElementById('findBtn'); var input = document.getElementById('findInput'); btn.classList.add('expanded'); setTimeout(function(){ input.focus(); }, 100); }
 
-  if (iframe) {
-    iframe.contentWindow?.focus();
-    iframe.click?.();
-  } else {
-    loadVideo();
-  }
-}
+function handleFindKey(e) { if (e.key !== 'Enter') return; var input = document.getElementById('findInput'); var val = parseInt(input.value); if (isNaN(val) || val < 1) { alert('Ekta valid episode number dao (1-' + watchEpsCount + ')'); return; } if (val > watchEpsCount) { alert('Ei anime e matro ' + watchEpsCount + ' ta episode ache.'); return; } selectEpisode(val); input.value = ''; document.getElementById('findBtn').classList.remove('expanded'); input.blur(); }
 
-function toggleFindInput(e) {
-  if (e) e.stopPropagation();
-  var btn = document.getElementById('findBtn');
-  var input = document.getElementById('findInput');
-  btn.classList.add('expanded');
-  setTimeout(function(){ input.focus(); }, 100);
-}
+document.addEventListener('click', function(e) { var btn = document.getElementById('findBtn'); if (!btn) return; if (!e.target.closest('#findBtn')) btn.classList.remove('expanded'); });
 
-function handleFindKey(e) {
-  if (e.key !== 'Enter') return;
-  var input = document.getElementById('findInput');
-  var val = parseInt(input.value);
-  if (isNaN(val) || val < 1) { alert('Ekta valid episode number dao (1-' + watchEpsCount + ')'); return; }
-  if (val > watchEpsCount) { alert('Ei anime e matro ' + watchEpsCount + ' ta episode ache.'); return; }
-  selectEpisode(val);
-  input.value = '';
-  document.getElementById('findBtn').classList.remove('expanded');
-  input.blur();
-}
+window.addEventListener('popstate', function(e) { var state = e.state || { view: 'home' }; if (state.view === 'watch' && watchAnime && watchAnime.mal_id === state.animeId) { hideAnimeModal(); showWatchView(); return; } if (state.view === 'details') { var a = findAnimeById(state.animeId); if (a) { showHomeView(); window._currentModalAnime = a; showAnimeModal(a); return; } } hideAnimeModal(); showHomeView(); loadTop(); });
 
-document.addEventListener('click', function(e) {
-  var btn = document.getElementById('findBtn');
-  if (!btn) return;
-  if (!e.target.closest('#findBtn')) btn.classList.remove('expanded');
-});
-
-window.addEventListener('popstate', function(e) {
-  var state = e.state || { view: 'home' };
-  if (state.view === 'watch' && watchAnime && watchAnime.mal_id === state.animeId) { hideAnimeModal(); showWatchView(); return; }
-  if (state.view === 'details') {
-    var a = findAnimeById(state.animeId);
-    if (a) { showHomeView(); window._currentModalAnime = a; showAnimeModal(a); return; }
-  }
-  hideAnimeModal();
-  showHomeView();
-  loadTop();
-});
-
-if (!history.state) {
-  try { history.replaceState({ view: 'home' }, '', location.pathname + location.search); } catch(e) {}
-}
+if (!history.state) { try { history.replaceState({ view: 'home' }, '', location.pathname + location.search); } catch(e) {} }
 
 input.addEventListener('input', function(){ var q=input.value.trim(); clearTimeout(suggestTimer); if(q.length<1){hideSuggestions();return;} suggestTimer=setTimeout(function(){fetchSuggestions(q);},300); });
 input.addEventListener('keypress', function(e){ if(e.key==='Enter'){ hideSuggestions(); searchAnime(); } });
@@ -1188,4 +754,4 @@ loadTop();
 setTimeout(showWelcome, 1500);
 </script>
 </body>
-                                                                </html>
+  </html>
