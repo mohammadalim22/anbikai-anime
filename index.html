@@ -461,13 +461,11 @@ var watchRangeSize = 100;
 var ANILIST_URL = 'https://graphql.anilist.co';
 var QUERY = 'query ($search: String, $genre: String, $sort: [MediaSort], $perPage: Int) { Page(page: 1, perPage: $perPage) { media(type: ANIME, search: $search, genre: $genre, sort: $sort, isAdult: false) { id title { romaji english } description(asHtml: false) coverImage { extraLarge large } bannerImage episodes nextAiringEpisode { episode } averageScore format startDate { year } genres trailer { id site } } } }';
 
-// ====== VIDEO DATA ======
-// Death Note er ID holo 1535. Ekhane Pixeldrain er Direct Link (api/file) bosano hoyeche.
 var VIDEO_DATA = {
   1535: {
     hindi: {
       "Season 1": {
-        1: [{ name: "Server 1", embed: "https://pixeldrain.com/api/file/SPapJ1HP" }]
+        1: [{ name: "Server 1", embed: "https://pixeldrain.com/u/SPapJ1HP" }]
       }
     }
   },
@@ -656,13 +654,22 @@ function toggleWelcomeCheck(e){ if(e && e.target && e.target.tagName!=='INPUT' &
 function closeWelcome(){ var cb=document.getElementById('dontShowAgain'); if(cb.checked) localStorage.setItem('anbikai_welcome_off','yes'); document.getElementById('welcomeModal').classList.remove('active'); }
 function skipWelcome(){ localStorage.setItem('anbikai_welcome_off','yes'); document.getElementById('welcomeModal').classList.remove('active'); }
 
-// ===== NEW FUNCTION: DIRECT MP4 FILE HOLE <video>, NA HOLE <iframe> =====
+// ===== FIXED PLAYER: Pixeldrain link hole iframe embed e convert kore =====
 function makePlayerHTML(embed) {
-  // Pixeldrain ba direct .mp4 link check kora hocche
-  if (embed.indexOf('pixeldrain.com/api/file/') >= 0 || embed.toLowerCase().endsWith('.mp4')) {
-    return '<video src="'+embed+'" controls autoplay playsinline style="width:100%;height:100%;object-fit:contain;background:#000;touch-action:manipulation;"></video>';
+  var id = "";
+  // Pixeldrain er /api/file/ link check
+  if (embed.indexOf('pixeldrain.com/api/file/') >= 0) {
+    id = embed.split('pixeldrain.com/api/file/')[1];
+    return '<iframe src="https://pixeldrain.com/e/' + id + '" tabindex="0" allowfullscreen allow="autoplay; encrypted-media; fullscreen" style="width:100%;height:100%;border:none;touch-action:manipulation;" '+
+      'onload="var f=this;setTimeout(function(){try{f.focus();}catch(e){}},50);setTimeout(function(){try{f.focus();}catch(e){}},600);"></iframe>';
   }
-  // Onno kono link (Streamtape/Bysufujedu) hole iframe use hobe
+  // Pixeldrain er /u/ link check
+  if (embed.indexOf('pixeldrain.com/u/') >= 0) {
+    id = embed.split('pixeldrain.com/u/')[1];
+    return '<iframe src="https://pixeldrain.com/e/' + id + '" tabindex="0" allowfullscreen allow="autoplay; encrypted-media; fullscreen" style="width:100%;height:100%;border:none;touch-action:manipulation;" '+
+      'onload="var f=this;setTimeout(function(){try{f.focus();}catch(e){}},50);setTimeout(function(){try{f.focus();}catch(e){}},600);"></iframe>';
+  }
+  // Onno kono link (Streamtape etc) hole iframe use hobe
   return '<iframe src="'+embed+'" tabindex="0" allowfullscreen allow="autoplay; encrypted-media; fullscreen" scrolling="no" frameborder="0" style="width:100%;height:100%;border:none;touch-action:manipulation;" '+
     'onload="var f=this;setTimeout(function(){try{f.focus();}catch(e){}},50);setTimeout(function(){try{f.focus();}catch(e){}},600);setTimeout(function(){try{f.focus();}catch(e){}},1500);"></iframe>';
 }
