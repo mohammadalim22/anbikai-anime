@@ -17,13 +17,13 @@
   * { box-sizing: border-box; margin:0; padding:0; -webkit-tap-highlight-color: transparent; }
   body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; padding-bottom: 30px; }
 
-  button, a, .card, .icon-btn, .ctrl-btn, .lang-tab, .server-tab, .ep-cell, .btn-play, .btn-bookmark, .watch-now-btn, .watch-link-btn, .watchlist-btn, .dl-icon-btn, .sug-item, .ep-tool, .range-selector button, .filter-btn, .search-btn, iframe, video {
+  button, a, .card, .icon-btn, .ctrl-btn, .lang-tab, .server-tab, .ep-cell, .btn-play, .btn-bookmark, .watch-now-btn, .watch-link-btn, .watchlist-btn, .dl-icon-btn, .sug-item, .ep-tool, .range-selector button, .filter-btn, .search-btn, .season-tab, iframe, video {
     touch-action: manipulation !important;
     -webkit-tap-highlight-color: transparent !important;
     -webkit-user-select: none;
     user-select: none;
   }
-  button, a, .card, .icon-btn, .ctrl-btn, .lang-tab, .server-tab, .ep-cell, .btn-play, .btn-bookmark, .watch-now-btn, .watch-link-btn, .watchlist-btn, .dl-icon-btn, .sug-item, .ep-tool, .range-selector button, .filter-btn, .search-btn {
+  button, a, .card, .icon-btn, .ctrl-btn, .lang-tab, .server-tab, .ep-cell, .btn-play, .btn-bookmark, .watch-now-btn, .watch-link-btn, .watchlist-btn, .dl-icon-btn, .sug-item, .ep-tool, .range-selector button, .filter-btn, .search-btn, .season-tab {
     cursor: pointer;
   }
 
@@ -115,6 +115,12 @@
   .ctrl-btn { background: var(--card2); border: 1px solid var(--border); color: var(--text); font-size: 1.15rem; cursor: pointer; width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
   .ctrl-btn:active { transform: scale(0.92); background: var(--orange); color: white; border-color: var(--orange); }
   .ctrl-btn.play { background: var(--orange); border-color: var(--orange); color: white; font-size: 1.3rem; }
+
+  /* Season Tabs CSS */
+  .season-tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+  .season-tab { background: var(--card2); border: 1.5px solid var(--border); color: var(--text); padding: 9px 18px; border-radius: 999px; cursor: pointer; font-size: 0.85rem; font-weight: 800; }
+  .season-tab:active { transform: scale(0.96); }
+  .season-tab.active { background: var(--accent2); color: white; border-color: var(--accent2); }
 
   .lang-tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
   .lang-tab { background: transparent; border: 1.5px solid var(--border); color: var(--muted); padding: 9px 18px; border-radius: 999px; cursor: pointer; font-size: 0.85rem; font-weight: 800; display: flex; align-items: center; gap: 7px; }
@@ -256,6 +262,7 @@
     .sug-item:hover { background: var(--card2); }
     .ctrl-btn:hover { background: var(--orange); color: white; border-color: var(--orange); }
     .lang-tab:hover { border-color: var(--muted); }
+    .season-tab:hover { border-color: var(--muted); }
     .server-tab:hover { background: var(--card2); }
     .ep-cell:hover { background: var(--card2); }
     .watch-now-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255,102,51,0.5); }
@@ -341,6 +348,10 @@
       <button class="ctrl-btn" onclick="nextEpisode()">⏭</button>
       <button class="ctrl-btn" onclick="randomEpisode()">🔀</button>
     </div>
+    
+    <!-- SEASON TABS ADD KORA HOYECHE -->
+    <div class="season-tabs" id="seasonTabs" style="display:none;"></div>
+    
     <div class="lang-tabs" id="langTabs"></div>
     <div class="server-row" id="serverTabs"></div>
     <div class="watching-info">
@@ -441,6 +452,7 @@ var watchAnime = null;
 var watchEpsCount = 0;
 var watchCurrentEp = 1;
 var watchCurrentLang = 'sub';
+var watchCurrentSeason = 1; // Default season
 var watchCurrentServer = 0;
 var watchRangeStart = 1;
 var watchRangeSize = 100;
@@ -448,6 +460,7 @@ var watchRangeSize = 100;
 var ANILIST_URL = 'https://graphql.anilist.co';
 var QUERY = 'query ($search: String, $genre: String, $sort: [MediaSort], $perPage: Int) { Page(page: 1, perPage: $perPage) { media(type: ANIME, search: $search, genre: $genre, sort: $sort, isAdult: false) { id title { romaji english } description(asHtml: false) coverImage { extraLarge large } bannerImage episodes nextAiringEpisode { episode } averageScore format startDate { year } genres trailer { id site } } } }';
 
+// VIDEO_DATA EI KHANE SEASON ADD KORA HOYECHE
 var VIDEO_DATA = {
   97940: {
     sub: [
@@ -485,19 +498,37 @@ var VIDEO_DATA = {
       { name: "Server 2", embed: "https://bysefujedu.com/e/759arii02xep/" }
     ],
     hindi: {
-      1: [{ name: "Server 1", embed: "https://streamtape.com/v/VWl90p4GZGiKMB6/Solo_Leveling_%5BHindi%5D_1080P_S02_E01.mp4" }],
-      2: [{ name: "Server 1", embed: "https://streamtape.com/v/AX7LPAJeKLuwpZ/Solo_Leveling_%5BHindi%5D_1080P_S02_E02.mp4" }],
-      3: [{ name: "Server 1", embed: "https://streamtape.com/v/VXr6degMKzsKMvr/Solo_Leveling_%5BHindi%5D_1080P_S02_E03.mp4" }],
-      4: [{ name: "Server 1", embed: "https://streamtape.com/v/kbpbaLlve0sOOkb/Solo_Leveling_%5BHindi%5D_1080P_S02_E04.mp4" }],
-      5: [{ name: "Server 1", embed: "https://streamtape.com/v/xvkzKjOKxaCk2XW/Solo_Leveling_%5BHindi%5D_1080P_S02_E05.mp4" }],
-      6: [{ name: "Server 1", embed: "https://streamtape.com/v/6qGYklr67dU9k6x/Solo_Leveling_%5BHindi%5D_1080P_S02_E06.mp4" }],
-      7: [{ name: "Server 1", embed: "https://streamtape.com/v/zKGerDa4D4uYr8A/Solo_Leveling_%5BHindi%5D_1080P_S02_E07.mp4" }],
-      8: [{ name: "Server 1", embed: "https://streamtape.com/v/3Pa21e14YBTdJZM/Solo_Leveling_%5BHindi%5D_1080P_S02_E08.mp4" }],
-      9: [{ name: "Server 1", embed: "https://streamtape.com/v/3Oq8zRRVkvsd170/Solo_Leveling_%5BHindi%5D_1080P_S02_E09.mp4" }],
-      10: [{ name: "Server 1", embed: "https://streamtape.com/v/0WWxJAgDqlSbpAl/Solo_Leveling_%5BHindi%5D_1080P_S02_E10.mp4" }],
-      11: [{ name: "Server 1", embed: "https://streamtape.com/v/mrjMWpqY9yUbxzd/Solo_Leveling_%5BHindi%5D_1080P_S02_E11.mp4" }],
-      12: [{ name: "Server 1", embed: "https://streamtape.com/v/ewdM81jYbdhJBA/Solo_Leveling_%5BHindi%5D_1080P_S02_E12.mp4" }],
-      13: [{ name: "Server 1", embed: "https://streamtape.com/v/b1rX02992gIPZ4d/Solo_Leveling_%5BHindi%5D_1080P_S02_E13.mp4" }]
+      "Season 1": {
+        // TODO: Replace these with actual Season 1 Hindi links
+        1: [{ name: "Server 1", embed: "https://streamtape.com/e/VWl90p4GZGiKMB6" }],
+        2: [{ name: "Server 1", embed: "https://streamtape.com/e/AX7LPAJeKLuwpZ" }],
+        3: [{ name: "Server 1", embed: "https://streamtape.com/e/VXr6degMKzsKMvr" }],
+        4: [{ name: "Server 1", embed: "https://streamtape.com/e/kbpbaLlve0sOOkb" }],
+        5: [{ name: "Server 1", embed: "https://streamtape.com/e/xvkzKjOKxaCk2XW" }],
+        6: [{ name: "Server 1", embed: "https://streamtape.com/e/6qGYklr67dU9k6x" }],
+        7: [{ name: "Server 1", embed: "https://streamtape.com/e/zKGerDa4D4uYr8A" }],
+        8: [{ name: "Server 1", embed: "https://streamtape.com/e/3Pa21e14YBTdJZM" }],
+        9: [{ name: "Server 1", embed: "https://streamtape.com/e/3Oq8zRRVkvsd170" }],
+        10: [{ name: "Server 1", embed: "https://streamtape.com/e/0WWxJAgDqlSbpAl" }],
+        11: [{ name: "Server 1", embed: "https://streamtape.com/e/mrjMWpqY9yUbxzd" }],
+        12: [{ name: "Server 1", embed: "https://streamtape.com/e/ewdM81jYbdhJBA" }],
+        13: [{ name: "Server 1", embed: "https://streamtape.com/e/b1rX02992gIPZ4d" }]
+      },
+      "Season 2": {
+        1: [{ name: "Server 1", embed: "https://streamtape.com/e/VWl90p4GZGiKMB6" }],
+        2: [{ name: "Server 1", embed: "https://streamtape.com/e/AX7LPAJeKLuwpZ" }],
+        3: [{ name: "Server 1", embed: "https://streamtape.com/e/VXr6degMKzsKMvr" }],
+        4: [{ name: "Server 1", embed: "https://streamtape.com/e/kbpbaLlve0sOOkb" }],
+        5: [{ name: "Server 1", embed: "https://streamtape.com/e/xvkzKjOKxaCk2XW" }],
+        6: [{ name: "Server 1", embed: "https://streamtape.com/e/6qGYklr67dU9k6x" }],
+        7: [{ name: "Server 1", embed: "https://streamtape.com/e/zKGerDa4D4uYr8A" }],
+        8: [{ name: "Server 1", embed: "https://streamtape.com/e/3Pa21e14YBTdJZM" }],
+        9: [{ name: "Server 1", embed: "https://streamtape.com/e/3Oq8zRRVkvsd170" }],
+        10: [{ name: "Server 1", embed: "https://streamtape.com/e/0WWxJAgDqlSbpAl" }],
+        11: [{ name: "Server 1", embed: "https://streamtape.com/e/mrjMWpqY9yUbxzd" }],
+        12: [{ name: "Server 1", embed: "https://streamtape.com/e/ewdM81jYbdhJBA" }],
+        13: [{ name: "Server 1", embed: "https://streamtape.com/e/b1rX02992gIPZ4d" }]
+      }
     },
     bangla: []
   }
@@ -527,11 +558,21 @@ function getDownloadUrl(embed) {
   return '';
 }
 
-function getServersForEpisode(animeId, lang, epNum) {
+// UPDATED: getServersForEpisode with Season
+function getServersForEpisode(animeId, lang, season, epNum) {
   var data = VIDEO_DATA[animeId] || {};
   var langData = data[lang];
   if (!langData) return [];
+
+  // If language data is an array (no seasons), return as is
   if (Array.isArray(langData)) return langData;
+
+  // If language data has season keys
+  if (season && langData[season]) {
+    return langData[season][epNum] || [];
+  }
+
+  // Fallback: direct episode mapping
   return langData[epNum] || [];
 }
 
@@ -543,11 +584,16 @@ function hasAnyVideos(animeId, lang) {
   return Object.keys(langData).length > 0;
 }
 
-function getAvailableEpisodes(animeId, lang) {
+// UPDATED: getAvailableEpisodes with Season
+function getAvailableEpisodes(animeId, lang, season) {
   var data = VIDEO_DATA[animeId] || {};
   var langData = data[lang];
   if (!langData) return null;
   if (Array.isArray(langData)) return null;
+
+  if (season && langData[season]) {
+    return Object.keys(langData[season]).map(Number).sort(function(a,b){return a-b;});
+  }
   return Object.keys(langData).map(Number).sort(function(a,b){return a-b;});
 }
 
@@ -863,20 +909,27 @@ function startWatching() {
   if (!VIDEO_DATA[a.mal_id]) { alert('Video paoa gelo na.'); return; }
 
   watchAnime = a;
-  var epsNum = parseInt(a.episodes);
-  if (isNaN(epsNum) || epsNum < 1) epsNum = 12;
-  watchEpsCount = epsNum;
   watchCurrentEp = 1;
   watchCurrentLang = pickFirstAvailableLang(a.mal_id);
+  watchCurrentSeason = 1; // Reset to Season 1 on start
   watchCurrentServer = 0;
   watchRangeStart = 1;
   watchRangeSize = 100;
+
+  var available = getAvailableEpisodes(a.mal_id, watchCurrentLang, watchCurrentSeason);
+  if (available && available.length > 0) {
+    watchEpsCount = available[available.length - 1];
+  } else {
+    var epsNum = parseInt(a.episodes);
+    watchEpsCount = (isNaN(epsNum) || epsNum < 1) ? 12 : epsNum;
+  }
 
   try { history.pushState({ view: 'watch', animeId: a.mal_id }, '', location.pathname + location.search + '#watch-' + a.mal_id); } catch(e) {}
 
   hideAnimeModal();
   showWatchView();
   renderBreadcrumb();
+  renderSeasonTabs(); // Render Season Tabs
   renderLangTabs();
   renderServerTabs();
   renderEpisodeGrid();
@@ -899,6 +952,51 @@ function renderBreadcrumb() {
     '<span class="current">'+watchAnime.title+'</span>';
 }
 
+// ===== NEW FUNCTION: RENDER SEASON TABS =====
+function renderSeasonTabs() {
+  var tabs = document.getElementById('seasonTabs');
+  if (!tabs) return;
+
+  var data = VIDEO_DATA[watchAnime.mal_id] || {};
+  var langData = data[watchCurrentLang];
+
+  if (!langData || Array.isArray(langData) || !langData['Season 1']) {
+    tabs.innerHTML = '';
+    tabs.style.display = 'none';
+    return;
+  }
+
+  tabs.style.display = 'flex';
+  var html = '';
+  var seasons = Object.keys(langData).filter(function(k) { return k.indexOf('Season') === 0; });
+  seasons.forEach(function(s) {
+    var seasonNum = s.replace('Season ', '');
+    var active = (watchCurrentSeason == seasonNum) ? ' active' : '';
+    html += '<button class="season-tab' + active + '" onclick="switchSeason(\'' + seasonNum + '\')">' + s + '</button>';
+  });
+  tabs.innerHTML = html;
+}
+
+// ===== NEW FUNCTION: SWITCH SEASON =====
+function switchSeason(s) {
+  watchCurrentSeason = parseInt(s);
+  watchCurrentEp = 1;
+  watchRangeStart = 1;
+
+  var available = getAvailableEpisodes(watchAnime.mal_id, watchCurrentLang, watchCurrentSeason);
+  if (available && available.length > 0) {
+    watchEpsCount = available[available.length - 1];
+  } else {
+    var epsNum = parseInt(watchAnime.episodes);
+    watchEpsCount = (isNaN(epsNum) || epsNum < 1) ? 12 : epsNum;
+  }
+
+  renderSeasonTabs();
+  renderEpisodeGrid();
+  renderServerTabs();
+  loadVideo();
+}
+
 function renderLangTabs() {
   var tabs = document.getElementById('langTabs');
   var langs = ['sub','dub','hindi','bangla'];
@@ -919,10 +1017,17 @@ function renderLangTabs() {
 function switchLang(l) {
   watchCurrentLang = l;
   watchCurrentServer = 0;
-  var available = getAvailableEpisodes(watchAnime.mal_id, l);
+  watchCurrentSeason = 1; // Reset season on language change
+
+  var available = getAvailableEpisodes(watchAnime.mal_id, watchCurrentLang, watchCurrentSeason);
   if (available && available.length > 0) {
-    if (available.indexOf(watchCurrentEp) === -1) watchCurrentEp = available[0];
+    watchEpsCount = available[available.length - 1];
+  } else {
+    var epsNum = parseInt(watchAnime.episodes);
+    watchEpsCount = (isNaN(epsNum) || epsNum < 1) ? 12 : epsNum;
   }
+
+  renderSeasonTabs(); // Add this
   renderLangTabs();
   renderServerTabs();
   renderEpisodeGrid();
@@ -931,7 +1036,7 @@ function switchLang(l) {
 
 function renderServerTabs() {
   var row = document.getElementById('serverTabs');
-  var servers = getServersForEpisode(watchAnime.mal_id, watchCurrentLang, watchCurrentEp);
+  var servers = getServersForEpisode(watchAnime.mal_id, watchCurrentLang, watchCurrentSeason, watchCurrentEp);
   var html = '';
   if (servers.length === 0) {
     html = '<div style="color:var(--muted);font-size:0.85rem;padding:10px;">Episode '+watchCurrentEp+' — ei language e paoa gelo na.</div>';
@@ -958,7 +1063,7 @@ function switchServer(i) {
 }
 
 function loadVideo() {
-  var servers = getServersForEpisode(watchAnime.mal_id, watchCurrentLang, watchCurrentEp);
+  var servers = getServersForEpisode(watchAnime.mal_id, watchCurrentLang, watchCurrentSeason, watchCurrentEp);
   var player = document.getElementById('watchPlayer');
   if (!servers.length) {
     player.innerHTML = '<div class="player-empty">Ei language e Episode '+watchCurrentEp+' er video paoa gelo na.</div>';
