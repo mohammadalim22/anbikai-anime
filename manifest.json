@@ -1,25 +1,24 @@
 {
   "name": "AnbuKai Anime",
   "short_name": "AnbuKai",
-  "description": "Free anime catalog",
+  "id": "/anbikai-anime/",
   "start_url": "/anbikai-anime/",
-  "scope": "/anbikai-anime/",
   "display": "standalone",
-  "orientation": "portrait",
-  "background_color": "#0f0f13",
-  "theme_color": "#ff4d6d",
+  "background_color": "#0a0a0f",
+  "theme_color": "#0a0a0f",
+  "description": "Free anime catalog",
   "icons": [
     {
-      "src": "logo.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any"
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
-      "src": "logo.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "maskable"
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
