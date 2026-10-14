@@ -485,32 +485,19 @@ var VIDEO_DATA = {
       { name: "Server 2", embed: "https://bysefujedu.com/e/759arii02xep/" }
     ],
     hindi: {
-      1: [
-        { name: "Server 1", embed: "https://streamtape.com/e/dpjZ9KbK4GSk8Wl/" },
-        { name: "Server 2", embed: "https://bysefujedu.com/e/n2aanl7bpp5u/" }
-      ],
-      2: [
-        { name: "Server 1", embed: "https://streamtape.com/e/LOl9QR8AqjUR14p/" },
-        { name: "Server 2", embed: "https://bysefujedu.com/e/ayawbozdtk23/" }
-      ],
-      3: [
-        { name: "Server 1", embed: "https://streamtape.com/e/qxdL08gR1Liab6/" }
-      ],
-      4: [
-        { name: "Server 1", embed: "https://streamtape.com/e/kpoQYAgX9ZtYyJ/" },
-        { name: "Server 2", embed: "https://bysefujedu.com/e/kk06tmtp0btu/" }
-      ],
-      5: [
-        { name: "Server 1", embed: "https://streamtape.com/e/kqy0V4XrVytOkbq/" },
-        { name: "Server 2", embed: "https://bysefujedu.com/e/5ntowatrpmx1/" }
-      ],
-      6: [{ name: "Server 1", embed: "https://streamtape.com/e/rbrqAwkB7vibmK7/" }],
-      7: [{ name: "Server 1", embed: "https://streamtape.com/e/myo68lGoL6TbooQ/" }],
-      8: [{ name: "Server 1", embed: "https://streamtape.com/e/Jegdz9ApDPUjYjP/" }],
-      9: [{ name: "Server 1", embed: "https://streamtape.com/e/D0A2kx0z2kTklp7/" }],
-      10: [{ name: "Server 1", embed: "https://streamtape.com/e/4D4GX2VX3lFpDK/" }],
-      11: [{ name: "Server 1", embed: "https://streamtape.com/e/4AYAKV39gmcKlvV/" }],
-      12: [{ name: "Server 1", embed: "https://streamtape.com/e/0B9AYqBXqgFbbvW/" }]
+      1: [{ name: "Server 1", embed: "https://streamtape.com/v/VWl90p4GZGiKMB6/Solo_Leveling_%5BHindi%5D_1080P_S02_E01.mp4" }],
+      2: [{ name: "Server 1", embed: "https://streamtape.com/v/AX7LPAJeKLuwpZ/Solo_Leveling_%5BHindi%5D_1080P_S02_E02.mp4" }],
+      3: [{ name: "Server 1", embed: "https://streamtape.com/v/VXr6degMKzsKMvr/Solo_Leveling_%5BHindi%5D_1080P_S02_E03.mp4" }],
+      4: [{ name: "Server 1", embed: "https://streamtape.com/v/kbpbaLlve0sOOkb/Solo_Leveling_%5BHindi%5D_1080P_S02_E04.mp4" }],
+      5: [{ name: "Server 1", embed: "https://streamtape.com/v/xvkzKjOKxaCk2XW/Solo_Leveling_%5BHindi%5D_1080P_S02_E05.mp4" }],
+      6: [{ name: "Server 1", embed: "https://streamtape.com/v/6qGYklr67dU9k6x/Solo_Leveling_%5BHindi%5D_1080P_S02_E06.mp4" }],
+      7: [{ name: "Server 1", embed: "https://streamtape.com/v/zKGerDa4D4uYr8A/Solo_Leveling_%5BHindi%5D_1080P_S02_E07.mp4" }],
+      8: [{ name: "Server 1", embed: "https://streamtape.com/v/3Pa21e14YBTdJZM/Solo_Leveling_%5BHindi%5D_1080P_S02_E08.mp4" }],
+      9: [{ name: "Server 1", embed: "https://streamtape.com/v/3Oq8zRRVkvsd170/Solo_Leveling_%5BHindi%5D_1080P_S02_E09.mp4" }],
+      10: [{ name: "Server 1", embed: "https://streamtape.com/v/0WWxJAgDqlSbpAl/Solo_Leveling_%5BHindi%5D_1080P_S02_E10.mp4" }],
+      11: [{ name: "Server 1", embed: "https://streamtape.com/v/mrjMWpqY9yUbxzd/Solo_Leveling_%5BHindi%5D_1080P_S02_E11.mp4" }],
+      12: [{ name: "Server 1", embed: "https://streamtape.com/v/ewdM81jYbdhJBA/Solo_Leveling_%5BHindi%5D_1080P_S02_E12.mp4" }],
+      13: [{ name: "Server 1", embed: "https://streamtape.com/v/b1rX02992gIPZ4d/Solo_Leveling_%5BHindi%5D_1080P_S02_E13.mp4" }]
     },
     bangla: []
   }
@@ -1028,7 +1015,6 @@ function prevEpisode() { if (watchCurrentEp > 1) selectEpisode(watchCurrentEp - 
 function nextEpisode() { if (watchCurrentEp < watchEpsCount) selectEpisode(watchCurrentEp + 1); }
 function randomEpisode() { var r = Math.floor(Math.random() * watchEpsCount) + 1; selectEpisode(r); }
 
-// ===== AI SUGGESTED FIX: replayVideo update =====
 function replayVideo() {
   var player = document.getElementById('watchPlayer');
   if (!player) return;
