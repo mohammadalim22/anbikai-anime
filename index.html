@@ -1027,13 +1027,20 @@ function selectEpisode(n) {
 function prevEpisode() { if (watchCurrentEp > 1) selectEpisode(watchCurrentEp - 1); }
 function nextEpisode() { if (watchCurrentEp < watchEpsCount) selectEpisode(watchCurrentEp + 1); }
 function randomEpisode() { var r = Math.floor(Math.random() * watchEpsCount) + 1; selectEpisode(r); }
+
+// ===== AI SUGGESTED FIX: replayVideo update =====
 function replayVideo() {
   var player = document.getElementById('watchPlayer');
-  if (player && player.querySelector('iframe')) {
-    var iframe = player.querySelector('iframe');
-    var src = iframe.src;
-    iframe.src = ''; setTimeout(function(){ iframe.src = src; }, 50);
-  } else { loadVideo(); }
+  if (!player) return;
+
+  var iframe = player.querySelector('iframe');
+
+  if (iframe) {
+    iframe.contentWindow?.focus();
+    iframe.click?.();
+  } else {
+    loadVideo();
+  }
 }
 
 function toggleFindInput(e) {
