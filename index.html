@@ -504,7 +504,7 @@ function getAvailableEpisodes(animeId, lang, season) {
 }
 
 var fallbackAnime = [ 
-  { mal_id: 178025, title: "Blue Box", score: 7.9, type: "TV", episodes: 25, img: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx178025-0p1g2w3b4x5c.jpg", banner: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/178025.jpg", synopsis: "Taiki Inomata is a student on the badminton team. He practices every morning in the gymnasium, where he meets Chinatsu Kano, a basketball player.", genres: ["Romance", "Sports", "Drama"], trailer: "", year: 2024 },
+  { mal_id: 178025, title: "Blue Box", score: 7.9, type: "ONA", episodes: 25, img: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx178025-0p1g2w3b4x5c.jpg", banner: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/178025.jpg", synopsis: "Taiki Inomata is a student on the badminton team. He practices every morning in the gymnasium, where he meets Chinatsu Kano, a basketball player.", genres: ["Romance", "Sports", "Drama"], trailer: "https://www.youtube.com/embed/1M3H1yL2QeE", year: 2024 },
   { mal_id: 16498, title: "Attack on Titan", score: 8.5, type: "TV", episodes: 25, img: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx16498-bqvzRjWp05Yj.jpg", banner: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/16498.jpg", synopsis: "Several hundred years ago, humans were nearly exterminated by titans.", genres: ["Action","Drama","Fantasy"], trailer: "https://www.youtube.com/embed/LHtdKWJdif4", year: 2013 },
   { mal_id: 1535, title: "Death Note", score: 8.6, type: "TV", episodes: 37, img: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx1535-b5y5Y1jN0F0e.jpg", banner: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/1535.jpg", synopsis: "A shinigami, as a god of death, can kill any person—provided they see their victim's face and write their victim's name in a notebook called a Death Note.", genres: ["Mystery","Psychological","Supernatural","Thriller"], trailer: "https://www.youtube.com/embed/NlJZ-YgAt-c", year: 2006 },
   { mal_id: 151807, title: "Solo Leveling", score: 8.3, type: "TV", episodes: 12, img: "https://cdn.myanimelist.net/images/anime/1779/141555.jpg", banner: "https://cdn.myanimelist.net/images/anime/1779/141555.jpg", synopsis: "In a world of hunters and monsters, the weakest hunter Sung Jinwoo gains a mysterious power to level up endlessly.", genres: ["Action","Adventure","Fantasy"], trailer: "https://www.youtube.com/embed/I6MQB0ELRsA", year: 2024 } 
@@ -626,11 +626,9 @@ function closeWelcome(){ var cb=document.getElementById('dontShowAgain'); if(cb.
 function skipWelcome(){ localStorage.setItem('anbikai_welcome_off','yes'); document.getElementById('welcomeModal').classList.remove('active'); }
 
 function makePlayerHTML(embed) {
-  // Check if it's a direct video file (.mp4) for Cloudflare R2 or similar
   if (embed.toLowerCase().indexOf('.mp4') >= 0 || embed.indexOf('r2.dev') >= 0) {
     return '<video src="'+embed+'" controls autoplay playsinline style="width:100%;height:100%;object-fit:contain;background:#000;touch-action:manipulation;"></video>';
   }
-  // Otherwise, fallback to iframe for Voe.sx, Streamtape, Doodstream
   return '<iframe src="'+embed+'" tabindex="0" allowfullscreen allow="autoplay; encrypted-media; fullscreen" scrolling="no" frameborder="0" style="width:100%;height:100%;border:none;touch-action:manipulation;" '+
     'onload="var f=this;setTimeout(function(){try{f.focus();}catch(e){}},50);setTimeout(function(){try{f.focus();}catch(e){}},600);setTimeout(function(){try{f.focus();}catch(e){}},1500);"></iframe>';
 }
@@ -761,4 +759,4 @@ setTimeout(initApp, 500);
 setTimeout(showWelcome, 1500);
 </script>
 </body>
-    </html>
+  </html>
