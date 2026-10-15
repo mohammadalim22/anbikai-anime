@@ -274,7 +274,6 @@
     <div class="hero-dots" id="heroDots"></div>
     <div id="heroSlides"></div>
   </div>
-
   <div id="continueSection" style="display:none">
     <div class="section-head">
       <h2>▶ CONTINUE WATCHING <span class="tag-on">ON</span></h2>
@@ -282,7 +281,6 @@
     </div>
     <div class="hscroll" id="continueRow"></div>
   </div>
-
   <div class="section-head" id="trendingHeader">
     <h2 id="trendingText">🔥 Trending Now</h2>
   </div>
@@ -412,8 +410,15 @@ var ANILIST_URL = 'https://graphql.anilist.co';
 var QUERY = 'query ($search: String, $genre: String, $sort: [MediaSort], $perPage: Int) { Page(page: 1, perPage: $perPage) { media(type: ANIME, search: $search, genre: $genre, sort: $sort, isAdult: false) { id title { romaji english } description(asHtml: false) coverImage { extraLarge large } bannerImage episodes nextAiringEpisode { episode } averageScore format startDate { year } genres trailer { id site } } } }';
 
 // ========== VIDEO_DATA ==========
-// Server 1 = Streamtape, Server 2 = Doodstream
+// Server 1 = Streamtape/Doodstream/R2, Server 2 = Streamtape (Backup)
 var VIDEO_DATA = {
+  16498: {
+    hindi: {
+      "Season 1": {
+        1: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/Attack_on_Titan_%5BHindi%5D_480P_S01_E01.mp4" }]
+      }
+    }
+  },
   1535: {
     hindi: {
       "Season 1": {
@@ -492,6 +497,7 @@ function getAvailableEpisodes(animeId, lang, season) {
 }
 
 var fallbackAnime = [ 
+  { mal_id: 16498, title: "Attack on Titan", score: 8.5, type: "TV", episodes: 25, img: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx16498-bqvzRjWp05Yj.jpg", banner: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/16498.jpg", synopsis: "Several hundred years ago, humans were nearly exterminated by titans.", genres: ["Action","Drama","Fantasy"], trailer: "https://www.youtube.com/embed/LHtdKWJdif4", year: 2013 },
   { mal_id: 1535, title: "Death Note", score: 8.6, type: "TV", episodes: 37, img: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx1535-b5y5Y1jN0F0e.jpg", banner: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/1535.jpg", synopsis: "A shinigami, as a god of death, can kill any person—provided they see their victim's face and write their victim's name in a notebook called a Death Note.", genres: ["Mystery","Psychological","Supernatural","Thriller"], trailer: "https://www.youtube.com/embed/NlJZ-YgAt-c", year: 2006 },
   { mal_id: 151807, title: "Solo Leveling", score: 8.3, type: "TV", episodes: 12, img: "https://cdn.myanimelist.net/images/anime/1779/141555.jpg", banner: "https://cdn.myanimelist.net/images/anime/1779/141555.jpg", synopsis: "In a world of hunters and monsters, the weakest hunter Sung Jinwoo gains a mysterious power to level up endlessly.", genres: ["Action","Adventure","Fantasy"], trailer: "https://www.youtube.com/embed/I6MQB0ELRsA", year: 2024 } 
 ];
@@ -611,7 +617,13 @@ function toggleWelcomeCheck(e){ if(e && e.target && e.target.tagName!=='INPUT' &
 function closeWelcome(){ var cb=document.getElementById('dontShowAgain'); if(cb.checked) localStorage.setItem('anbikai_welcome_off','yes'); document.getElementById('welcomeModal').classList.remove('active'); }
 function skipWelcome(){ localStorage.setItem('anbikai_welcome_off','yes'); document.getElementById('welcomeModal').classList.remove('active'); }
 
+// ========== PLAYER LOGIC (R2 .mp4 / Streamtape iframe) ==========
 function makePlayerHTML(embed) {
+  // Check if it's a direct video file (.mp4) for Cloudflare R2 or similar
+  if (embed.toLowerCase().indexOf('.mp4') >= 0 || embed.indexOf('r2.dev') >= 0) {
+    return '<video src="'+embed+'" controls autoplay playsinline style="width:100%;height:100%;object-fit:contain;background:#000;touch-action:manipulation;"></video>';
+  }
+  // Otherwise, fallback to iframe for Streamtape/Doodstream
   return '<iframe src="'+embed+'" tabindex="0" allowfullscreen allow="autoplay; encrypted-media; fullscreen" scrolling="no" frameborder="0" style="width:100%;height:100%;border:none;touch-action:manipulation;" '+
     'onload="var f=this;setTimeout(function(){try{f.focus();}catch(e){}},50);setTimeout(function(){try{f.focus();}catch(e){}},600);setTimeout(function(){try{f.focus();}catch(e){}},1500);"></iframe>';
 }
