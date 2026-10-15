@@ -464,7 +464,7 @@ var VIDEO_DATA = {
   1535: {
     hindi: {
       "Season 1": {
-        1: [{ name: "Server 1", embed: "https://playmogo.com/e/cbzujgmk5ttv" }]
+        1: [{ name: "Server 1", embed: "https://pixeldrain.com/u/hg7PhBNi?embed" }]
       }
     }
   },
@@ -658,7 +658,7 @@ function makePlayerHTML(embed) {
     'onload="var f=this;setTimeout(function(){try{f.focus();}catch(e){}},50);setTimeout(function(){try{f.focus();}catch(e){}},600);setTimeout(function(){try{f.focus();}catch(e){}},1500);"></iframe>';
 }
 
-// === STATE SAVE & RESTORE FUNCTIONS ===
+// === STATE SAVE FUNCTION ===
 function saveWatchState() {
   if (watchAnime) {
     localStorage.setItem('anbikai_watch_state', JSON.stringify({
@@ -675,7 +675,7 @@ function startWatching() {
   var a = window._currentModalAnime; if (!a) return; if (!VIDEO_DATA[a.mal_id]) { alert('Video paoa gelo na.'); return; }
   watchAnime = a; watchCurrentEp = 1; watchCurrentLang = pickFirstAvailableLang(a.mal_id); watchCurrentSeason = 1; watchCurrentServer = 0; watchRangeStart = 1; watchRangeSize = 100;
 
-  // Restore state if the same anime was previously watched
+  // Restore state
   var saved = localStorage.getItem('anbikai_watch_state');
   if (saved) {
     try {
@@ -768,7 +768,7 @@ document.addEventListener('click', function(e){ if(!e.target.closest('.search-wr
 
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('service-worker.js').catch(function(){}); }
 
-// === INITIAL LOAD LOGIC (WITH STATE RESTORE) ===
+// === INITIAL LOAD LOGIC ===
 function initApp() {
     var hash = location.hash;
     var saved = localStorage.getItem('anbikai_watch_state');
@@ -780,7 +780,7 @@ function initApp() {
                 window._currentModalAnime = state.anime;
                 hideAnimeModal();
                 showWatchView();
-                startWatching(); // This restores episode, lang, season, server internally
+                startWatching();
                 return;
             }
         } catch(e) { console.log("Restore error:", e); }
@@ -793,4 +793,4 @@ setTimeout(initApp, 500);
 setTimeout(showWelcome, 1500);
 </script>
 </body>
-  </html>
+      </html>
