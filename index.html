@@ -117,7 +117,6 @@
   .ctrl-btn:active { transform: scale(0.92); background: var(--orange); color: white; border-color: var(--orange); }
   .ctrl-btn.play { background: var(--orange); border-color: var(--orange); color: white; font-size: 1.3rem; }
 
-  /* Season Tabs CSS */
   .season-tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
   .season-tab { background: var(--card2); border: 1.5px solid var(--border); color: var(--text); padding: 9px 18px; border-radius: 999px; cursor: pointer; font-size: 0.85rem; font-weight: 800; }
   .season-tab:active { transform: scale(0.96); }
@@ -465,7 +464,7 @@ var VIDEO_DATA = {
   1535: {
     hindi: {
       "Season 1": {
-        1: [{ name: "Server 1", embed: "https://pixeldrain.com/u/SPapJ1HP" }]
+        1: [{ name: "Server 1", embed: "https://playmogo.com/e/cbzujgmk5ttv" }]
       }
     }
   },
@@ -654,22 +653,7 @@ function toggleWelcomeCheck(e){ if(e && e.target && e.target.tagName!=='INPUT' &
 function closeWelcome(){ var cb=document.getElementById('dontShowAgain'); if(cb.checked) localStorage.setItem('anbikai_welcome_off','yes'); document.getElementById('welcomeModal').classList.remove('active'); }
 function skipWelcome(){ localStorage.setItem('anbikai_welcome_off','yes'); document.getElementById('welcomeModal').classList.remove('active'); }
 
-// ===== FIXED PLAYER: Pixeldrain link hole iframe embed e convert kore =====
 function makePlayerHTML(embed) {
-  var id = "";
-  // Pixeldrain er /api/file/ link check
-  if (embed.indexOf('pixeldrain.com/api/file/') >= 0) {
-    id = embed.split('pixeldrain.com/api/file/')[1];
-    return '<iframe src="https://pixeldrain.com/e/' + id + '" tabindex="0" allowfullscreen allow="autoplay; encrypted-media; fullscreen" style="width:100%;height:100%;border:none;touch-action:manipulation;" '+
-      'onload="var f=this;setTimeout(function(){try{f.focus();}catch(e){}},50);setTimeout(function(){try{f.focus();}catch(e){}},600);"></iframe>';
-  }
-  // Pixeldrain er /u/ link check
-  if (embed.indexOf('pixeldrain.com/u/') >= 0) {
-    id = embed.split('pixeldrain.com/u/')[1];
-    return '<iframe src="https://pixeldrain.com/e/' + id + '" tabindex="0" allowfullscreen allow="autoplay; encrypted-media; fullscreen" style="width:100%;height:100%;border:none;touch-action:manipulation;" '+
-      'onload="var f=this;setTimeout(function(){try{f.focus();}catch(e){}},50);setTimeout(function(){try{f.focus();}catch(e){}},600);"></iframe>';
-  }
-  // Onno kono link (Streamtape etc) hole iframe use hobe
   return '<iframe src="'+embed+'" tabindex="0" allowfullscreen allow="autoplay; encrypted-media; fullscreen" scrolling="no" frameborder="0" style="width:100%;height:100%;border:none;touch-action:manipulation;" '+
     'onload="var f=this;setTimeout(function(){try{f.focus();}catch(e){}},50);setTimeout(function(){try{f.focus();}catch(e){}},600);setTimeout(function(){try{f.focus();}catch(e){}},1500);"></iframe>';
 }
