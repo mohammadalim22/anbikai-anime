@@ -658,9 +658,37 @@ function makePlayerHTML(embed) {
     'onload="var f=this;setTimeout(function(){try{f.focus();}catch(e){}},50);setTimeout(function(){try{f.focus();}catch(e){}},600);setTimeout(function(){try{f.focus();}catch(e){}},1500);"></iframe>';
 }
 
+// === STATE SAVE & RESTORE FUNCTIONS ===
+function saveWatchState() {
+  if (watchAnime) {
+    localStorage.setItem('anbikai_watch_state', JSON.stringify({
+      anime: watchAnime,
+      ep: watchCurrentEp,
+      lang: watchCurrentLang,
+      season: watchCurrentSeason,
+      server: watchCurrentServer
+    }));
+  }
+}
+
 function startWatching() {
   var a = window._currentModalAnime; if (!a) return; if (!VIDEO_DATA[a.mal_id]) { alert('Video paoa gelo na.'); return; }
   watchAnime = a; watchCurrentEp = 1; watchCurrentLang = pickFirstAvailableLang(a.mal_id); watchCurrentSeason = 1; watchCurrentServer = 0; watchRangeStart = 1; watchRangeSize = 100;
+
+  // Restore state if the same anime was previously watched
+  var saved = localStorage.getItem('anbikai_watch_state');
+  if (saved) {
+    try {
+      var state = JSON.parse(saved);
+      if (state.anime && state.anime.mal_id === a.mal_id) {
+        watchCurrentEp = state.ep || 1;
+        watchCurrentLang = state.lang || pickFirstAvailableLang(a.mal_id);
+        watchCurrentSeason = state.season || 1;
+        watchCurrentServer = state.server || 0;
+      }
+    } catch(e) {}
+  }
+
   var available = getAvailableEpisodes(a.mal_id, watchCurrentLang, watchCurrentSeason);
   if (available && available.length > 0) { watchEpsCount = available[available.length - 1]; } else { var epsNum = parseInt(a.episodes); watchEpsCount = (isNaN(epsNum) || epsNum < 1) ? 12 : epsNum; }
   try { history.pushState({ view: 'watch', animeId: a.mal_id }, '', location.pathname + location.search + '#watch-' + a.mal_id); } catch(e) {}
@@ -709,7 +737,7 @@ function loadVideo() {
   if (!servers.length) { player.innerHTML = '<div class="player-empty">Ei language e Episode '+watchCurrentEp+' er video paoa gelo na.</div>'; document.getElementById('watchingEpText').textContent = 'Episode '+watchCurrentEp; return; }
   var s = servers[watchCurrentServer] || servers[0]; var embed = s.embed;
   if (!disclaimerAccepted) { showDisclaimer(embed); player.innerHTML = '<div class="player-empty">Loading...</div>'; } else { player.innerHTML = makePlayerHTML(embed); }
-  document.getElementById('watchingEpText').textContent = 'Episode '+watchCurrentEp; if (watchAnime) addToHistory(watchAnime, 'Episode '+watchCurrentEp+' ('+langLabel(watchCurrentLang)+')');
+  document.getElementById('watchingEpText').textContent = 'Episode '+watchCurrentEp; if (watchAnime) { addToHistory(watchAnime, 'Episode '+watchCurrentEp+' ('+langLabel(watchCurrentLang)+')'); saveWatchState(); }
 }
 
 function renderEpisodeGrid() { var grid = document.getElementById('epGrid'); var from = watchRangeStart; var to = Math.min(from + watchRangeSize - 1, watchEpsCount); document.getElementById('rangeLabel').textContent = from + '-' + to; var html = ''; for (var i=from; i<=to; i++) { html += '<div class="ep-cell'+(i===watchCurrentEp?' active':'')+'" onclick="selectEpisode('+i+')">'+i+'</div>'; } grid.innerHTML = html; }
@@ -740,8 +768,28 @@ document.addEventListener('click', function(e){ if(!e.target.closest('.search-wr
 
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('service-worker.js').catch(function(){}); }
 
-setActiveBtn('homeBtn');
-loadTop();
+// === INITIAL LOAD LOGIC (WITH STATE RESTORE) ===
+function initApp() {
+    var hash = location.hash;
+    var saved = localStorage.getItem('anbikai_watch_state');
+    if (hash.indexOf('#watch-') >= 0 && saved) {
+        try {
+            var state = JSON.parse(saved);
+            var animeId = parseInt(hash.replace('#watch-', ''));
+            if (state.anime && state.anime.mal_id === animeId) {
+                window._currentModalAnime = state.anime;
+                hideAnimeModal();
+                showWatchView();
+                startWatching(); // This restores episode, lang, season, server internally
+                return;
+            }
+        } catch(e) { console.log("Restore error:", e); }
+    }
+    setActiveBtn('homeBtn');
+    loadTop();
+}
+
+setTimeout(initApp, 500);
 setTimeout(showWelcome, 1500);
 </script>
 </body>
