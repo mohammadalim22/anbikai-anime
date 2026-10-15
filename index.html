@@ -460,19 +460,22 @@ var watchRangeSize = 100;
 var ANILIST_URL = 'https://graphql.anilist.co';
 var QUERY = 'query ($search: String, $genre: String, $sort: [MediaSort], $perPage: Int) { Page(page: 1, perPage: $perPage) { media(type: ANIME, search: $search, genre: $genre, sort: $sort, isAdult: false) { id title { romaji english } description(asHtml: false) coverImage { extraLarge large } bannerImage episodes nextAiringEpisode { episode } averageScore format startDate { year } genres trailer { id site } } } }';
 
+// ========== VIDEO_DATA: Server 1 = Streamtape, Server 2 = Doodstream ==========
 var VIDEO_DATA = {
   1535: {
     hindi: {
       "Season 1": {
-        1: [{ name: "Server 1", embed: "https://pixeldrain.com/u/hg7PhBNi?embed" }]
+        1: [
+          { name: "Server 1", embed: "https://playmogo.com/e/cbzujgmk5ttv" }
+        ]
       }
     }
   },
   97940: {
-    sub: [{ name: "Server 1", embed: "https://streamtape.com/e/JKKxw2xeQ0sj0R0/" },{ name: "Server 2", embed: "https://streamtape.com/e/PDyGxboGa3u03pq/" }],
-    dub: [{ name: "Server 1", embed: "https://streamtape.com/e/JKKxw2xeQ0sj0R0/" },{ name: "Server 2", embed: "https://bysefujedu.com/e/k6659hlcqjod" }],
-    hindi: [{ name: "Server 1", embed: "https://streamtape.com/e/JKKxw2xeQ0sj0R0/" },{ name: "Server 2", embed: "https://streamtape.com/e/PDyGxboGa3u03pq/" }],
-    bangla: [{ name: "Server 1", embed: "https://streamtape.com/e/JKKxw2xeQ0sj0R0/" },{ name: "Server 2", embed: "https://streamtape.com/e/PDyGxboGa3u03pq/" }]
+    sub: [{ name: "Server 1", embed: "https://streamtape.com/e/JKKxw2xeQ0sj0R0/" }],
+    dub: [{ name: "Server 1", embed: "https://streamtape.com/e/JKKxw2xeQ0sj0R0/" }],
+    hindi: [{ name: "Server 1", embed: "https://streamtape.com/e/JKKxw2xeQ0sj0R0/" }],
+    bangla: [{ name: "Server 1", embed: "https://streamtape.com/e/JKKxw2xeQ0sj0R0/" }]
   },
   1735: {
     sub: [{ name: "Server 1", embed: "https://streamtape.com/e/PW4m8D2oGeI0ORJ/" }],
@@ -481,8 +484,8 @@ var VIDEO_DATA = {
     bangla: [{ name: "Server 1", embed: "https://streamtape.com/e/eoYOmAJ6LoTZjM/" }]
   },
   151807: {
-    sub: [{ name: "Server 1", embed: "https://streamtape.com/e/2a3KAG3bXJIZXm4/" },{ name: "Server 2", embed: "https://bysefujedu.com/e/3r4nyti9w1d0/" }],
-    dub: [{ name: "Server 1", embed: "https://streamtape.com/e/xqAMwoYg6khkbXV/" },{ name: "Server 2", embed: "https://bysefujedu.com/e/759arii02xep/" }],
+    sub: [{ name: "Server 1", embed: "https://streamtape.com/e/2a3KAG3bXJIZXm4/" }],
+    dub: [{ name: "Server 1", embed: "https://streamtape.com/e/xqAMwoYg6khkbXV/" }],
     hindi: {
       "Season 1": {
         1: [{ name: "Server 1", embed: "https://streamtape.com/e/VWl90p4GZGiKMB6" }], 2: [{ name: "Server 1", embed: "https://streamtape.com/e/AX7LPAJeKLuwpZ" }],
@@ -514,7 +517,7 @@ function platformIcon(p) { var m={crunchyroll:"🟠",netflix:"🔴",hulu:"🟢",
 function langIcon(l) { var m = { sub: '<span class="cc-icon">CC</span>', dub: '🎤', hindi: '🇮🇳', bangla: '🇧🇩' }; return m[l] || ''; }
 function langLabel(l) { var m = { sub: "Soft Sub", dub: "Dub", hindi: "Hindi", bangla: "Bangla" }; return m[l] || l; }
 
-function getDownloadUrl(embed) { if (!embed) return ''; if (embed.indexOf('streamtape.com/e/') >= 0) return embed.replace('/e/', '/v/'); if (embed.indexOf('bysefujedu.com/e/') >= 0) return embed.replace('/e/', '/d/'); return ''; }
+function getDownloadUrl(embed) { if (!embed) return ''; if (embed.indexOf('streamtape.com/e/') >= 0) return embed.replace('/e/', '/v/'); return ''; }
 
 function getServersForEpisode(animeId, lang, season, epNum) {
   var data = VIDEO_DATA[animeId] || {}; var langData = data[lang]; if (!langData) return [];
@@ -793,4 +796,4 @@ setTimeout(initApp, 500);
 setTimeout(showWelcome, 1500);
 </script>
 </body>
-      </html>
+  </html>
