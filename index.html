@@ -84,6 +84,7 @@
   .hist-time { position: absolute; top: 8px; right: 8px; background: rgba(245,158,11,0.95); color: white; padding: 4px 8px; border-radius: 6px; font-size: 0.6rem; font-weight: 800; }
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); gap: 14px; padding: 6px 16px 20px; max-width: 1200px; margin: 0 auto; }
   .grid .card { width: auto; }
+  .grid .ad-row { grid-column: 1 / -1; display: flex; justify-content: center; padding: 6px 0; }
   #status { text-align: center; color: var(--muted); margin: 20px; font-size: 0.9rem; }
   .watch-page { display: none; }
   .watch-page.active { display: block; }
@@ -191,6 +192,19 @@
   .disc-btn-secondary { background: var(--card2); color: var(--text); border: 1px solid var(--border); }
   footer { text-align: center; padding: 28px 20px; color: var(--muted); font-size: 0.8rem; border-top: 1px solid var(--border); margin-top: 40px; }
   footer a { color: var(--orange); }
+  
+  /* ===== EXIT CONFIRMATION DIALOG ===== */
+  .exit-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 500; padding: 16px; overflow-y: auto; align-items: center; justify-content: center; }
+  .exit-overlay.active { display: flex; }
+  .exit-box { background: var(--card); border-radius: 22px; max-width: 400px; width: 100%; padding: 30px 24px; border: 2px solid var(--accent2); text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.7); }
+  .exit-icon { font-size: 3.5rem; margin-bottom: 14px; }
+  .exit-title { font-size: 1.35rem; font-weight: 900; margin-bottom: 12px; color: var(--text); }
+  .exit-text { font-size: 0.92rem; color: var(--muted); margin-bottom: 24px; line-height: 1.6; }
+  .exit-btn { padding: 15px 20px; border-radius: 14px; border: none; font-weight: 900; font-size: 0.98rem; cursor: pointer; width: 100%; margin-bottom: 12px; display: block; }
+  .exit-btn:active { transform: scale(0.97); }
+  .exit-btn-primary { background: linear-gradient(135deg, #ef4444, #b91c1c); color: white; box-shadow: 0 6px 20px rgba(239,68,68,0.4); }
+  .exit-btn-secondary { background: var(--card2); color: var(--text); border: 1px solid var(--border); }
+  
   @media (hover: hover) and (pointer: fine) {
     .icon-btn:hover { background: var(--card2); }
     .card:hover { transform: translateY(-2px); }
@@ -265,24 +279,20 @@
     <h2 id="trendingText">🔥 Trending Now</h2>
   </div>
   
-  <div id="status"></div>
-  <div class="grid" id="animeGrid"></div>
-  
-  <!-- ======= ADSTERRA NATIVE BANNER (moves between home & search position) ======= -->
-  <div id="nativeAdBox" style="max-width: 1200px; margin: 0 auto; padding: 20px 16px; display: flex; justify-content: center;">
+  <div id="homeTopAd" style="max-width: 1200px; margin: 0 auto; padding: 10px 16px 0; display: flex; justify-content: center;">
     <script async="async" data-cfasync="false" src="https://bauval.org/21/0975c69fd19ef05b794c0537867b9000"></script>
     <div id="container-0975c69fd19ef05b794c0537867b9000"></div>
   </div>
-  <!-- ======= END NATIVE BANNER ======= -->
+
+  <div id="status"></div>
+  <div class="grid" id="animeGrid"></div>
   
-  <!-- ======= ADSTERRA BANNER 300x250 (Home bottom) ======= -->
-  <div style="max-width: 1200px; margin: 0 auto; padding: 20px 16px; display: flex; justify-content: center;">
+  <div id="homeMidAd" style="max-width: 1200px; margin: 0 auto; padding: 20px 16px; display: flex; justify-content: center;">
     <script>
       atOptions = { 'key' : '09b8512086e36e4c1f1d5d5bb7faf625', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };
     </script>
     <script src="https://bauval.org/22/09b8512086e36e4c1f1d5d5bb7faf625"></script>
   </div>
-  <!-- ======= END 300x250 ======= -->
   
 </div>
 
@@ -299,7 +309,6 @@
       <button class="ctrl-btn" onclick="randomEpisode()">🔀</button>
     </div>
     
-    <!-- ======= ADSTERRA BANNER 320x50 & 300x250 (Below Player) ======= -->
     <div style="display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 16px;">
       <div>
         <script>
@@ -314,7 +323,6 @@
         <script src="https://bauval.org/22/09b8512086e36e4c1f1d5d5bb7faf625"></script>
       </div>
     </div>
-    <!-- ======= END ADS ======= -->
     
     <div class="season-tabs" id="seasonTabs" style="display:none;"></div>
     <div class="lang-tabs" id="langTabs"></div>
@@ -346,7 +354,6 @@
     <div class="ep-grid" id="epGrid"></div>
   </div>
   
-  <!-- ======= REVIEWS PANEL (Below Episodes) ======= -->
   <div class="reviews-panel">
     <div class="ep-head">
       <h3>📝 Reviews (<span id="reviewsCount">0</span>)</h3>
@@ -358,7 +365,6 @@
       <button onclick="submitReview()">Post Review</button>
     </div>
   </div>
-  <!-- ======= END REVIEWS ======= -->
   
 </div>
 
@@ -383,6 +389,17 @@
   </div>
 </div>
 
+<!-- ===== EXIT CONFIRMATION DIALOG ===== -->
+<div class="exit-overlay" id="exitModal">
+  <div class="exit-box">
+    <div class="exit-icon">🚪</div>
+    <div class="exit-title">Exit AnbuKai?</div>
+    <div class="exit-text">Are you sure you want to leave?<br>Your watch progress and history are saved.</div>
+    <button class="exit-btn exit-btn-primary" onclick="confirmExit()">✅ Yes, Exit</button>
+    <button class="exit-btn exit-btn-secondary" onclick="cancelExit()">❌ Cancel</button>
+  </div>
+</div>
+
 <script>
 var grid = document.getElementById('animeGrid');
 var trendingHeader = document.getElementById('trendingHeader');
@@ -398,6 +415,10 @@ var heroAnimeList = [];
 var heroIndex = 0;
 var heroTimer = null;
 var searchState = { query: '', results: [] };
+
+/* ====== NAVIGATION STATE TRACKING ====== */
+var currentView = 'home';
+var pendingHome = false;
 
 var watchAnime = null;
 var watchEpsCount = 0;
@@ -494,13 +515,13 @@ function getAvailableEpisodes(animeId, lang, season) {
   return Object.keys(langData).map(Number).filter(function(n){ return !isNaN(n); }).sort(function(a,b){return a-b;});
 }
 
-var fallbackAnime = [ 
+var fallbackAnime = [
   { mal_id: 11061, title: "Hunter x Hunter (2011)", score: 9.0, type: "TV", episodes: 148, img: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx11061-KKc7oXANs7hL.png", banner: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/11061.jpg", synopsis: "Gon Freecss discovers that his father is a legendary Hunter.", genres: ["Action","Adventure","Fantasy"], trailer: "https://www.youtube.com/embed/d6cHfBk59gs", year: 2011 },
   { mal_id: 38000, title: "Demon Slayer: Kimetsu no Yaiba", score: 8.5, type: "TV", episodes: 55, img: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx101922-PEn1CTc93blC.jpg", banner: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/101922-F7AeHZAMdmHz.jpg", synopsis: "Tanjiro becomes a demon slayer to avenge his family.", genres: ["Action","Supernatural","Adventure"], trailer: "https://www.youtube.com/embed/VQGCKyvzIM4", year: 2019 },
   { mal_id: 178025, title: "Blue Box", score: 7.9, type: "TV", episodes: 25, img: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx178025-0p1g2w3b4x5c.jpg", banner: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/178025.jpg", synopsis: "Taiki Inomata is a student on the badminton team.", genres: ["Romance", "Sports", "Drama"], trailer: "", year: 2024 },
   { mal_id: 16498, title: "Attack on Titan", score: 8.5, type: "TV", episodes: 25, img: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx16498-bqvzRjWp05Yj.jpg", banner: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/16498.jpg", synopsis: "Humans were nearly exterminated by titans.", genres: ["Action","Drama","Fantasy"], trailer: "https://www.youtube.com/embed/LHtdKWJdif4", year: 2013 },
   { mal_id: 1535, title: "Death Note", score: 8.6, type: "TV", episodes: 37, img: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx1535-b5y5Y1jN0F0e.jpg", banner: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/1535.jpg", synopsis: "A shinigami, as a god of death, can kill any person.", genres: ["Mystery","Psychological","Supernatural","Thriller"], trailer: "https://www.youtube.com/embed/NlJZ-YgAt-c", year: 2006 },
-  { mal_id: 151807, title: "Solo Leveling", score: 8.3, type: "TV", episodes: 12, img: "https://cdn.myanimelist.net/images/anime/1779/141555.jpg", banner: "https://cdn.myanimelist.net/images/anime/1779/141555.jpg", synopsis: "Weakest hunter Sung Jinwoo gains a mysterious power.", genres: ["Action","Adventure","Fantasy"], trailer: "https://www.youtube.com/embed/I6MQB0ELRsA", year: 2024 } 
+  { mal_id: 151807, title: "Solo Leveling", score: 8.3, type: "TV", episodes: 12, img: "https://cdn.myanimelist.net/images/anime/1779/141555.jpg", banner: "https://cdn.myanimelist.net/images/anime/1779/141555.jpg", synopsis: "Weakest hunter Sung Jinwoo gains a mysterious power.", genres: ["Action","Adventure","Fantasy"], trailer: "https://www.youtube.com/embed/I6MQB0ELRsA", year: 2024 }
 ];
 
 function fetchWithTimeout(url, opt, ms) { opt = opt || {}; ms = ms || 8000; return new Promise(function(res, rej) { var c = new AbortController(); opt.signal = c.signal; var t = setTimeout(function(){ c.abort(); rej(new Error('timeout')); }, ms); fetch(url, opt).then(function(r){ clearTimeout(t); if(!r.ok) rej(new Error('fail')); else res(r); }).catch(function(e){ clearTimeout(t); rej(e); }); }); }
@@ -535,20 +556,29 @@ function setActiveBtn(id){ ['homeBtn','watchlistBtn','historyBtn','searchToggleB
 function showHomeView(){ document.getElementById('homeView').style.display='block'; document.getElementById('watchPage').classList.remove('active'); }
 function showWatchView(){ document.getElementById('homeView').style.display='none'; document.getElementById('watchPage').classList.add('active'); }
 
+/* ============ HOME BUTTON (with back-loop) ============ */
 function goHome(){
-  setActiveBtn('homeBtn');
-  document.getElementById('searchBar').classList.remove('active');
-  hideAnimeModal();
-  showHomeView();
-  input.value = '';  // Clear search input
-  try { history.pushState({view: 'home'}, '', location.pathname + location.search); } catch(e) {}
-  loadTop();
+  if (currentView === 'home' && !pendingHome) {
+    // Already on home — just refresh UI
+    setActiveBtn('homeBtn');
+    document.getElementById('searchBar').classList.remove('active');
+    hideAnimeModal();
+    showHomeView();
+    input.value = '';
+    searchState = { query: '', results: [] };
+    loadTop();
+    return;
+  }
+  // Not on home — walk back to home via popstate loop
+  pendingHome = true;
+  history.back();
 }
 
 function hideAnimeModal(){ var overlay = document.getElementById('animeModalOverlay'); if(overlay) overlay.classList.remove('active'); document.body.style.overflow = ''; }
 function findAnimeById(id) { for(var i=0;i<currentList.length;i++) if(currentList[i].mal_id===id) return currentList[i]; for(var j=0;j<fallbackAnime.length;j++) if(fallbackAnime[j].mal_id===id) return fallbackAnime[j]; for(var k=0;k<heroAnimeList.length;k++) if(heroAnimeList[k].mal_id===id) return heroAnimeList[k]; var h = getHistory(); for(var m=0;m<h.length;m++) if(h[m].mal_id===id) return h[m]; return null; }
 
 function loadTop() {
+  currentView = 'home';
   document.getElementById('heroSlider').style.display = 'block';
   document.getElementById('continueSection').style.display = 'none';
   trendingHeader.style.display = 'flex';
@@ -556,8 +586,8 @@ function loadTop() {
   statusEl.textContent=''; grid.innerHTML='';
   searchState = { query: '', results: [] };
   anilistFetch({ sort:['TRENDING_DESC'], perPage: 30 }).then(function(res){
-    if(res && res.data && res.data.Page && res.data.Page.media && res.data.Page.media.length>0){ var mapped = res.data.Page.media.map(mapAniList); renderHero(mapped); renderAnime(mapped); } else { renderHero(fallbackAnime); renderAnime(fallbackAnime); }
-  }).catch(function(){ renderHero(fallbackAnime); renderAnime(fallbackAnime); });
+    if(res && res.data && res.data.Page && res.data.Page.media && res.data.Page.media.length>0){ var mapped = res.data.Page.media.map(mapAniList); renderHero(mapped); renderAnime(mapped, false); } else { renderHero(fallbackAnime); renderAnime(fallbackAnime, false); }
+  }).catch(function(){ renderHero(fallbackAnime); renderAnime(fallbackAnime, false); });
 }
 
 function renderHero(list) {
@@ -576,6 +606,7 @@ function addHeroToWatchlist(id){ var a=null; for(var i=0;i<heroAnimeList.length;
 function searchAnime(fromHistory) {
   var q = input.value.trim(); hideSuggestions();
   if(!q){ goHome(); return; }
+  currentView = 'search';
   showHomeView();
   document.getElementById('heroSlider').style.display='none';
   document.getElementById('continueSection').style.display='none';
@@ -594,7 +625,7 @@ function searchAnime(fromHistory) {
       l=sortSearchResults(l,q);
       searchState.query = q;
       searchState.results = l;
-      renderAnime(l);
+      renderAnime(l, true);
     } else { statusEl.textContent='No results found.'; }
   }).catch(function(){ statusEl.textContent='Search failed.'; });
 }
@@ -602,6 +633,7 @@ function searchAnime(fromHistory) {
 function filterGenre() {
   var g = document.getElementById('genreSelect').value;
   if(!g){ goHome(); return; }
+  currentView = 'home';
   showHomeView();
   document.getElementById('heroSlider').style.display='none';
   document.getElementById('continueSection').style.display='none';
@@ -610,10 +642,11 @@ function filterGenre() {
   statusEl.textContent='Loading...';
   grid.innerHTML='';
   searchState = { query: '', results: [] };
-  anilistFetch({ genre:g, sort:['POPULARITY_DESC'], perPage:30 }).then(function(res){ if(res && res.data && res.data.Page && res.data.Page.media) renderAnime(res.data.Page.media.map(mapAniList)); }).catch(function(){ statusEl.textContent='Filter failed.'; });
+  anilistFetch({ genre:g, sort:['POPULARITY_DESC'], perPage:30 }).then(function(res){ if(res && res.data && res.data.Page && res.data.Page.media) renderAnime(res.data.Page.media.map(mapAniList), false); }).catch(function(){ statusEl.textContent='Filter failed.'; });
 }
 
 function showWatchlist() {
+  currentView = 'home';
   setActiveBtn('watchlistBtn');
   document.getElementById('searchBar').classList.remove('active');
   showHomeView();
@@ -624,10 +657,11 @@ function showWatchlist() {
   trendingText.textContent = '⭐ Watchlist ('+l.length+')';
   searchState = { query: '', results: [] };
   if(l.length===0){ statusEl.textContent='Watchlist is empty.'; grid.innerHTML=''; return; }
-  statusEl.textContent=''; renderAnime(l);
+  statusEl.textContent=''; renderAnime(l, false);
 }
 
 function showHistory() {
+  currentView = 'home';
   setActiveBtn('historyBtn');
   document.getElementById('searchBar').classList.remove('active');
   showHomeView();
@@ -667,30 +701,48 @@ function makeCard(a) {
   return '<div class="card" onclick="openDetails('+a.mal_id+')"><div class="card-img"><img src="'+a.img+'" loading="lazy" onerror="this.style.opacity=0.2">'+badge+score+watchBadge+'</div><div class="card-title">'+a.title+'</div><div class="card-sub">'+((a.type||'TV')+' • '+(a.episodes||'?')+' eps')+'</div></div>';
 }
 
-function renderAnime(list){
-  currentList=list;
-  var adBox = document.getElementById('nativeAdBox');
-  var gridParent = grid.parentNode;
+function renderAnime(list, isSearchView){
+  currentList = list;
+  var topAd = document.getElementById('homeTopAd');
+  var midAd = document.getElementById('homeMidAd');
+  if (topAd && topAd.parentNode === grid) grid.parentNode.insertBefore(topAd, grid);
+  if (midAd && midAd.parentNode === grid) grid.parentNode.insertBefore(midAd, grid.nextSibling);
   
-  // Move ad out of grid first (to prevent innerHTML from destroying it)
-  if (adBox && adBox.parentNode === grid) {
-    gridParent.insertBefore(adBox, grid.nextSibling);
-    adBox.style.gridColumn = '';
-  }
-  
-  if(!list||list.length===0){ statusEl.textContent='No anime found.'; grid.innerHTML=''; return; }
+  if(!list || list.length===0){ statusEl.textContent='No anime found.'; grid.innerHTML=''; return; }
   statusEl.textContent='';
   var h='';
   for(var i=0;i<list.length;i++) h += makeCard(list[i]);
   grid.innerHTML=h;
   
-  // Reposition ad based on view (search view: after 2 cards)
-  var isSearchView = trendingText.textContent.indexOf('SEARCH') >= 0;
-  if (isSearchView && adBox && grid.children.length > 2) {
-    grid.insertBefore(adBox, grid.children[2]);
-    adBox.style.gridColumn = '1 / -1';
-    adBox.style.maxWidth = '100%';
-    adBox.style.padding = '10px 0';
+  if (isSearchView) {
+    if (midAd && grid.children.length > 2) {
+      midAd.style.gridColumn = '1 / -1';
+      midAd.style.maxWidth = '100%';
+      midAd.style.padding = '10px 0';
+      midAd.style.margin = '0';
+      midAd.style.display = 'flex';
+      midAd.style.justifyContent = 'center';
+      grid.insertBefore(midAd, grid.children[2]);
+    }
+  } else {
+    if (topAd) {
+      topAd.style.gridColumn = '1 / -1';
+      topAd.style.maxWidth = '100%';
+      topAd.style.padding = '10px 0';
+      topAd.style.margin = '0';
+      topAd.style.display = 'flex';
+      topAd.style.justifyContent = 'center';
+      if (grid.children.length > 0) grid.insertBefore(topAd, grid.children[0]);
+    }
+    if (midAd && grid.children.length > 3) {
+      midAd.style.gridColumn = '1 / -1';
+      midAd.style.maxWidth = '100%';
+      midAd.style.padding = '10px 0';
+      midAd.style.margin = '0';
+      midAd.style.display = 'flex';
+      midAd.style.justifyContent = 'center';
+      grid.insertBefore(midAd, grid.children[3]);
+    }
   }
 }
 
@@ -701,6 +753,7 @@ function fetchSuggestions(q) { if(!q||q.length<1){ hideSuggestions(); return; } 
 
 function openDetails(id) {
   var a = findAnimeById(id); if(!a) return;
+  currentView = 'details';
   window._currentModalAnime = a;
   showAnimeModal(a);
   try { history.pushState({ view: 'details', anime: a }, '', location.pathname + location.search + '#anime-' + a.mal_id); } catch(e) {}
@@ -779,6 +832,7 @@ function saveWatchState() {
 function startWatching(isRestoring) {
   var a = window._currentModalAnime; if (!a) return;
   if (!VIDEO_DATA[a.mal_id]) { alert('Video not found.'); return; }
+  currentView = 'watch';
   watchAnime = a; watchCurrentEp = 1; watchCurrentLang = pickFirstAvailableLang(a.mal_id); watchCurrentSeason = 1; watchCurrentServer = 0; watchRangeStart = 1; watchRangeSize = 100;
   
   var saved = localStorage.getItem('anbikai_watch_state');
@@ -931,42 +985,115 @@ function handleFindKey(e) { if (e.key !== 'Enter') return; var input = document.
 
 document.addEventListener('click', function(e) { var btn = document.getElementById('findBtn'); if (!btn) return; if (!e.target.closest('#findBtn')) btn.classList.remove('expanded'); });
 
-// ======== BACK BUTTON HANDLER ========
+/* ====== EXIT DIALOG FUNCTIONS ====== */
+function showExitDialog() {
+  document.getElementById('exitModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function cancelExit() {
+  document.getElementById('exitModal').classList.remove('active');
+  document.body.style.overflow = '';
+  // Guard state is already re-armed in popstate handler
+}
+function confirmExit() {
+  document.getElementById('exitModal').classList.remove('active');
+  document.body.style.overflow = '';
+  // Go back 2 steps: pop the re-armed guard, then leave the app
+  history.go(-2);
+}
+
+/* ============ BACK BUTTON HANDLER (FULL REWRITE) ============ */
 window.addEventListener('popstate', function(e) {
   var state = e.state;
   
-  // HOME view
-  if (!state || state.view === 'home') {
-    hideAnimeModal(); showHomeView();
+  // ===== Case 1: We're on our way back to home =====
+  if (pendingHome) {
+    if (!state || state.view === 'home' || state.isRoot || state.isGuard) {
+      pendingHome = false;
+      currentView = 'home';
+      setActiveBtn('homeBtn');
+      document.getElementById('searchBar').classList.remove('active');
+      hideAnimeModal();
+      showHomeView();
+      input.value = '';
+      searchState = { query: '', results: [] };
+      loadTop();
+      return;
+    }
+    // Not home yet — keep walking back
+    history.back();
+    return;
+  }
+  
+  // ===== Case 2: User pressed back from root home → show exit dialog =====
+  if (!state || state.isRoot) {
+    if (currentView === 'home') {
+      // Re-arm the guard state to prevent leaving, then show dialog
+      try { history.pushState({view: 'home', isGuard: true}, '', location.pathname + location.search); } catch(err) {}
+      showExitDialog();
+      return;
+    }
+    // Coming back to home from a sub-view
+    currentView = 'home';
+    setActiveBtn('homeBtn');
+    document.getElementById('searchBar').classList.remove('active');
+    hideAnimeModal();
+    showHomeView();
     input.value = '';
-    searchState = { query: '', results: [] };
     loadTop();
     return;
   }
   
-  // SEARCH view - restore search results!
+  // ===== Case 3: Guard home state (we popped to it) =====
+  if (state.isGuard) {
+    if (currentView === 'home') {
+      // Re-arm and show exit dialog
+      try { history.pushState({view: 'home', isGuard: true}, '', location.pathname + location.search); } catch(err) {}
+      showExitDialog();
+      return;
+    }
+    currentView = 'home';
+    hideAnimeModal();
+    showHomeView();
+    input.value = '';
+    loadTop();
+    return;
+  }
+  
+  // ===== Case 4: Home state (non-root) =====
+  if (state.view === 'home') {
+    currentView = 'home';
+    hideAnimeModal();
+    showHomeView();
+    input.value = '';
+    loadTop();
+    return;
+  }
+  
+  // ===== Case 5: Search view =====
   if (state.view === 'search' && state.query) {
-    hideAnimeModal(); showHomeView();
+    currentView = 'search';
+    hideAnimeModal();
+    showHomeView();
     input.value = state.query;
     document.getElementById('searchBar').classList.add('active');
     document.getElementById('heroSlider').style.display = 'none';
     document.getElementById('continueSection').style.display = 'none';
     trendingHeader.style.display = 'flex';
     trendingText.textContent = '🔍 SEARCH: ' + state.query.toUpperCase();
-    
-    // Try to use cached results first
     if (searchState.query === state.query && searchState.results.length > 0) {
       statusEl.textContent = '';
-      renderAnime(searchState.results);
+      renderAnime(searchState.results, true);
     } else {
       grid.innerHTML = '';
-      searchAnime(true); // re-fetch
+      searchAnime(true);
     }
     return;
   }
   
-  // WATCH view
+  // ===== Case 6: Watch view =====
   if (state.view === 'watch' && state.anime) {
+    currentView = 'watch';
     watchAnime = state.anime;
     watchCurrentEp = state.ep || 1;
     watchCurrentLang = state.lang || 'sub';
@@ -974,26 +1101,28 @@ window.addEventListener('popstate', function(e) {
     watchCurrentServer = state.server || 0;
     var available = getAvailableEpisodes(watchAnime.mal_id, watchCurrentLang, watchCurrentSeason);
     if (available && available.length > 0) { watchEpsCount = available[available.length - 1]; } else { var epsNum = parseInt(watchAnime.episodes); watchEpsCount = (isNaN(epsNum) || epsNum < 1) ? 12 : epsNum; }
-    hideAnimeModal(); showWatchView();
+    hideAnimeModal();
+    showWatchView();
     renderBreadcrumb(); renderSeasonTabs(); renderLangTabs(); renderServerTabs(); renderEpisodeGrid(); renderWatchReviews(); loadVideo();
     return;
   }
   
-  // DETAILS view
+  // ===== Case 7: Details view =====
   if (state.view === 'details' && state.anime) {
+    currentView = 'details';
     showHomeView();
     window._currentModalAnime = state.anime;
     showAnimeModal(state.anime);
     return;
   }
   
-  // Fallback
-  hideAnimeModal(); showHomeView();
+  // ===== Fallback =====
+  currentView = 'home';
+  hideAnimeModal();
+  showHomeView();
   input.value = '';
   loadTop();
 });
-
-if (!history.state) { try { history.replaceState({ view: 'home' }, '', location.pathname + location.search); } catch(e) {} }
 
 input.addEventListener('input', function(){ var q=input.value.trim(); clearTimeout(suggestTimer); if(q.length<1){hideSuggestions();return;} suggestTimer=setTimeout(function(){fetchSuggestions(q);},300); });
 input.addEventListener('keypress', function(e){ if(e.key==='Enter'){ hideSuggestions(); searchAnime(); } });
@@ -1004,6 +1133,15 @@ if('serviceWorker' in navigator){ navigator.serviceWorker.register('service-work
 function initApp() {
   var hash = location.hash;
   var saved = localStorage.getItem('anbikai_watch_state');
+  
+  // Set up initial root + guard states
+  try {
+    if (!history.state || !history.state.view) {
+      history.replaceState({view: 'home', isRoot: true}, '', location.pathname + location.search);
+      history.pushState({view: 'home', isGuard: true}, '', location.pathname + location.search);
+    }
+  } catch(e) { console.log('History init error:', e); }
+  
   if (hash.indexOf('#watch-') >= 0 && saved) {
     try {
       var state = JSON.parse(saved);
@@ -1012,20 +1150,25 @@ function initApp() {
         window._currentModalAnime = state.anime;
         hideAnimeModal();
         showWatchView();
+        currentView = 'watch';
         startWatching(true);
         return;
       }
     } catch(e) { console.log("Restore error:", e); }
   }
+  
   if (hash.indexOf('#search-') >= 0) {
     var q = decodeURIComponent(hash.replace('#search-', ''));
     if (q) {
       input.value = q;
+      currentView = 'search';
       searchAnime(true);
       return;
     }
   }
+  
   setActiveBtn('homeBtn');
+  currentView = 'home';
   loadTop();
 }
 
