@@ -17,8 +17,8 @@
   body.light { --bg:#f7f7fa; --bg2:#fff; --card:#fff; --card2:#f0f0f5; --text:#1a1a1a; --muted:#6b6b76; --border:#e0e0e8; --input-bg:#f2f2f7; --score:#d4a017; }
   * { box-sizing: border-box; margin:0; padding:0; -webkit-tap-highlight-color: transparent; }
   body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; padding-bottom: 30px; }
-  button, a, .card, .icon-btn, .ctrl-btn, .lang-tab, .server-tab, .ep-cell, .btn-play, .btn-bookmark, .watch-now-btn, .watch-link-btn, .watchlist-btn, .dl-icon-btn, .sug-item, .ep-tool, .range-selector button, .filter-btn, .search-btn, .season-tab, iframe, video { touch-action: manipulation !important; -webkit-tap-highlight-color: transparent !important; -webkit-user-select: none; user-select: none; }
-  button, a, .card, .icon-btn, .ctrl-btn, .lang-tab, .server-tab, .ep-cell, .btn-play, .btn-bookmark, .watch-now-btn, .watch-link-btn, .watchlist-btn, .dl-icon-btn, .sug-item, .ep-tool, .range-selector button, .filter-btn, .search-btn, .season-tab { cursor: pointer; }
+  button, a, .card, .icon-btn, .ctrl-btn, .lang-tab, .server-tab, .ep-cell, .btn-play, .btn-bookmark, .watch-now-btn, .watch-link-btn, .watchlist-btn, .dl-icon-btn, .sug-item, .ep-tool, .range-selector button, .filter-btn, .search-btn, .season-btn, iframe, video { touch-action: manipulation !important; -webkit-tap-highlight-color: transparent !important; -webkit-user-select: none; user-select: none; }
+  button, a, .card, .icon-btn, .ctrl-btn, .lang-tab, .server-tab, .ep-cell, .btn-play, .btn-bookmark, .watch-now-btn, .watch-link-btn, .watchlist-btn, .dl-icon-btn, .sug-item, .ep-tool, .range-selector button, .filter-btn, .search-btn, .season-btn { cursor: pointer; }
   header { padding: 12px 16px; background: var(--bg); display: flex; align-items: center; justify-content: space-between; gap: 10px; position: sticky; top: 0; z-index: 50; }
   .logo-wrap { display: flex; align-items: center; gap: 8px; cursor: pointer; }
   .logo-icon { width: 38px; height: 38px; border-radius: 10px; overflow: hidden; flex-shrink: 0; background:#000; }
@@ -100,10 +100,18 @@
   .ctrl-btn { background: var(--card2); border: 1px solid var(--border); color: var(--text); font-size: 1.15rem; cursor: pointer; width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
   .ctrl-btn:active { transform: scale(0.92); background: var(--orange); color: white; border-color: var(--orange); }
   .ctrl-btn.play { background: var(--orange); border-color: var(--orange); color: white; font-size: 1.3rem; }
+  
+  /* Season Dropdown CSS */
   .season-tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
-  .season-tab { background: var(--card2); border: 1.5px solid var(--border); color: var(--text); padding: 9px 18px; border-radius: 999px; cursor: pointer; font-size: 0.85rem; font-weight: 800; }
-  .season-tab:active { transform: scale(0.96); }
-  .season-tab.active { background: var(--accent2); color: white; border-color: var(--accent2); }
+  .season-dropdown { position: relative; display: inline-block; }
+  .season-btn { background: var(--accent2); color: white; border: 1.5px solid var(--accent2); padding: 9px 18px; border-radius: 999px; cursor: pointer; font-size: 0.85rem; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+  .season-btn:active { transform: scale(0.96); }
+  .season-menu { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); background: var(--card); border: 1px solid var(--border); border-radius: 12px; margin-top: 8px; min-width: 150px; max-height: 200px; overflow-y: auto; display: none; z-index: 100; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+  .season-menu.active { display: block; }
+  .season-item { display: block; width: 100%; padding: 12px 16px; background: transparent; border: none; color: var(--text); text-align: center; font-size: 0.85rem; font-weight: 700; cursor: pointer; border-bottom: 1px solid var(--border); }
+  .season-item:last-child { border-bottom: none; }
+  .season-item:hover, .season-item.active { background: var(--accent2); color: white; }
+  
   .lang-tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
   .lang-tab { background: transparent; border: 1.5px solid var(--border); color: var(--muted); padding: 9px 18px; border-radius: 999px; cursor: pointer; font-size: 0.85rem; font-weight: 800; display: flex; align-items: center; gap: 7px; }
   .lang-tab:active { transform: scale(0.96); }
@@ -219,7 +227,7 @@
     .sug-item:hover { background: var(--card2); }
     .ctrl-btn:hover { background: var(--orange); color: white; border-color: var(--orange); }
     .lang-tab:hover { border-color: var(--muted); }
-    .season-tab:hover { border-color: var(--muted); }
+    .season-btn:hover { border-color: var(--muted); }
     .server-tab:hover { background: var(--card2); }
     .ep-cell:hover { background: var(--card2); }
     .watch-now-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255,102,51,0.5); }
@@ -287,15 +295,31 @@
   <div class="section-head" id="trendingHeader">
     <h2 id="trendingText">🔥 Trending Now</h2>
   </div>
-  <div id="status"></div>
-  <div class="grid" id="animeGrid"></div>
   
-  <!-- ======= ADSTERRA NATIVE BANNER ======= -->
-  <div style="max-width: 1200px; margin: 0 auto; padding: 0 16px 20px;">
+  <!-- ======= ADSTERRA NATIVE BANNER (Trending Now-এর ঠিক নিচে) ======= -->
+  <div style="max-width: 1200px; margin: 0 auto; padding: 0 16px 20px; display: flex; justify-content: center;">
     <script async="async" data-cfasync="false" src="https://bauval.org/21/0975c69fd19ef05b794c0537867b9000"></script>
     <div id="container-0975c69fd19ef05b794c0537867b9000"></div>
   </div>
   <!-- ======= END NATIVE BANNER ======= -->
+
+  <div id="status"></div>
+  <div class="grid" id="animeGrid"></div>
+  
+  <!-- ======= ADSTERRA BANNER 300x250 (Home Anime List-এর নিচে) ======= -->
+  <div style="max-width: 1200px; margin: 0 auto; padding: 20px 16px; display: flex; justify-content: center;">
+    <script>
+      atOptions = {
+        'key' : '09b8512086e36e4c1f1d5d5bb7faf625',
+        'format' : 'iframe',
+        'height' : 250,
+        'width' : 300,
+        'params' : {}
+      };
+    </script>
+    <script src="https://bauval.org/22/09b8512086e36e4c1f1d5d5bb7faf625"></script>
+  </div>
+  <!-- ======= END BANNER 300x250 ======= -->
   
 </div>
 
@@ -312,7 +336,7 @@
       <button class="ctrl-btn" onclick="randomEpisode()">🔀</button>
     </div>
     
-    <!-- ======= ADSTERRA BANNER 320x50 ======= -->
+    <!-- ======= ADSTERRA BANNER 320x50 (Player Control-এর নিচে) ======= -->
     <div style="display: flex; justify-content: center; margin-bottom: 16px;">
       <script>
         atOptions = {
@@ -327,7 +351,9 @@
     </div>
     <!-- ======= END BANNER 320x50 ======= -->
     
+    <!-- Season Dropdown Area -->
     <div class="season-tabs" id="seasonTabs" style="display:none;"></div>
+    
     <div class="lang-tabs" id="langTabs"></div>
     <div class="server-row" id="serverTabs"></div>
     <div class="watching-info">
@@ -357,7 +383,7 @@
     <div class="ep-grid" id="epGrid"></div>
   </div>
   
-  <!-- ======= ADSTERRA BANNER 300x250 ======= -->
+  <!-- ======= ADSTERRA BANNER 300x250 (Episode List-এর নিচে) ======= -->
   <div style="display: flex; justify-content: center; margin: 20px auto; max-width: 1200px; padding: 0 16px;">
     <script>
       atOptions = {
@@ -543,7 +569,13 @@ function platformIcon(p) { var m={crunchyroll:"🟠",netflix:"🔴",hulu:"🟢",
 function langIcon(l) { var m = { sub: '<span class="cc-icon">CC</span>', dub: '🎤', hindi: '🇮🇳', bangla: '🇧🇩' }; return m[l] || ''; }
 function langLabel(l) { var m = { sub: "Soft Sub", dub: "Dub", hindi: "Hindi", bangla: "Bangla" }; return m[l] || l; }
 
-function getDownloadUrl(embed) { if (!embed) return ''; if (embed.indexOf('streamtape.com/e/') >= 0) return embed.replace('/e/', '/v/'); return ''; }
+function getDownloadUrl(embed) {
+  if (!embed) return '';
+  if (embed.indexOf('.mp4') >= 0) return embed; // Direct MP4 download
+  if (embed.indexOf('streamtape.com/e/') >= 0) return embed.replace('/e/', '/v/');
+  // For other embeds, return the embed link itself (opens in new tab)
+  return embed;
+}
 
 function getServersForEpisode(animeId, lang, season, epNum) {
   var data = VIDEO_DATA[animeId] || {}; var langData = data[lang]; if (!langData) return [];
@@ -754,11 +786,25 @@ function pickFirstAvailableLang(id) { var langs = ['sub','dub','hindi','bangla']
 function renderBreadcrumb() { document.getElementById('breadcrumb').innerHTML = '<a href="#" onclick="goHome();return false;">🏠 Home</a><span class="sep">/</span><a href="#" onclick="goHome();return false;">'+(watchAnime.type||'TV')+'</a><span class="sep">/</span><span class="current">'+watchAnime.title+'</span>'; }
 
 function renderSeasonTabs() {
-  var tabs = document.getElementById('seasonTabs'); if (!tabs) return; var data = VIDEO_DATA[watchAnime.mal_id] || {}; var langData = data[watchCurrentLang];
-  if (!langData || Array.isArray(langData) || !langData['Season 1']) { tabs.innerHTML = ''; tabs.style.display = 'none'; return; }
-  tabs.style.display = 'flex'; var html = ''; var seasons = Object.keys(langData).filter(function(k) { return k.indexOf('Season') === 0; });
-  seasons.forEach(function(s) { var seasonNum = s.replace('Season ', ''); var active = (watchCurrentSeason == seasonNum) ? ' active' : ''; html += '<button class="season-tab' + active + '" onclick="switchSeason(\'' + seasonNum + '\')">' + s + '</button>'; }); tabs.innerHTML = html;
+  var container = document.getElementById('seasonTabs'); if (!container) return; var data = VIDEO_DATA[watchAnime.mal_id] || {}; var langData = data[watchCurrentLang];
+  if (!langData || Array.isArray(langData) || !langData['Season 1']) { container.innerHTML = ''; container.style.display = 'none'; return; }
+  container.style.display = 'flex'; var html = ''; var seasons = Object.keys(langData).filter(function(k) { return k.indexOf('Season') === 0; });
+  var currentSeasonKey = 'Season ' + watchCurrentSeason;
+  html += '<div class="season-dropdown">';
+  html += '<button class="season-btn" onclick="toggleSeasonMenu(event)">' + currentSeasonKey + ' ▼</button>';
+  html += '<div class="season-menu" id="seasonMenu">';
+  seasons.forEach(function(s) { 
+    var seasonNum = s.replace('Season ', ''); 
+    var activeClass = (watchCurrentSeason == seasonNum) ? ' active' : ''; 
+    html += '<button class="season-item ' + activeClass + '" onclick="selectSeason(\'' + seasonNum + '\', event)">' + s + '</button>'; 
+  });
+  html += '</div></div>';
+  container.innerHTML = html;
 }
+
+function toggleSeasonMenu(e) { e.stopPropagation(); var menu = document.getElementById('seasonMenu'); if (menu) menu.classList.toggle('active'); }
+function selectSeason(s, e) { e.stopPropagation(); switchSeason(s); var menu = document.getElementById('seasonMenu'); if (menu) menu.classList.remove('active'); }
+document.addEventListener('click', function(e) { var menu = document.getElementById('seasonMenu'); if (menu && menu.classList.contains('active')) { if (!e.target.closest('.season-dropdown')) { menu.classList.remove('active'); } } });
 
 function switchSeason(s) {
   watchCurrentSeason = parseInt(s); watchCurrentEp = 1; watchRangeStart = 1;
@@ -780,8 +826,10 @@ function renderServerTabs() {
   var row = document.getElementById('serverTabs'); var servers = getServersForEpisode(watchAnime.mal_id, watchCurrentLang, watchCurrentSeason, watchCurrentEp); var html = '';
   if (servers.length === 0) { html = '<div style="color:var(--muted);font-size:0.85rem;padding:10px;">Episode '+watchCurrentEp+' — ei language e paoa gelo na.</div>'; row.innerHTML = html; return; }
   for (var i=0;i<servers.length;i++) { html += '<button class="server-tab'+(watchCurrentServer===i?' active':'')+'" onclick="switchServer('+i+')">'+servers[i].name+'</button>'; }
-  var current = servers[watchCurrentServer] || servers[0]; var dlUrl = getDownloadUrl(current.embed);
-  if (dlUrl) { html += '<a class="dl-icon-btn" href="'+dlUrl+'" target="_blank" title="Download"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 3a1 1 0 0 1 1 1v9.586l3.293-3.293a1 1 0 1 1 1.414 1.414l-5 5a1 1 0 0 1-1.414 0l-5-5a1 1 0 1 1 1.414-1.414L11 13.586V4a1 1 0 0 1 1-1zM5 19a1 1 0 0 1 1-1h12a1 1 0 1 1 0 2H6a1 1 0 0 1-1-1z"/></svg></a>'; }
+  var current = servers[watchCurrentServer] || servers[0]; 
+  var dlUrl = getDownloadUrl(current.embed);
+  // Always show download button as requested
+  html += '<a class="dl-icon-btn" href="'+dlUrl+'" target="_blank" title="Download"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 3a1 1 0 0 1 1 1v9.586l3.293-3.293a1 1 0 1 1 1.414 1.414l-5 5a1 1 0 0 1-1.414 0l-5-5a1 1 0 1 1 1.414-1.414L11 13.586V4a1 1 0 0 1 1-1zM5 19a1 1 0 0 1 1-1h12a1 1 0 1 1 0 2H6a1 1 0 0 1-1-1z"/></svg></a>';
   row.innerHTML = html;
 }
 
