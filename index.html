@@ -410,8 +410,22 @@ var ANILIST_URL = 'https://graphql.anilist.co';
 var QUERY = 'query ($search: String, $genre: String, $sort: [MediaSort], $perPage: Int) { Page(page: 1, perPage: $perPage) { media(type: ANIME, search: $search, genre: $genre, sort: $sort, isAdult: false) { id title { romaji english } description(asHtml: false) coverImage { extraLarge large } bannerImage episodes nextAiringEpisode { episode } averageScore format startDate { year } genres trailer { id site } } } }';
 
 // ========== VIDEO_DATA ==========
-// Server 1 = Voe.sx, Streamtape, Doodstream, R2
 var VIDEO_DATA = {
+  // Demon Slayer (AniList ID: 38000)
+  38000: {
+    sub: [
+      { name: "Movie: Infinity Castle", embed: "https://streamtape.com/e/1D9jP7qp26f6kl" }
+    ],
+    dub: [
+      { name: "Movie: Infinity Castle", embed: "https://streamtape.com/e/1D9jP7qp26f6kl" }
+    ],
+    hindi: {
+      "Movie: Infinity Castle": {
+        1: [{ name: "Server 1", embed: "https://streamtape.com/e/bVW27jBXpvTdwr" }]
+      }
+    },
+    bangla: []
+  },
   178025: {
     hindi: {
       "Season 1": {
@@ -488,22 +502,40 @@ function getDownloadUrl(embed) { if (!embed) return ''; if (embed.indexOf('strea
 
 function getServersForEpisode(animeId, lang, season, epNum) {
   var data = VIDEO_DATA[animeId] || {}; var langData = data[lang]; if (!langData) return [];
-  if (Array.isArray(langData)) return langData;
+  if (Array.isArray(langData)) {
+    // Special case: Movie entries stored as array with "Movie:" names
+    if (langData.length > 0 && langData[0].name && langData[0].name.indexOf('Movie') === 0) return langData;
+    return langData;
+  }
   var seasonKey = "Season " + season;
   if (langData[seasonKey]) return langData[seasonKey][epNum] || [];
+  // If keys are non-numeric (like "Movie: Infinity Castle"), and epNum=1, return first entry
+  var keys = Object.keys(langData);
+  if (keys.length > 0 && isNaN(Number(keys[0]))) {
+    var firstKey = keys[0];
+    if (langData[firstKey] && langData[firstKey][1]) return langData[firstKey][1];
+  }
   return langData[epNum] || [];
 }
 
 function hasAnyVideos(animeId, lang) { var data = VIDEO_DATA[animeId] || {}; var langData = data[lang]; if (!langData) return false; if (Array.isArray(langData)) return langData.length > 0; return Object.keys(langData).length > 0; }
 
 function getAvailableEpisodes(animeId, lang, season) {
-  var data = VIDEO_DATA[animeId] || {}; var langData = data[lang]; if (!langData) return null; if (Array.isArray(langData)) return null;
+  var data = VIDEO_DATA[animeId] || {}; var langData = data[lang]; if (!langData) return null; 
+  if (Array.isArray(langData)) return null;
   var seasonKey = "Season " + season;
   if (langData[seasonKey]) return Object.keys(langData[seasonKey]).map(Number).filter(function(n){ return !isNaN(n); }).sort(function(a,b){return a-b;});
+  var keys = Object.keys(langData);
+  if (keys.length > 0 && isNaN(Number(keys[0]))) {
+    // Movie entry
+    var subKeys = Object.keys(langData[keys[0]]);
+    return subKeys.map(Number).filter(function(n){ return !isNaN(n); });
+  }
   return Object.keys(langData).map(Number).filter(function(n){ return !isNaN(n); }).sort(function(a,b){return a-b;});
 }
 
 var fallbackAnime = [ 
+  { mal_id: 38000, title: "Demon Slayer: Kimetsu no Yaiba", score: 8.5, type: "TV", episodes: 55, img: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx101922-PEn1CTc93blC.jpg", banner: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/101922-F7AeHZAMdmHz.jpg", synopsis: "Tanjiro becomes a demon slayer to avenge his family and cure his sister.", genres: ["Action","Supernatural","Adventure"], trailer: "https://www.youtube.com/embed/VQGCKyvzIM4", year: 2019 },
   { mal_id: 178025, title: "Blue Box", score: 7.9, type: "TV", episodes: 25, img: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx178025-0p1g2w3b4x5c.jpg", banner: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/178025.jpg", synopsis: "Taiki Inomata is a student on the badminton team. He practices every morning in the gymnasium, where he meets Chinatsu Kano, a basketball player.", genres: ["Romance", "Sports", "Drama"], trailer: "", year: 2024 },
   { mal_id: 16498, title: "Attack on Titan", score: 8.5, type: "TV", episodes: 25, img: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx16498-bqvzRjWp05Yj.jpg", banner: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/16498.jpg", synopsis: "Several hundred years ago, humans were nearly exterminated by titans.", genres: ["Action","Drama","Fantasy"], trailer: "https://www.youtube.com/embed/LHtdKWJdif4", year: 2013 },
   { mal_id: 1535, title: "Death Note", score: 8.6, type: "TV", episodes: 37, img: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx1535-b5y5Y1jN0F0e.jpg", banner: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/1535.jpg", synopsis: "A shinigami, as a god of death, can kill any person—provided they see their victim's face and write their victim's name in a notebook called a Death Note.", genres: ["Mystery","Psychological","Supernatural","Thriller"], trailer: "https://www.youtube.com/embed/NlJZ-YgAt-c", year: 2006 },
