@@ -76,6 +76,27 @@
   .card-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .card-badge { position: absolute; top: 8px; left: 8px; background: var(--accent); color: white; padding: 3px 9px; border-radius: 6px; font-size: 0.6rem; font-weight: 900; }
   .card-score { position: absolute; bottom: 8px; left: 8px; background: rgba(0,0,0,0.85); color: var(--score); padding: 4px 9px; border-radius: 6px; font-size: 0.7rem; font-weight: 800; }
+  /* WATCH BADGE - green */
+  .watch-badge {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 0.62rem;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    box-shadow: 0 3px 10px rgba(34, 197, 94, 0.5);
+    animation: pulse-green 2s infinite;
+  }
+  @keyframes pulse-green {
+    0%, 100% { box-shadow: 0 3px 10px rgba(34, 197, 94, 0.5); }
+    50% { box-shadow: 0 3px 18px rgba(34, 197, 94, 0.9); }
+  }
   .card-title { font-size: 0.82rem; font-weight: 700; margin-top: 9px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
   .card-sub { font-size: 0.7rem; color: var(--muted); margin-top: 3px; }
   .hist-time { position: absolute; top: 8px; right: 8px; background: rgba(245,158,11,0.95); color: white; padding: 4px 8px; border-radius: 6px; font-size: 0.6rem; font-weight: 800; }
@@ -411,7 +432,6 @@ var QUERY = 'query ($search: String, $genre: String, $sort: [MediaSort], $perPag
 
 // ========== VIDEO_DATA ==========
 var VIDEO_DATA = {
-  // Demon Slayer (AniList ID: 38000)
   38000: {
     sub: [{ name: "Server 1", embed: "https://streamtape.com/e/1D9jP7qp26f6kl" }],
     dub: [{ name: "Server 1", embed: "https://streamtape.com/e/1D9jP7qp26f6kl" }],
@@ -501,7 +521,6 @@ function getServersForEpisode(animeId, lang, season, epNum) {
   if (Array.isArray(langData)) return langData;
   var seasonKey = "Season " + season;
   if (langData[seasonKey]) return langData[seasonKey][epNum] || [];
-  // Movie-style keys (e.g., "Movie: Infinity Castle")
   var keys = Object.keys(langData);
   if (keys.length > 0 && isNaN(Number(keys[0]))) {
     var firstKey = keys[0];
@@ -511,6 +530,16 @@ function getServersForEpisode(animeId, lang, season, epNum) {
 }
 
 function hasAnyVideos(animeId, lang) { var data = VIDEO_DATA[animeId] || {}; var langData = data[lang]; if (!langData) return false; if (Array.isArray(langData)) return langData.length > 0; return Object.keys(langData).length > 0; }
+
+// Check if anime has ANY video at all (for the green WATCH badge)
+function animeHasVideo(animeId) {
+  if (!VIDEO_DATA[animeId]) return false;
+  var langs = ['sub','dub','hindi','bangla'];
+  for (var i=0; i<langs.length; i++) {
+    if (hasAnyVideos(animeId, langs[i])) return true;
+  }
+  return false;
+}
 
 function getAvailableEpisodes(animeId, lang, season) {
   var data = VIDEO_DATA[animeId] || {}; var langData = data[lang]; if (!langData) return null;
@@ -605,11 +634,19 @@ function showHistory() { setActiveBtn('historyBtn'); document.getElementById('se
 
 function updateContinueRow() { var row = document.getElementById('continueRow'); if(!row) return; var l = getHistory(); var sec = document.getElementById('continueSection'); if(l.length===0){ sec.style.display='none'; return; } var html=''; for(var i=0;i<Math.min(l.length,15);i++) html += makeContinueCard(l[i]); row.innerHTML = html; }
 function makeContinueCard(h) { var score = (h.score && h.score!=='N/A') ? '<div class="card-score">★ '+h.score+'</div>' : ''; return '<div class="card" onclick="openDetails('+h.mal_id+')"><div class="card-img"><img src="'+h.img+'" loading="lazy" onerror="this.style.opacity=0.2">'+score+'<div class="hist-time">🕐 '+timeAgo(h.watchedAt)+'</div></div><div class="card-title">'+h.title+'</div><div class="card-sub" style="color:var(--orange);font-weight:700;">▶ '+h.episode+'</div></div>'; }
-function makeCard(a) { var badge = (a.episodes && String(a.episodes).indexOf('+')>=0) ? '<div class="card-badge">ONGOING</div>' : ''; var score = (a.score && a.score!=='N/A') ? '<div class="card-score">★ '+a.score+'</div>' : ''; return '<div class="card" onclick="openDetails('+a.mal_id+')"><div class="card-img"><img src="'+a.img+'" loading="lazy" onerror="this.style.opacity=0.2">'+badge+score+'</div><div class="card-title">'+a.title+'</div><div class="card-sub">'+((a.type||'TV')+' • '+(a.episodes||'?')+' eps')+'</div></div>'; }
+
+// ===== UPDATED makeCard with WATCH BADGE =====
+function makeCard(a) {
+  var badge = (a.episodes && String(a.episodes).indexOf('+')>=0) ? '<div class="card-badge">ONGOING</div>' : '';
+  var score = (a.score && a.score!=='N/A') ? '<div class="card-score">★ '+a.score+'</div>' : '';
+  var watchBadge = animeHasVideo(a.mal_id) ? '<div class="watch-badge">▶ WATCH</div>' : '';
+  return '<div class="card" onclick="openDetails('+a.mal_id+')"><div class="card-img"><img src="'+a.img+'" loading="lazy" onerror="this.style.opacity=0.2">'+badge+score+watchBadge+'</div><div class="card-title">'+a.title+'</div><div class="card-sub">'+((a.type||'TV')+' • '+(a.episodes||'?')+' eps')+'</div></div>';
+}
+
 function renderAnime(list){ currentList=list; if(!list||list.length===0){ statusEl.textContent='Kono anime paoa gelo na.'; grid.innerHTML=''; return; } statusEl.textContent=''; var h=''; for(var i=0;i<list.length;i++) h += makeCard(list[i]); grid.innerHTML=h; }
 
 function hideSuggestions(){ suggestionsEl.classList.remove('active'); suggestionsEl.innerHTML=''; }
-function showSuggestions(items) { if(!items||items.length===0){ hideSuggestions(); return; } var h=''; for(var i=0;i<items.length;i++){ var a=items[i]; h+='<div class="sug-item" onclick="pickSuggestion('+a.mal_id+')"><img src="'+a.img+'" onerror="this.style.visibility=\'hidden\'"><div class="sug-item-info"><h4>'+a.title+'</h4><p>★ '+a.score+' • '+(a.type||'')+' • '+(a.episodes||'?')+' eps'+(a.year?' • '+a.year:'')+'</p></div></div>'; } suggestionsEl.innerHTML=h; suggestionsEl.classList.add('active'); }
+function showSuggestions(items) { if(!items||items.length===0){ hideSuggestions(); return; } var h=''; for(var i=0;i<items.length;i++){ var a=items[i]; var wb = animeHasVideo(a.mal_id) ? ' <span style="color:#22c55e;font-weight:900;">▶ WATCH</span>' : ''; h+='<div class="sug-item" onclick="pickSuggestion('+a.mal_id+')"><img src="'+a.img+'" onerror="this.style.visibility=\'hidden\'"><div class="sug-item-info"><h4>'+a.title+'</h4><p>★ '+a.score+' • '+(a.type||'')+' • '+(a.episodes||'?')+' eps'+(a.year?' • '+a.year:'')+wb+'</p></div></div>'; } suggestionsEl.innerHTML=h; suggestionsEl.classList.add('active'); }
 function pickSuggestion(id){ var a=null; for(var i=0;i<currentList.length;i++) if(currentList[i].mal_id===id){a=currentList[i];break;} if(!a) for(var j=0;j<fallbackAnime.length;j++) if(fallbackAnime[j].mal_id===id){a=fallbackAnime[j];break;} hideSuggestions(); if(a) openDetails(a.mal_id); }
 function fetchSuggestions(q) { if(!q||q.length<1){ hideSuggestions(); return; } suggestionsEl.classList.add('active'); suggestionsEl.innerHTML='<div class="sug-loading">Loading...</div>'; anilistFetch({ search:q, perPage:8 }).then(function(res){ if(res && res.data && res.data.Page && res.data.Page.media && res.data.Page.media.length>0){ var l=res.data.Page.media.map(mapAniList); l=sortSearchResults(l,q); showSuggestions(l); } else hideSuggestions(); }).catch(function(){ var ql=q.toLowerCase(); var m=fallbackAnime.filter(function(a){return a.title.toLowerCase().indexOf(ql)>=0;}); if(m.length>0) showSuggestions(m); else hideSuggestions(); }); }
 
@@ -782,4 +819,4 @@ setTimeout(initApp, 500);
 setTimeout(showWelcome, 1500);
 </script>
 </body>
-  </html>
+    </html>
