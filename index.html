@@ -191,20 +191,25 @@
   .disc-btn-primary { background: var(--accent); color: white; }
   .disc-btn-secondary { background: var(--card2); color: var(--text); border: 1px solid var(--border); }
   footer { text-align: center; padding: 28px 20px; color: var(--muted); font-size: 0.8rem; border-top: 1px solid var(--border); margin-top: 40px; }
-  footer a { color: var(--orange); }
-  
-  /* ===== EXIT CONFIRMATION DIALOG ===== */
-  .exit-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 500; padding: 16px; overflow-y: auto; align-items: center; justify-content: center; }
-  .exit-overlay.active { display: flex; }
-  .exit-box { background: var(--card); border-radius: 22px; max-width: 400px; width: 100%; padding: 30px 24px; border: 2px solid var(--accent2); text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.7); }
-  .exit-icon { font-size: 3.5rem; margin-bottom: 14px; }
-  .exit-title { font-size: 1.35rem; font-weight: 900; margin-bottom: 12px; color: var(--text); }
-  .exit-text { font-size: 0.92rem; color: var(--muted); margin-bottom: 24px; line-height: 1.6; }
-  .exit-btn { padding: 15px 20px; border-radius: 14px; border: none; font-weight: 900; font-size: 0.98rem; cursor: pointer; width: 100%; margin-bottom: 12px; display: block; }
-  .exit-btn:active { transform: scale(0.97); }
-  .exit-btn-primary { background: linear-gradient(135deg, #ef4444, #b91c1c); color: white; box-shadow: 0 6px 20px rgba(239,68,68,0.4); }
-  .exit-btn-secondary { background: var(--card2); color: var(--text); border: 1px solid var(--border); }
-  
+  footer a { color: var(--orange); cursor: pointer; text-decoration: none; margin: 0 6px; }
+  footer a:hover { text-decoration: underline; }
+
+  /* ===== POLICY MODAL CSS ===== */
+  .policy-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 400; padding: 16px; overflow-y: auto; align-items: center; justify-content: center; }
+  .policy-overlay.active { display: flex; }
+  .policy-box { background: var(--bg2); border-radius: 20px; max-width: 700px; width: 100%; max-height: 85vh; display: flex; flex-direction: column; border: 1px solid var(--border); box-shadow: 0 20px 60px rgba(0,0,0,0.7); }
+  .policy-header { padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: var(--bg2); border-radius: 20px 20px 0 0; z-index: 2; }
+  .policy-header h2 { font-size: 1.25rem; font-weight: 900; color: var(--text); margin: 0; }
+  .policy-close { background: var(--card2); border: none; color: var(--text); width: 36px; height: 36px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .policy-close:active { transform: scale(0.9); }
+  .policy-body { padding: 20px; overflow-y: auto; font-size: 0.9rem; line-height: 1.7; color: #d0d0d8; }
+  .policy-body h3 { color: var(--orange); font-size: 1rem; margin: 20px 0 10px; font-weight: 800; }
+  .policy-body p { margin-bottom: 14px; }
+  .policy-body ul { margin-left: 20px; margin-bottom: 14px; }
+  .policy-body li { margin-bottom: 6px; }
+  .policy-body a { color: var(--orange); font-weight: 700; text-decoration: none; }
+  .policy-body strong { color: var(--text); }
+
   @media (hover: hover) and (pointer: fine) {
     .icon-btn:hover { background: var(--card2); }
     .card:hover { transform: translateY(-2px); }
@@ -369,9 +374,29 @@
 </div>
 
 <footer>
-  AnbuKai Anime • Data: AniList API<br>
-  <small>All anime content belongs to their respective owners. <a href="#" onclick="showDisclaimer();return false;">Full Disclaimer</a></small>
+  AnbuKai Anime • Data: AniList API<br><br>
+  <div style="margin-top: 10px; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;">
+    <a onclick="openPolicy('privacy')">Privacy Policy</a> | 
+    <a onclick="openPolicy('about')">About Us</a> | 
+    <a onclick="openPolicy('contact')">Contact</a> | 
+    <a onclick="openPolicy('dmca')">DMCA / Disclaimer</a>
+  </div>
+  <br>
+  <small>All anime content belongs to their respective owners.</small>
 </footer>
+
+<!-- ===== POLICY MODAL HTML ===== -->
+<div class="policy-overlay" id="policyModal">
+  <div class="policy-box">
+    <div class="policy-header">
+      <h2 id="policyTitle">Privacy Policy</h2>
+      <button class="policy-close" onclick="closePolicy()">✕</button>
+    </div>
+    <div class="policy-body" id="policyContent">
+      <!-- Content will be injected here -->
+    </div>
+  </div>
+</div>
 
 <div class="disc-overlay" id="discModal">
   <div class="disc-box">
@@ -416,7 +441,6 @@ var heroIndex = 0;
 var heroTimer = null;
 var searchState = { query: '', results: [] };
 
-/* ====== NAVIGATION STATE TRACKING ====== */
 var currentView = 'home';
 var pendingHome = false;
 
@@ -467,6 +491,87 @@ var VIDEO_DATA = {
 };
 
 var WATCH_LINKS = { 151807: [{ platform: "crunchyroll", url: "https://www.crunchyroll.com/series/GDKHZEJ0K/solo-leveling" }] };
+
+// ===== POLICY CONTENT =====
+var POLICY_CONTENT = {
+  privacy: {
+    title: "Privacy Policy",
+    content: `
+      <p>Last updated: October 2026</p>
+      <p>At <strong>AnbuKai</strong>, accessible from <a href="https://mohammadalim22.github.io/anbikai-anime/">https://mohammadalim22.github.io/anbikai-anime/</a>, one of our main priorities is the privacy of our visitors. This Privacy Policy document contains types of information that is collected and recorded by AnbuKai and how we use it.</p>
+      <h3>1. Log Files</h3>
+      <p>AnbuKai follows a standard procedure of using log files. These files log visitors when they visit websites. The information collected by log files include internet protocol (IP) addresses, browser type, Internet Service Provider (ISP), date and time stamp, referring/exit pages, and possibly the number of clicks. These are not linked to any information that is personally identifiable.</p>
+      <h3>2. Cookies and Web Beacons</h3>
+      <p>Like any other website, AnbuKai uses "cookies". These cookies are used to store information including visitors' preferences, and the pages on the website that the visitor accessed or visited. The information is used to optimize the users' experience by customizing our web page content based on visitors' browser type and/or other information.</p>
+      <h3>3. Third-Party Advertisers</h3>
+      <p>Third-party ad servers or ad networks uses technologies like cookies, JavaScript, or Web Beacons that are used in their respective advertisements and links that appear on AnbuKai, which are sent directly to users' browser. They automatically receive your IP address when this occurs. These technologies are used to measure the effectiveness of their advertising campaigns and/or to personalize the advertising content that you see on websites that you visit.</p>
+      <p>Note that AnbuKai has no access to or control over these cookies that are used by third-party advertisers.</p>
+      <h3>4. Consent</h3>
+      <p>By using our website, you hereby consent to our Privacy Policy and agree to its Terms and Conditions.</p>
+    `
+  },
+  about: {
+    title: "About Us",
+    content: `
+      <p>Welcome to <strong>AnbuKai</strong>!</p>
+      <p>AnbuKai is a free anime streaming directory designed for anime lovers. Our goal is to provide a clean, fast, and user-friendly interface where you can discover trending anime, search for your favorites, and watch them with minimal interruptions.</p>
+      <p><strong>What we do:</strong></p>
+      <ul>
+        <li>We aggregate anime metadata (titles, synopsis, ratings) from the AniList API.</li>
+        <li>We embed videos from third-party hosting providers.</li>
+        <li>We provide features like Watchlist, Watch History, and multiple language options (Sub, Dub, Hindi).</li>
+      </ul>
+      <p>We do not host any videos on our servers. All videos are embedded from publicly available third-party sources.</p>
+      <p>If you have any questions or suggestions, feel free to contact us.</p>
+    `
+  },
+  contact: {
+    title: "Contact Us",
+    content: `
+      <p>If you have any questions, feedback, or business inquiries, please reach out to us.</p>
+      <h3>Email:</h3>
+      <p>📧 <a href="mailto:itsmealim514@gmail.com">itsmealim514@gmail.com</a></p>
+      <h3>Response Time:</h3>
+      <p>We usually respond within 24-48 hours.</p>
+      <h3>DMCA / Copyright Issues:</h3>
+      <p>If you are a copyright owner and want us to remove a specific link, please read our <a onclick="openPolicy('dmca')" style="color:var(--orange);cursor:pointer;">DMCA Disclaimer</a> first and email us with the required details.</p>
+    `
+  },
+  dmca: {
+    title: "DMCA / Disclaimer",
+    content: `
+      <p><strong>AnbuKai does not host any video files.</strong></p>
+      <p>All videos displayed on this website are embedded from third-party services (such as Streamtape, Doodstream, Voe, Cloudflare R2, etc.). We do not upload, store, or distribute any copyrighted content on our servers.</p>
+      <h3>Copyright Infringement</h3>
+      <p>If you believe that your copyrighted work has been copied in a way that constitutes copyright infringement and is accessible on this site, please notify us by providing the following information:</p>
+      <ul>
+        <li>Identification of the copyrighted work claimed to have been infringed.</li>
+        <li>Identification of the material that is claimed to be infringing (provide the exact URL).</li>
+        <li>Your contact information (email address).</li>
+        <li>A statement that you have a good faith belief that use of the material is not authorized.</li>
+      </ul>
+      <p>Please send your DMCA notice to: <a href="mailto:itsmealim514@gmail.com">itsmealim514@gmail.com</a></p>
+      <p>We will review and remove the specific embedded links upon valid requests.</p>
+      <h3>Disclaimer</h3>
+      <p>AnbuKai is an indexing site and does not take responsibility for the content hosted by third parties. Users are advised to watch anime through official platforms like Crunchyroll, Netflix, or Muse Asia to support the creators.</p>
+    `
+  }
+};
+
+function openPolicy(type) {
+  var data = POLICY_CONTENT[type];
+  if (!data) return;
+  document.getElementById('policyTitle').textContent = data.title;
+  document.getElementById('policyContent').innerHTML = data.content;
+  document.getElementById('policyModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closePolicy() {
+  document.getElementById('policyModal').classList.remove('active');
+  document.body.style.overflow = '';
+}
+// ===========================
 
 function platformLabel(p) { var m={crunchyroll:"Crunchyroll",netflix:"Netflix",hulu:"Hulu",prime:"Prime Video",youtube:"YouTube",muse:"Muse Asia"}; return m[p]||p; }
 function platformIcon(p) { var m={crunchyroll:"🟠",netflix:"🔴",hulu:"🟢",prime:"🔵",youtube:"▶️",muse:"🟣"}; return m[p]||"▶"; }
@@ -556,10 +661,8 @@ function setActiveBtn(id){ ['homeBtn','watchlistBtn','historyBtn','searchToggleB
 function showHomeView(){ document.getElementById('homeView').style.display='block'; document.getElementById('watchPage').classList.remove('active'); }
 function showWatchView(){ document.getElementById('homeView').style.display='none'; document.getElementById('watchPage').classList.add('active'); }
 
-/* ============ HOME BUTTON (with back-loop) ============ */
 function goHome(){
   if (currentView === 'home' && !pendingHome) {
-    // Already on home — just refresh UI
     setActiveBtn('homeBtn');
     document.getElementById('searchBar').classList.remove('active');
     hideAnimeModal();
@@ -569,7 +672,6 @@ function goHome(){
     loadTop();
     return;
   }
-  // Not on home — walk back to home via popstate loop
   pendingHome = true;
   history.back();
 }
@@ -993,20 +1095,16 @@ function showExitDialog() {
 function cancelExit() {
   document.getElementById('exitModal').classList.remove('active');
   document.body.style.overflow = '';
-  // Guard state is already re-armed in popstate handler
 }
 function confirmExit() {
   document.getElementById('exitModal').classList.remove('active');
   document.body.style.overflow = '';
-  // Go back 2 steps: pop the re-armed guard, then leave the app
   history.go(-2);
 }
 
-/* ============ BACK BUTTON HANDLER (FULL REWRITE) ============ */
 window.addEventListener('popstate', function(e) {
   var state = e.state;
   
-  // ===== Case 1: We're on our way back to home =====
   if (pendingHome) {
     if (!state || state.view === 'home' || state.isRoot || state.isGuard) {
       pendingHome = false;
@@ -1020,20 +1118,16 @@ window.addEventListener('popstate', function(e) {
       loadTop();
       return;
     }
-    // Not home yet — keep walking back
     history.back();
     return;
   }
   
-  // ===== Case 2: User pressed back from root home → show exit dialog =====
   if (!state || state.isRoot) {
     if (currentView === 'home') {
-      // Re-arm the guard state to prevent leaving, then show dialog
       try { history.pushState({view: 'home', isGuard: true}, '', location.pathname + location.search); } catch(err) {}
       showExitDialog();
       return;
     }
-    // Coming back to home from a sub-view
     currentView = 'home';
     setActiveBtn('homeBtn');
     document.getElementById('searchBar').classList.remove('active');
@@ -1044,10 +1138,8 @@ window.addEventListener('popstate', function(e) {
     return;
   }
   
-  // ===== Case 3: Guard home state (we popped to it) =====
   if (state.isGuard) {
     if (currentView === 'home') {
-      // Re-arm and show exit dialog
       try { history.pushState({view: 'home', isGuard: true}, '', location.pathname + location.search); } catch(err) {}
       showExitDialog();
       return;
@@ -1060,7 +1152,6 @@ window.addEventListener('popstate', function(e) {
     return;
   }
   
-  // ===== Case 4: Home state (non-root) =====
   if (state.view === 'home') {
     currentView = 'home';
     hideAnimeModal();
@@ -1070,7 +1161,6 @@ window.addEventListener('popstate', function(e) {
     return;
   }
   
-  // ===== Case 5: Search view =====
   if (state.view === 'search' && state.query) {
     currentView = 'search';
     hideAnimeModal();
@@ -1091,7 +1181,6 @@ window.addEventListener('popstate', function(e) {
     return;
   }
   
-  // ===== Case 6: Watch view =====
   if (state.view === 'watch' && state.anime) {
     currentView = 'watch';
     watchAnime = state.anime;
@@ -1107,7 +1196,6 @@ window.addEventListener('popstate', function(e) {
     return;
   }
   
-  // ===== Case 7: Details view =====
   if (state.view === 'details' && state.anime) {
     currentView = 'details';
     showHomeView();
@@ -1116,7 +1204,6 @@ window.addEventListener('popstate', function(e) {
     return;
   }
   
-  // ===== Fallback =====
   currentView = 'home';
   hideAnimeModal();
   showHomeView();
@@ -1134,7 +1221,6 @@ function initApp() {
   var hash = location.hash;
   var saved = localStorage.getItem('anbikai_watch_state');
   
-  // Set up initial root + guard states
   try {
     if (!history.state || !history.state.view) {
       history.replaceState({view: 'home', isRoot: true}, '', location.pathname + location.search);
