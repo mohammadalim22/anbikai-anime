@@ -101,14 +101,6 @@
   .ctrl-btn { background: var(--card2); border: 1px solid var(--border); color: var(--text); font-size: 1rem; cursor: pointer; width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
   .ctrl-btn:active { transform: scale(0.92); background: var(--orange); color: white; border-color: var(--orange); }
   .ctrl-btn.play { background: var(--orange); border-color: var(--orange); color: white; font-size: 1.2rem; }
-  
-  /* Audio Sync Slider Styles */
-  .audio-sync-container { display: none; align-items: center; justify-content: center; gap: 10px; background: var(--card2); padding: 10px 16px; border-radius: 12px; margin-bottom: 16px; border: 1px solid var(--border); }
-  .audio-sync-container.active { display: flex; }
-  .audio-sync-container label { font-size: 0.8rem; font-weight: 800; color: var(--text); white-space: nowrap; }
-  .audio-sync-slider { flex: 1; max-width: 200px; accent-color: var(--orange); }
-  .audio-sync-val { font-size: 0.8rem; font-weight: 900; color: var(--orange); width: 30px; text-align: right; }
-
   .season-tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
   .season-dropdown { position: relative; display: inline-block; }
   .season-btn { background: var(--accent2); color: white; border: 1.5px solid var(--accent2); padding: 9px 18px; border-radius: 999px; cursor: pointer; font-size: 0.85rem; font-weight: 800; display: flex; align-items: center; gap: 8px; }
@@ -332,13 +324,6 @@
       <button class="ctrl-btn" onclick="randomEpisode()">🔀</button>
     </div>
     
-    <!-- Audio Sync Slider (Only shows for MP4 videos) -->
-    <div class="audio-sync-container" id="audioSyncBox">
-      <label>🎵 Audio Sync</label>
-      <input type="range" class="audio-sync-slider" id="audioDelaySlider" min="-3" max="3" step="0.1" value="0" oninput="changeAudioDelay(this.value)">
-      <span class="audio-sync-val" id="audioDelayVal">0.0s</span>
-    </div>
-
     <div style="display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 16px;">
       <div>
         <script>
@@ -476,12 +461,6 @@ var watchCurrentSeason = 1;
 var watchCurrentServer = 0;
 var watchRangeStart = 1;
 var watchRangeSize = 100;
-
-// Audio Sync Variables
-var audioCtx = null;
-var audioSourceNode = null;
-var audioDelayNode = null;
-var isAudioSetup = false;
 
 var ANILIST_URL = 'https://graphql.anilist.co';
 var QUERY = 'query ($search: String, $genre: String, $sort: [MediaSort], $perPage: Int) { Page(page: 1, perPage: $perPage) { media(type: ANIME, search: $search, genre: $genre, sort: $sort, isAdult: false) { id title { romaji english } description(asHtml: false) coverImage { extraLarge large } bannerImage episodes nextAiringEpisode { episode } averageScore format startDate { year } genres trailer { id site } } } }';
@@ -1011,7 +990,7 @@ function acceptDisclaimer(){ disclaimerAccepted=true; document.getElementById('d
 
 function makePlayerHTML(embed) {
   if (embed.toLowerCase().indexOf('.mp4') >= 0 || embed.indexOf('r2.dev') >= 0) {
-    return '<video id="mainVideoPlayer" src="'+embed+'" controls autoplay playsinline crossorigin="anonymous" style="width:100%;height:100%;object-fit:contain;background:#000;touch-action:manipulation;" onplay="setupAudioDelay()"></video>';
+    return '<video src="'+embed+'" controls autoplay playsinline style="width:100%;height:100%;object-fit:contain;background:#000;touch-action:manipulation;"></video>';
   }
   return '<iframe src="'+embed+'" tabindex="0" allowfullscreen allow="autoplay; encrypted-media; fullscreen" scrolling="no" frameborder="0" style="width:100%;height:100%;border:none;touch-action:manipulation;" '+
     'onload="var f=this;setTimeout(function(){try{f.focus();}catch(e){}},50);setTimeout(function(){try{f.focus();}catch(e){}},600);setTimeout(function(){try{f.focus();}catch(e){}},1500);"></iframe>';
@@ -1127,53 +1106,10 @@ function loadVideo() {
   var player = document.getElementById('watchPlayer');
   if (!servers.length) { player.innerHTML = '<div class="player-empty">Episode '+watchCurrentEp+' video not found in this language.</div>'; document.getElementById('watchingEpText').textContent = 'Episode '+watchCurrentEp; return; }
   var s = servers[watchCurrentServer] || servers[0]; var embed = s.embed;
-  
-  // Reset Audio Sync
-  isAudioSetup = false;
-  document.getElementById('audioSyncBox').classList.remove('active');
-  document.getElementById('audioDelaySlider').value = 0;
-  document.getElementById('audioDelayVal').textContent = '0.0s';
-  
   if (!disclaimerAccepted) { showDisclaimer(embed); player.innerHTML = '<div class="player-empty">Loading...</div>'; } else { player.innerHTML = makePlayerHTML(embed); }
   document.getElementById('watchingEpText').textContent = 'Episode '+watchCurrentEp;
   if (watchAnime) { addToHistory(watchAnime, 'Episode '+watchCurrentEp+' ('+langLabel(watchCurrentLang)+')'); saveWatchState(); }
 }
-
-/* ====== AUDIO SYNC FUNCTIONS ====== */
-function setupAudioDelay() {
-    if (isAudioSetup) return;
-    var video = document.getElementById('mainVideoPlayer');
-    if (!video) return;
-    
-    document.getElementById('audioSyncBox').classList.add('active');
-
-    try {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        audioSourceNode = audioCtx.createMediaElementSource(video);
-        audioDelayNode = audioCtx.createDelay(5.0); // Max 5 seconds delay
-
-        audioSourceNode.connect(audioDelayNode);
-        audioDelayNode.connect(audioCtx.destination);
-        
-        // Important: Mute original video to prevent echo
-        video.muted = true; 
-        
-        isAudioSetup = true;
-    } catch (e) {
-        console.log("Audio Sync not supported: ", e);
-        document.getElementById('audioSyncBox').classList.remove('active');
-        // Unmute original video in case of failure
-        video.muted = false;
-    }
-}
-
-function changeAudioDelay(val) {
-    if (audioDelayNode) {
-        audioDelayNode.delayTime.value = parseFloat(val);
-        document.getElementById('audioDelayVal').textContent = parseFloat(val).toFixed(1) + 's';
-    }
-}
-/* ================================== */
 
 function renderEpisodeGrid() {
   var grid = document.getElementById('epGrid');
