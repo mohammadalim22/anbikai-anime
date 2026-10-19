@@ -467,7 +467,7 @@ var QUERY = 'query ($search: String, $genre: String, $sort: [MediaSort], $perPag
 
 var VIDEO_DATA = {
   11061: { hindi: { "Season 1": { 1: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/Hunter_x_Hunter_%5BHindi%5D_1080P_S01_E01.mp4" }] } } },
-  101922: { 
+  178788: { 
     sub: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/Demon_Slayer_-Kimetsu_no_Yaiba-_The_Movie_Infinity_Castle_%5BHindi%5D_1080P.mp4" }], 
     dub: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/Demon_Slayer_-Kimetsu_no_Yaiba-_The_Movie_Infinity_Castle_%5BHindi%5D_1080P.mp4" }], 
     hindi: { 
@@ -477,9 +477,19 @@ var VIDEO_DATA = {
     }, 
     bangla: [] 
   },
+  101922: { 
+    sub: [{ name: "Server 1", embed: "https://streamtape.com/e/1D9jP7qp26f6kl" }], 
+    dub: [{ name: "Server 1", embed: "https://streamtape.com/e/1D9jP7qp26f6kl" }], 
+    hindi: { 
+      "Season 1": { 
+        1: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/Demon_Slayer_-Kimetsu_no_Yaiba-_The_Movie_Infinity_Castle_%5BHindi%5D_1080P.mp4" }] 
+      } 
+    }, 
+    bangla: [] 
+  },
   38000: { 
-    sub: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/Demon_Slayer_-Kimetsu_no_Yaiba-_The_Movie_Infinity_Castle_%5BHindi%5D_1080P.mp4" }], 
-    dub: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/Demon_Slayer_-Kimetsu_no_Yaiba-_The_Movie_Infinity_Castle_%5BHindi%5D_1080P.mp4" }], 
+    sub: [{ name: "Server 1", embed: "https://streamtape.com/e/1D9jP7qp26f6kl" }], 
+    dub: [{ name: "Server 1", embed: "https://streamtape.com/e/1D9jP7qp26f6kl" }], 
     hindi: { 
       "Season 1": { 
         1: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/Demon_Slayer_-Kimetsu_no_Yaiba-_The_Movie_Infinity_Castle_%5BHindi%5D_1080P.mp4" }] 
@@ -683,7 +693,7 @@ function getAvailableEpisodes(animeId, lang, season) {
 
 var fallbackAnime = [
   { mal_id: 11061, title: "Hunter x Hunter (2011)", score: 9.0, type: "TV", episodes: 148, img: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx11061-KKc7oXANs7hL.png", banner: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/11061.jpg", synopsis: "Gon Freecss discovers that his father is a legendary Hunter.", genres: ["Action","Adventure","Fantasy"], trailer: "https://www.youtube.com/embed/d6cHfBk59gs", year: 2011 },
-  { mal_id: 101922, title: "Demon Slayer: Kimetsu no Yaiba", score: 8.5, type: "TV", episodes: 55, img: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx101922-PEn1CTc93blC.jpg", banner: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/101922-F7AeHZAMdmHz.jpg", synopsis: "Tanjiro becomes a demon slayer to avenge his family.", genres: ["Action","Supernatural","Adventure"], trailer: "https://www.youtube.com/embed/VQGCKyvzIM4", year: 2019 },
+  { mal_id: 178788, title: "Demon Slayer: Kimetsu no Yaiba Infinity Castle", score: 8.6, type: "MOVIE", episodes: 1, img: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx178788-9Q5Q6o4V5q7f.jpg", banner: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/178788.jpg", synopsis: "The first movie of the Infinity Castle arc.", genres: ["Action","Supernatural","Adventure"], trailer: "", year: 2024 },
   { mal_id: 178025, title: "Blue Box", score: 7.9, type: "TV", episodes: 25, img: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx178025-0p1g2w3b4x5c.jpg", banner: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/178025.jpg", synopsis: "Taiki Inomata is a student on the badminton team.", genres: ["Romance", "Sports", "Drama"], trailer: "", year: 2024 },
   { mal_id: 16498, title: "Attack on Titan", score: 8.5, type: "TV", episodes: 25, img: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx16498-bqvzRjWp05Yj.jpg", banner: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/16498.jpg", synopsis: "Humans were nearly exterminated by titans.", genres: ["Action","Drama","Fantasy"], trailer: "https://www.youtube.com/embed/LHtdKWJdif4", year: 2013 },
   { mal_id: 1535, title: "Death Note", score: 8.6, type: "TV", episodes: 37, img: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx1535-b5y5Y1jN0F0e.jpg", banner: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/1535.jpg", synopsis: "A shinigami, as a god of death, can kill any person.", genres: ["Mystery","Psychological","Supernatural","Thriller"], trailer: "https://www.youtube.com/embed/NlJZ-YgAt-c", year: 2006 },
@@ -927,7 +937,7 @@ function showAnimeModal(a) {
   var overlay = document.getElementById('animeModalOverlay');
   if (!overlay) { overlay = document.createElement('div'); overlay.id = 'animeModalOverlay'; overlay.className = 'modal-overlay'; overlay.innerHTML = '<div class="modal"><div class="modal-header"><img id="mImg" src=""></div><div class="modal-body" id="animeModalBody"></div></div>'; document.body.appendChild(overlay); }
   document.getElementById('mImg').src = a.banner || a.img;
-  var html = '<h2>'+a.title+'</h2><div class="modal-info"><span class="score">★ '+a.score+'</span><span>'+(a.type||'TV')+'</span><span>'+a.episodes+' eps</span>'+(a.year?'<span>'+a.year+'</span>':'')+'</div>';
+  var html = '<h2>'+a.title+'</h2><div class="modal-info"><span class="score">★ '+a.score+'</span><span style="background:var(--accent2); color:white; border-color:var(--accent2);">ID: '+a.mal_id+'</span><span>'+(a.type||'TV')+'</span><span>'+a.episodes+' eps</span>'+(a.year?'<span>'+a.year+'</span>':'')+'</div>';
   if(a.genres && a.genres.length){ html += '<div class="genres">'; for(var i=0;i<a.genres.length;i++) html += '<span class="genre-tag">'+a.genres[i]+'</span>'; html += '</div>'; }
   html += '<p class="synopsis">'+(a.synopsis||'No description available.')+'</p>';
   var hasVideoData = VIDEO_DATA[a.mal_id] && (hasAnyVideos(a.mal_id, 'sub') || hasAnyVideos(a.mal_id, 'dub') || hasAnyVideos(a.mal_id, 'hindi') || hasAnyVideos(a.mal_id, 'bangla'));
@@ -1160,7 +1170,15 @@ function cancelExit() {
 function confirmExit() {
   document.getElementById('exitModal').classList.remove('active');
   document.body.style.overflow = '';
-  history.go(-2);
+  
+  // Force close the tab/window
+  window.open('', '_self', '');
+  window.close();
+
+  // If browser blocks window.close(), redirect to a blank page so it feels like it closed
+  setTimeout(function(){
+    window.location.href = 'about:blank';
+  }, 300);
 }
 
 window.addEventListener('popstate', function(e) {
