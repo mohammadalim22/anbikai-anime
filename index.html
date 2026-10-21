@@ -726,12 +726,12 @@ function getAvailableEpisodes(animeId, lang, season) {
 }
 
 var fallbackAnime = [
-  { mal_id: 11061, title: "Hunter x Hunter (2011)", score: 9.0, type: "TV", episodes: 148, img: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx11061-KKc7oXANs7hL.png", banner: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/11061.jpg", synopsis: "Gon Freecss discovers that his father is a legendary Hunter.", genres: ["Action","Adventure","Fantasy"], trailer: "https://www.youtube.com/embed/d6cHfBk59gs", year: 2011 },
-  { mal_id: 178788, title: "Demon Slayer: Kimetsu no Yaiba Infinity Castle", score: 8.6, type: "MOVIE", episodes: 1, img: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx178788-9Q5Q6o4V5q7f.jpg", banner: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/178788.jpg", synopsis: "The first movie of the Infinity Castle arc.", genres: ["Action","Supernatural","Adventure"], trailer: "", year: 2024 },
-  { mal_id: 178025, title: "Blue Box", score: 7.9, type: "TV", episodes: 25, img: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx178025-0p1g2w3b4x5c.jpg", banner: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/178025.jpg", synopsis: "Taiki Inomata is a student on the badminton team.", genres: ["Romance", "Sports", "Drama"], trailer: "", year: 2024 },
-  { mal_id: 16498, title: "Attack on Titan", score: 8.5, type: "TV", episodes: 25, img: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx16498-bqvzRjWp05Yj.jpg", banner: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/16498.jpg", synopsis: "Humans were nearly exterminated by titans.", genres: ["Action","Drama","Fantasy"], trailer: "https://www.youtube.com/embed/LHtdKWJdif4", year: 2013 },
-  { mal_id: 1535, title: "Death Note", score: 8.6, type: "TV", episodes: 37, img: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx1535-b5y5Y1jN0F0e.jpg", banner: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/1535.jpg", synopsis: "A shinigami, as a god of death, can kill any person.", genres: ["Mystery","Psychological","Supernatural","Thriller"], trailer: "https://www.youtube.com/embed/NlJZ-YgAt-c", year: 2006 },
-  { mal_id: 151807, title: "Solo Leveling", score: 8.3, type: "TV", episodes: 12, img: "https://cdn.myanimelist.net/images/anime/1779/141555.jpg", banner: "https://cdn.myanimelist.net/images/anime/1779/141555.jpg", synopsis: "Weakest hunter Sung Jinwoo gains a mysterious power.", genres: ["Action","Adventure","Fantasy"], trailer: "https://www.youtube.com/embed/I6MQB0ELRsA", year: 2024 }
+  { mal_id: 11061, title: "Hunter x Hunter (2011)", score: 9.0, type: "TV", episodes: 148, img: "https://cdn.myanimelist.net/images/anime/1337/99013.jpg", banner: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/11061.jpg", synopsis: "Gon Freecss discovers that his father is a legendary Hunter.", genres: ["Action","Adventure","Fantasy"], trailer: "https://www.youtube.com/embed/d6cHfBk59gs", year: 2011 },
+  { mal_id: 178788, title: "Demon Slayer: Kimetsu no Yaiba Infinity Castle", score: 8.6, type: "MOVIE", episodes: 1, img: "https://cdn.myanimelist.net/images/anime/1012/143790.jpg", banner: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/178788.jpg", synopsis: "The first movie of the Infinity Castle arc.", genres: ["Action","Supernatural","Adventure"], trailer: "", year: 2024 },
+  { mal_id: 178025, title: "Blue Box", score: 7.9, type: "TV", episodes: 25, img: "https://cdn.myanimelist.net/images/anime/1815/145170.jpg", banner: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/178025.jpg", synopsis: "Taiki Inomata is a student on the badminton team.", genres: ["Romance", "Sports", "Drama"], trailer: "", year: 2024 },
+  { mal_id: 16498, title: "Attack on Titan", score: 8.5, type: "TV", episodes: 25, img: "https://cdn.myanimelist.net/images/anime/10/47347.jpg", banner: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/16498.jpg", synopsis: "Humans were nearly exterminated by titans.", genres: ["Action","Drama","Fantasy"], trailer: "https://www.youtube.com/embed/LHtdKWJdif4", year: 2013 },
+  { mal_id: 1535, title: "Death Note", score: 8.6, type: "TV", episodes: 37, img: "https://cdn.myanimelist.net/images/anime/9/9453.jpg", banner: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/1535.jpg", synopsis: "A shinigami, as a god of death, can kill any person.", genres: ["Mystery","Psychological","Supernatural","Thriller"], trailer: "https://www.youtube.com/embed/NlJZ-YgAt-c", year: 2006 },
+  { mal_id: 151807, title: "Solo Leveling", score: 8.3, type: "TV", episodes: 12, img: "https://cdn.myanimelist.net/images/anime/1923/140230.jpg", banner: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/151807.jpg", synopsis: "Weakest hunter Sung Jinwoo gains a mysterious power.", genres: ["Action","Adventure","Fantasy"], trailer: "https://www.youtube.com/embed/I6MQB0ELRsA", year: 2024 }
 ];
 
 function fetchWithTimeout(url, opt, ms) { opt = opt || {}; ms = ms || 8000; return new Promise(function(res, rej) { var c = new AbortController(); opt.signal = c.signal; var t = setTimeout(function(){ c.abort(); rej(new Error('timeout')); }, ms); fetch(url, opt).then(function(r){ clearTimeout(t); if(!r.ok) rej(new Error('fail')); else res(r); }).catch(function(e){ clearTimeout(t); rej(e); }); }); }
@@ -792,9 +792,20 @@ function loadTop() {
   trendingText.textContent = '🔥 Trending Now';
   statusEl.textContent=''; grid.innerHTML='';
   searchState = { query: '', results: [] };
+  
+  // Immediately render fallback so page isn't blank
+  renderHero(fallbackAnime); 
+  renderAnime(fallbackAnime, false);
+
   anilistFetch({ sort:['TRENDING_DESC'], perPage: 30 }).then(function(res){
-    if(res && res.data && res.data.Page && res.data.Page.media && res.data.Page.media.length>0){ var mapped = res.data.Page.media.map(mapAniList); renderHero(mapped); renderAnime(mapped, false); } else { renderHero(fallbackAnime); renderAnime(fallbackAnime, false); }
-  }).catch(function(){ renderHero(fallbackAnime); renderAnime(fallbackAnime, false); });
+    if(res && res.data && res.data.Page && res.data.Page.media && res.data.Page.media.length>0){ 
+        var mapped = res.data.Page.media.map(mapAniList); 
+        renderHero(mapped); 
+        renderAnime(mapped, false); 
+    }
+  }).catch(function(){ 
+      // Already rendered fallback, so do nothing here
+  });
 }
 
 function renderHero(list) {
@@ -928,7 +939,8 @@ function makeCard(a) {
   var badge = (a.episodes && String(a.episodes).indexOf('+')>=0) ? '<div class="card-badge">ONGOING</div>' : '';
   var score = (a.score && a.score!=='N/A') ? '<div class="card-score">★ '+a.score+'</div>' : '';
   var watchBadge = animeHasVideo(a.mal_id) ? '<div class="watch-badge">▶ WATCH</div>' : '';
-  return '<div class="card" onclick="openDetails('+a.mal_id+')"><div class="card-img"><img src="'+a.img+'" loading="lazy" onerror="this.style.opacity=0.2">'+badge+score+watchBadge+'</div><div class="card-title">'+a.title+'</div><div class="card-sub">'+((a.type||'TV')+' • '+(a.episodes||'?')+' eps')+'</div></div>';
+  var imgSrc = a.img ? a.img : 'https://via.placeholder.com/300x450?text=No+Image';
+  return '<div class="card" onclick="openDetails('+a.mal_id+')"><div class="card-img"><img src="'+imgSrc+'" loading="lazy" onerror="this.src=\'https://via.placeholder.com/300x450?text=No+Image\'">'+badge+score+watchBadge+'</div><div class="card-title">'+a.title+'</div><div class="card-sub">'+((a.type||'TV')+' • '+(a.episodes||'?')+' eps')+'</div></div>';
 }
 
 function renderAnime(list, isSearchView){
