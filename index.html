@@ -326,8 +326,8 @@
             <div class="preroll-content">
                 <div class="preroll-text">Your video will play after <span id="adCountdown">5</span>s</div>
                 <div class="ad-box">
-                    <!-- Adsterra 300x250 Ad injected here dynamically via JS -->
-                    <div id="prerollAdContainer"></div>
+                    <!-- Adsterra 300x250 Ad injected statically to avoid blocking -->
+                    <div id="prerollAdContainer" style="width:300px; height:250px;"></div>
                 </div>
                 <button class="skip-btn" id="skipAdBtn" onclick="closePreRollAndPlay()">Skip Ad & Play ▶</button>
             </div>
@@ -1063,9 +1063,16 @@ function acceptDisclaimer(){
     }
 }
 
+function handleVideoError(videoElement) {
+    var content = document.getElementById('playerContent');
+    if (content) {
+        content.innerHTML = '<div class="player-empty" style="color:var(--accent);flex-direction:column;gap:10px;"><div>⚠️ Video Not Loading</div><div style="font-size:0.75rem;color:var(--muted);line-height:1.5;">This video may have CORS issues or the link is broken. Please check Cloudflare R2 settings or try another server.</div></div>';
+    }
+}
+
 function makePlayerHTML(embed) {
   if (embed.toLowerCase().indexOf('.mp4') >= 0 || embed.indexOf('r2.dev') >= 0) {
-    return '<video id="mainVideoPlayer" src="'+embed+'" controls playsinline preload="metadata" style="width:100%;height:100%;object-fit:contain;background:#000;touch-action:manipulation;"></video>';
+    return '<video id="mainVideoPlayer" src="'+embed+'" controls playsinline preload="metadata" onerror="handleVideoError(this)" style="width:100%;height:100%;object-fit:contain;background:#000;touch-action:manipulation;"></video>';
   }
   return '<iframe src="'+embed+'" tabindex="0" allowfullscreen allow="autoplay; encrypted-media; fullscreen" scrolling="no" frameborder="0" style="width:100%;height:100%;border:none;touch-action:manipulation;" '+
     'onload="var f=this;setTimeout(function(){try{f.focus();}catch(e){}},50);setTimeout(function(){try{f.focus();}catch(e){}},600);setTimeout(function(){try{f.focus();}catch(e){}},1500);"></iframe>';
@@ -1075,7 +1082,6 @@ function showPreRollAd(videoUrl) {
     var overlay = document.getElementById('prerollOverlay');
     var content = document.getElementById('playerContent');
     if (!overlay || !content) return;
-    var adContainer = document.getElementById('prerollAdContainer');
     var countdownSpan = document.getElementById('adCountdown');
     var skipBtn = document.getElementById('skipAdBtn');
     
@@ -1084,16 +1090,12 @@ function showPreRollAd(videoUrl) {
     countdownSpan.textContent = timeLeft;
     skipBtn.classList.remove('active');
     document.querySelector('.preroll-text').innerHTML = 'Your video will play after <span id="adCountdown">5</span>s';
-    
-    adContainer.innerHTML = `
-        <script>
-          atOptions = { 'key' : '09b8512086e36e4c1f1d5d5bb7faf625', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };
-        <\/script>
-        <script src="https://bauval.org/22/09b8512086e36e4c1f1d5d5bb7faf625"><\/script>
-    `;
 
+    // Video loads immediately in the background
     content.innerHTML = makePlayerHTML(videoUrl);
     currentVideoElement = document.getElementById('mainVideoPlayer');
+    
+    // Ad overlay shows on top
     overlay.classList.add('active');
 
     adTimer = setInterval(function() {
@@ -1112,7 +1114,7 @@ function closePreRollAndPlay() {
     if (adTimer) clearInterval(adTimer);
     document.getElementById('prerollOverlay').classList.remove('active');
     if (currentVideoElement) {
-        currentVideoElement.play();
+        currentVideoElement.play().catch(function(e){ console.log('Play blocked:', e); });
     }
 }
 
