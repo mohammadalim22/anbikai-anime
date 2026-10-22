@@ -757,10 +757,18 @@ function showWatchView(){ document.getElementById('homeView').style.display='non
 
 function goHome(){
   if (currentView === 'home' && !document.getElementById('searchBar').classList.contains('active')) {
-    window.scrollTo(0,0);
+    window.scrollTo({top: 0, behavior: 'smooth'});
     return;
   }
-  history.back();
+  currentView = 'home';
+  setActiveBtn('homeBtn');
+  document.getElementById('searchBar').classList.remove('active');
+  hideAnimeModal();
+  showHomeView();
+  input.value = '';
+  searchState = { query: '', results: [] };
+  try { history.pushState({view: 'home'}, '', location.pathname + location.search); } catch(e) {}
+  loadTop();
 }
 
 function hideAnimeModal(){ var overlay = document.getElementById('animeModalOverlay'); if(overlay) overlay.classList.remove('active'); document.body.style.overflow = ''; }
@@ -1032,8 +1040,28 @@ function submitReview() {
 function escapeHtml(s){ return String(s).replace(/[&<>"']/g,function(c){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]);}); }
 
 function showDisclaimer(e){ pendingVideoEmbed=e||null; document.getElementById('discModal').classList.add('active'); document.body.style.overflow='hidden'; }
-function closeDisclaimer(){ document.getElementById('discModal').classList.remove('active'); document.body.style.overflow=''; pendingVideoEmbed=null; }
-function acceptDisclaimer(){ disclaimerAccepted=true; document.getElementById('discModal').classList.remove('active'); document.body.style.overflow=''; if(pendingVideoEmbed){ var p=document.getElementById('watchPlayer'); if(p) p.innerHTML=makePlayerHTML(pendingVideoEmbed); pendingVideoEmbed=null; } }
+function closeDisclaimer(){ 
+    document.getElementById('discModal').classList.remove('active'); 
+    document.body.style.overflow=''; 
+    pendingVideoEmbed=null; 
+    var content = document.getElementById('playerContent');
+    if(content) content.innerHTML = '<div class="player-empty">Video cancelled.</div>';
+}
+function acceptDisclaimer(){
+    disclaimerAccepted=true;
+    document.getElementById('discModal').classList.remove('active');
+    document.body.style.overflow='';
+    if(pendingVideoEmbed){
+        var embed = pendingVideoEmbed;
+        pendingVideoEmbed=null;
+        if (embed.toLowerCase().indexOf('.mp4') >= 0 || embed.indexOf('r2.dev') >= 0) {
+            showPreRollAd(embed);
+        } else {
+            var content = document.getElementById('playerContent');
+            if(content) content.innerHTML = makePlayerHTML(embed);
+        }
+    }
+}
 
 function makePlayerHTML(embed) {
   if (embed.toLowerCase().indexOf('.mp4') >= 0 || embed.indexOf('r2.dev') >= 0) {
@@ -1046,6 +1074,7 @@ function makePlayerHTML(embed) {
 function showPreRollAd(videoUrl) {
     var overlay = document.getElementById('prerollOverlay');
     var content = document.getElementById('playerContent');
+    if (!overlay || !content) return;
     var adContainer = document.getElementById('prerollAdContainer');
     var countdownSpan = document.getElementById('adCountdown');
     var skipBtn = document.getElementById('skipAdBtn');
@@ -1054,6 +1083,7 @@ function showPreRollAd(videoUrl) {
     var timeLeft = 5;
     countdownSpan.textContent = timeLeft;
     skipBtn.classList.remove('active');
+    document.querySelector('.preroll-text').innerHTML = 'Your video will play after <span id="adCountdown">5</span>s';
     
     adContainer.innerHTML = `
         <script>
@@ -1194,17 +1224,29 @@ function switchServer(i) { watchCurrentServer = i; renderServerTabs(); loadVideo
 function loadVideo() {
   var servers = getServersForEpisode(watchAnime.mal_id, watchCurrentLang, watchCurrentSeason, watchCurrentEp);
   var content = document.getElementById('playerContent');
+  var overlay = document.getElementById('prerollOverlay');
+  if (!content || !overlay) return;
+
+  if (adTimer) clearInterval(adTimer);
+  overlay.classList.remove('active');
+  content.innerHTML = '<div class="player-empty">Loading video...</div>';
+
+  if (!servers.length) { 
+      content.innerHTML = '<div class="player-empty">Episode '+watchCurrentEp+' video not found in this language.</div>'; 
+      document.getElementById('watchingEpText').textContent = 'Episode '+watchCurrentEp; 
+      return; 
+  }
   
-  if (!servers.length) { content.innerHTML = '<div class="player-empty">Episode '+watchCurrentEp+' video not found in this language.</div>'; document.getElementById('watchingEpText').textContent = 'Episode '+watchCurrentEp; return; }
-  var s = servers[watchCurrentServer] || servers[0]; var embed = s.embed;
+  var s = servers[watchCurrentServer] || servers[0]; 
+  var embed = s.embed;
   
-  if (!disclaimerAccepted) { showDisclaimer(embed); content.innerHTML = '<div class="player-empty">Loading...</div>'; } 
-  else { 
+  if (!disclaimerAccepted) { 
+      showDisclaimer(embed); 
+  } else { 
       if (embed.toLowerCase().indexOf('.mp4') >= 0 || embed.indexOf('r2.dev') >= 0) {
           showPreRollAd(embed);
       } else {
           content.innerHTML = makePlayerHTML(embed);
-          document.getElementById('prerollOverlay').classList.remove('active'); 
       }
   }
   document.getElementById('watchingEpText').textContent = 'Episode '+watchCurrentEp;
