@@ -1072,7 +1072,7 @@ function handleVideoError(videoElement) {
 
 function makePlayerHTML(embed) {
   if (embed.toLowerCase().indexOf('.mp4') >= 0 || embed.indexOf('r2.dev') >= 0) {
-    return '<video id="mainVideoPlayer" src="'+embed+'" controls playsinline preload="metadata" onerror="handleVideoError(this)" style="width:100%;height:100%;object-fit:contain;background:#000;touch-action:manipulation;"></video>';
+    return '<video id="mainVideoPlayer" src="'+embed+'" crossorigin="anonymous" controls playsinline preload="metadata" onerror="handleVideoError(this)" style="width:100%;height:100%;object-fit:contain;background:#000;touch-action:manipulation;"></video>';
   }
   return '<iframe src="'+embed+'" tabindex="0" allowfullscreen allow="autoplay; encrypted-media; fullscreen" scrolling="no" frameborder="0" style="width:100%;height:100%;border:none;touch-action:manipulation;" '+
     'onload="var f=this;setTimeout(function(){try{f.focus();}catch(e){}},50);setTimeout(function(){try{f.focus();}catch(e){}},600);setTimeout(function(){try{f.focus();}catch(e){}},1500);"></iframe>';
