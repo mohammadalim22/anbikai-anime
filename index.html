@@ -1096,7 +1096,6 @@ function showPreRollAd(videoUrl) {
     content.innerHTML = makePlayerHTML(videoUrl);
     currentVideoElement = document.getElementById('mainVideoPlayer');
     
-    // Timeout for loading
     loadTimeout = setTimeout(function() {
         if (currentVideoElement && currentVideoElement.readyState === 0) {
             handleVideoError(currentVideoElement);
@@ -1413,7 +1412,14 @@ input.addEventListener('input', function(){ var q=input.value.trim(); clearTimeo
 input.addEventListener('keypress', function(e){ if(e.key==='Enter'){ hideSuggestions(); searchAnime(); } });
 document.addEventListener('click', function(e){ if(!e.target.closest('.search-wrap') && !e.target.closest('#searchBar')) hideSuggestions(); });
 
-if('serviceWorker' in navigator){ navigator.serviceWorker.register('service-worker.js').catch(function(){}); }
+// Service Worker unregistered to avoid cache issues
+if('serviceWorker' in navigator){ 
+    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+        for(let registration of registrations) {
+            registration.unregister();
+        }
+    });
+}
 
 function initApp() {
   var hash = location.hash;
