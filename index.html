@@ -95,7 +95,7 @@
   .player { aspect-ratio: 16/9; width: 100%; background: #000; border-radius: 14px; overflow: hidden; margin-bottom: 14px; position: relative; }
   .player iframe { width: 100%; height: 100%; border: none; display: block; touch-action: manipulation !important; }
   .player video { width: 100%; height: 100%; display: block; background: #000; touch-action: manipulation !important; }
-  .player-empty { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 0.85rem; text-align: center; padding: 20px; }
+  .player-empty { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 0.85rem; text-align: center; padding: 20px; flex-direction: column; gap: 12px; }
   .player-controls { display: flex; justify-content: center; gap: 14px; padding: 16px; background: var(--card); border-radius: 14px; margin-bottom: 16px; border: 1px solid var(--border); }
   .ctrl-btn { background: var(--card2); border: 1px solid var(--border); color: var(--text); font-size: 1.15rem; cursor: pointer; width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
   .ctrl-btn:active { transform: scale(0.92); background: var(--orange); color: white; border-color: var(--orange); }
@@ -412,8 +412,28 @@ var watchRangeSize = 100;
 var ANILIST_URL = 'https://graphql.anilist.co';
 var QUERY = 'query ($search: String, $genre: String, $sort: [MediaSort], $perPage: Int) { Page(page: 1, perPage: $perPage) { media(type: ANIME, search: $search, genre: $genre, sort: $sort, isAdult: false) { id title { romaji english } description(asHtml: false) coverImage { extraLarge large } bannerImage episodes nextAiringEpisode { episode } averageScore format startDate { year } genres trailer { id site } } } }';
 
-// ========== VIDEO_DATA (খালি করা হয়েছে) ==========
-var VIDEO_DATA = {};
+/* =====================================================
+   VIDEO_DATA - এখানে তোর ভিডিও লিংক বসাবি
+   ===================================================== */
+var VIDEO_DATA = {
+  // উদাহরণ: Attack on Titan (id: 16498)
+  16498: {
+    hindi: {
+      "Season 1": {
+        1: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/Attack_on_Titan_%5BHindi%5D_480P_S01_E01.mp4" }]
+      }
+    }
+  },
+  // উদাহরণ: One Piece (id: 21) - তুই নিজে লিংক বসাবি
+  21: {
+    hindi: {
+      "Season 1": {
+        1: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/One_Piece_%5BEnglish%5D_360P_S01_E918.mp4" }]
+      }
+    }
+  }
+  // আরও অ্যানিমে যোগ করতে এখানে কপি করে id বদলিয়ে লিংক দাও
+};
 
 var WATCH_LINKS = {};
 
@@ -422,15 +442,61 @@ function platformIcon(p) { var m={crunchyroll:"🟠",netflix:"🔴",hulu:"🟢",
 function langIcon(l) { var m = { sub: '<span class="cc-icon">CC</span>', dub: '🎤', hindi: '🇮🇳', bangla: '🇧🇩' }; return m[l] || ''; }
 function langLabel(l) { var m = { sub: "Soft Sub", dub: "Dub", hindi: "Hindi", bangla: "Bangla" }; return m[l] || l; }
 
-function getDownloadUrl(embed) { return ''; }
+function getDownloadUrl(embed) {
+  if (!embed) return '';
+  if (embed.indexOf('.mp4') >= 0) return embed;
+  if (embed.indexOf('streamtape.com/e/') >= 0) return embed.replace('/e/', '/v/');
+  return embed;
+}
 
-function getServersForEpisode(animeId, lang, season, epNum) { return []; }
+function getServersForEpisode(animeId, lang, season, epNum) {
+  var data = VIDEO_DATA[animeId] || {};
+  var langData = data[lang];
+  if (!langData) return [];
+  if (Array.isArray(langData)) return langData;
+  var seasonKey = "Season " + season;
+  if (langData[seasonKey]) return langData[seasonKey][epNum] || [];
+  var keys = Object.keys(langData);
+  if (keys.length > 0 && isNaN(Number(keys[0]))) {
+    var firstKey = keys[0];
+    if (langData[firstKey] && langData[firstKey][1]) return langData[firstKey][1];
+  }
+  return langData[epNum] || [];
+}
 
-function hasAnyVideos(animeId, lang) { return false; }
+function hasAnyVideos(animeId, lang) {
+  var data = VIDEO_DATA[animeId] || {};
+  var langData = data[lang];
+  if (!langData) return false;
+  if (Array.isArray(langData)) return langData.length > 0;
+  return Object.keys(langData).length > 0;
+}
 
-function animeHasVideo(animeId) { return false; }
+function animeHasVideo(animeId) {
+  if (!VIDEO_DATA[animeId]) return false;
+  var langs = ['sub','dub','hindi','bangla'];
+  for (var i=0; i<langs.length; i++) {
+    if (hasAnyVideos(animeId, langs[i])) return true;
+  }
+  return false;
+}
 
-function getAvailableEpisodes(animeId, lang, season) { return null; }
+function getAvailableEpisodes(animeId, lang, season) {
+  var data = VIDEO_DATA[animeId] || {};
+  var langData = data[lang];
+  if (!langData) return null;
+  if (Array.isArray(langData)) return null;
+  var seasonKey = "Season " + season;
+  if (langData[seasonKey]) {
+    return Object.keys(langData[seasonKey]).map(Number).filter(function(n){ return !isNaN(n); }).sort(function(a,b){return a-b;});
+  }
+  var keys = Object.keys(langData);
+  if (keys.length > 0 && isNaN(Number(keys[0]))) {
+    var subKeys = Object.keys(langData[keys[0]]);
+    return subKeys.map(Number).filter(function(n){ return !isNaN(n); });
+  }
+  return Object.keys(langData).map(Number).filter(function(n){ return !isNaN(n); }).sort(function(a,b){return a-b;});
+}
 
 var fallbackAnime = [ 
   { mal_id: 21, title: "One Piece", score: 8.7, type: "TV", episodes: "1100+", img: "https://cdn.myanimelist.net/images/anime/6/73245.jpg", banner: "https://cdn.myanimelist.net/images/anime/6/73245.jpg", synopsis: "Monkey D. Luffy sets off on an adventure to find the legendary One Piece treasure.", genres: ["Action","Adventure","Fantasy"], trailer: "https://www.youtube.com/embed/MCb13lbVGE0", year: 1999 },
@@ -557,14 +623,65 @@ function escapeHtml(s){ return String(s).replace(/[&<>"']/g,function(c){return (
 
 function showDisclaimer(e){ pendingVideoEmbed=e||null; document.getElementById('discModal').classList.add('active'); document.body.style.overflow='hidden'; }
 function closeDisclaimer(){ document.getElementById('discModal').classList.remove('active'); document.body.style.overflow=''; pendingVideoEmbed=null; }
-function acceptDisclaimer(){ disclaimerAccepted=true; document.getElementById('discModal').classList.remove('active'); document.body.style.overflow=''; if(pendingVideoEmbed){ var p=document.getElementById('watchPlayer'); if(p) p.innerHTML=makePlayerHTML(pendingVideoEmbed); pendingVideoEmbed=null; } }
+function acceptDisclaimer(){ 
+  disclaimerAccepted=true; 
+  document.getElementById('discModal').classList.remove('active'); 
+  document.body.style.overflow=''; 
+  if(pendingVideoEmbed){ 
+    var p=document.getElementById('watchPlayer'); 
+    if(p) p.innerHTML=makePlayerHTML(pendingVideoEmbed); 
+    pendingVideoEmbed=null; 
+  } 
+}
 
 function showWelcome(){ if(localStorage.getItem('anbikai_welcome_off')==='yes') return; if(sessionStorage.getItem('anbikai_welcome_shown')==='yes') return; sessionStorage.setItem('anbikai_welcome_shown','yes'); document.getElementById('welcomeModal').classList.add('active'); }
 function toggleWelcomeCheck(e){ if(e && e.target && e.target.tagName!=='INPUT' && e.target.tagName!=='LABEL'){ var cb=document.getElementById('dontShowAgain'); cb.checked=!cb.checked; } }
 function closeWelcome(){ var cb=document.getElementById('dontShowAgain'); if(cb.checked) localStorage.setItem('anbikai_welcome_off','yes'); document.getElementById('welcomeModal').classList.remove('active'); }
 function skipWelcome(){ localStorage.setItem('anbikai_welcome_off','yes'); document.getElementById('welcomeModal').classList.remove('active'); }
 
-function makePlayerHTML(embed) { return ''; }
+/* ========== গুরুত্বপূর্ণ ফিক্স: makePlayerHTML (CORS ছাড়া) ========== */
+function makePlayerHTML(embed) {
+  if (!embed) return '<div class="player-empty">Video link paoa gelo na</div>';
+
+  // mp4 / r2 / workers.dev হলে native video player
+  if (embed.toLowerCase().indexOf('.mp4') >= 0 || 
+      embed.indexOf('workers.dev') >= 0 || 
+      embed.indexOf('r2.dev') >= 0) {
+    
+    return `
+      <video 
+        id="mainVideoPlayer" 
+        src="${embed}" 
+        controls 
+        playsinline 
+        preload="auto" 
+        controlslist="nodownload"
+        onerror="handleVideoError(this)"
+        style="width:100%;height:100%;object-fit:contain;background:#000;">
+      </video>
+    `;
+  }
+
+  // অন্যথায় iframe
+  return `<iframe src="${embed}" allowfullscreen allow="autoplay; encrypted-media; fullscreen" scrolling="no" frameborder="0" style="width:100%;height:100%;border:none;"></iframe>`;
+}
+
+function handleVideoError(videoEl) {
+  var player = document.getElementById('watchPlayer');
+  if (player) {
+    player.innerHTML = `
+      <div class="player-empty">
+        <div style="font-size:1.1rem; color:var(--accent);">⚠️ Video load fail</div>
+        <div style="font-size:0.8rem; color:var(--muted); max-width:280px; line-height:1.5;">
+          Link broken হলে অথবা R2 CORS সেট না থাকলে এমন হয়।
+        </div>
+        <button onclick="loadVideo()" style="margin-top:8px;padding:10px 18px;background:var(--orange);color:white;border:none;border-radius:8px;font-weight:800;cursor:pointer;">
+          🔄 Try Again
+        </button>
+      </div>
+    `;
+  }
+}
 
 function saveWatchState() {
   if (watchAnime) {
@@ -633,11 +750,30 @@ function renderServerTabs() {
 function switchServer(i) { watchCurrentServer = i; renderServerTabs(); loadVideo(); }
 
 function loadVideo() {
-  var servers = getServersForEpisode(watchAnime.mal_id, watchCurrentLang, watchCurrentSeason, watchCurrentEp); var player = document.getElementById('watchPlayer');
-  if (!servers.length) { player.innerHTML = '<div class="player-empty">Ei language e Episode '+watchCurrentEp+' er video paoa gelo na.</div>'; document.getElementById('watchingEpText').textContent = 'Episode '+watchCurrentEp; return; }
-  var s = servers[watchCurrentServer] || servers[0]; var embed = s.embed;
-  if (!disclaimerAccepted) { showDisclaimer(embed); player.innerHTML = '<div class="player-empty">Loading...</div>'; } else { player.innerHTML = makePlayerHTML(embed); }
-  document.getElementById('watchingEpText').textContent = 'Episode '+watchCurrentEp; if (watchAnime) { addToHistory(watchAnime, 'Episode '+watchCurrentEp+' ('+langLabel(watchCurrentLang)+')'); saveWatchState(); }
+  var servers = getServersForEpisode(watchAnime.mal_id, watchCurrentLang, watchCurrentSeason, watchCurrentEp); 
+  var player = document.getElementById('watchPlayer');
+  
+  if (!servers.length) { 
+    player.innerHTML = '<div class="player-empty">Ei language e Episode '+watchCurrentEp+' er video paoa gelo na.</div>'; 
+    document.getElementById('watchingEpText').textContent = 'Episode '+watchCurrentEp; 
+    return; 
+  }
+  
+  var s = servers[watchCurrentServer] || servers[0]; 
+  var embed = s.embed;
+  
+  if (!disclaimerAccepted) { 
+    showDisclaimer(embed); 
+    player.innerHTML = '<div class="player-empty">Loading...</div>'; 
+  } else { 
+    player.innerHTML = makePlayerHTML(embed); 
+  }
+  
+  document.getElementById('watchingEpText').textContent = 'Episode '+watchCurrentEp; 
+  if (watchAnime) { 
+    addToHistory(watchAnime, 'Episode '+watchCurrentEp+' ('+langLabel(watchCurrentLang)+')'); 
+    saveWatchState(); 
+  }
 }
 
 function renderEpisodeGrid() { var grid = document.getElementById('epGrid'); var from = watchRangeStart; var to = Math.min(from + watchRangeSize - 1, watchEpsCount); document.getElementById('rangeLabel').textContent = from + '-' + to; var html = ''; for (var i=from; i<=to; i++) { html += '<div class="ep-cell'+(i===watchCurrentEp?' active':'')+'" onclick="selectEpisode('+i+')">'+i+'</div>'; } grid.innerHTML = html; }
@@ -650,7 +786,15 @@ function prevEpisode() { if (watchCurrentEp > 1) selectEpisode(watchCurrentEp - 
 function nextEpisode() { if (watchCurrentEp < watchEpsCount) selectEpisode(watchCurrentEp + 1); }
 function randomEpisode() { var r = Math.floor(Math.random() * watchEpsCount) + 1; selectEpisode(r); }
 
-function replayVideo() { var player = document.getElementById('watchPlayer'); if (!player) return; var iframe = player.querySelector('iframe'); var video = player.querySelector('video'); if (video) { video.currentTime = 0; video.play(); } else if (iframe) { iframe.contentWindow?.focus(); iframe.click?.(); } else { loadVideo(); } }
+function replayVideo() { 
+  var player = document.getElementById('watchPlayer'); 
+  if (!player) return; 
+  var iframe = player.querySelector('iframe'); 
+  var video = player.querySelector('video'); 
+  if (video) { video.currentTime = 0; video.play(); } 
+  else if (iframe) { iframe.contentWindow?.focus(); } 
+  else { loadVideo(); } 
+}
 
 function toggleFindInput(e) { if (e) e.stopPropagation(); var btn = document.getElementById('findBtn'); var input = document.getElementById('findInput'); btn.classList.add('expanded'); setTimeout(function(){ input.focus(); }, 100); }
 
