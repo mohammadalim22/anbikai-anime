@@ -493,9 +493,9 @@ var QUERY = 'query ($search: String, $genre: String, $sort: [MediaSort], $perPag
 
 var VIDEO_DATA = {
   21: {
-    sub: [{ name: "Server 1", embed: "https://cdn.mp4tourl.com/video/free/fb6c28fd-7dfa-4a41-a437-1733bf263361.mp4" }],
-    dub: [{ name: "Server 1", embed: "https://cdn.mp4tourl.com/video/free/fb6c28fd-7dfa-4a41-a437-1733bf263361.mp4" }],
-    hindi: { "Season 1": { 1: [{ name: "Server 1", embed: "https://cdn.mp4tourl.com/video/free/fb6c28fd-7dfa-4a41-a437-1733bf263361.mp4" }] } },
+    sub: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/One_Piece_%5BEnglish%5D_360P_S01_E918.mp4" }],
+    dub: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/One_Piece_%5BEnglish%5D_360P_S01_E918.mp4" }],
+    hindi: { "Season 1": { 1: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/One_Piece_%5BEnglish%5D_360P_S01_E918.mp4" }] } },
     bangla: []
   },
   11061: { hindi: { "Season 1": { 1: [{ name: "Server 1", embed: "https://frosty-pine-0fcf.mdabdulalim56006.workers.dev/Hunter_x_Hunter_Hindi_1080P_S01_E01.mp4" }] } } },
@@ -551,7 +551,7 @@ var VIDEO_DATA = {
     },
     hindi: {
       "Season 1": {
-        1: [{ name: "Server 1", embed: "https://cdn.mp4tourl.com/video/free/fb6c28fd-7dfa-4a41-a437-1733bf263361.mp4" }],
+        1: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/One_Piece_%5BEnglish%5D_360P_S01_E918.mp4" }],
         2: [{ name: "Server 1", embed: "https://frosty-pine-0fcf.mdabdulalim56006.workers.dev/Naruto_Shippuden_Hindi_480P_S01_E02.mp4" }],
         3: [{ name: "Server 1", embed: "https://frosty-pine-0fcf.mdabdulalim56006.workers.dev/Naruto_Shippuden_Hindi_720P_S01_E03.mp4" }],
         4: [{ name: "Server 1", embed: "https://frosty-pine-0fcf.mdabdulalim56006.workers.dev/Naruto_Shippuden_Hindi_720P_S01_E04.mp4" }],
@@ -1058,7 +1058,7 @@ function acceptDisclaimer(){
     if(pendingVideoEmbed){
         var embed = pendingVideoEmbed;
         pendingVideoEmbed=null;
-        if (embed.toLowerCase().indexOf('.mp4') >= 0 || embed.indexOf('workers.dev') >= 0 || embed.indexOf('mp4tourl') >= 0) {
+        if (embed.toLowerCase().indexOf('.mp4') >= 0 || embed.indexOf('workers.dev') >= 0 || embed.indexOf('r2.dev') >= 0) {
             showPreRollAd(embed);
         } else {
             var content = document.getElementById('playerContent');
@@ -1071,12 +1071,12 @@ function handleVideoError(videoElement) {
     if (loadTimeout) clearTimeout(loadTimeout);
     var content = document.getElementById('playerContent');
     if (content) {
-        content.innerHTML = '<div class="player-empty" style="color:var(--accent);flex-direction:column;gap:10px;"><div>⚠️ Video Not Loading</div><div style="font-size:0.75rem;color:var(--muted);line-height:1.5;">This video may have CORS issues or the link is broken. Please check your Backblaze filenames or try another server.</div></div>';
+        content.innerHTML = '<div class="player-empty" style="color:var(--accent);flex-direction:column;gap:10px;"><div>⚠️ Video Not Loading</div><div style="font-size:0.75rem;color:var(--muted);line-height:1.5;">This video may have CORS issues or the link is broken. Please check your Cloudflare R2 CORS policy or try another server.</div></div>';
     }
 }
 
 function makePlayerHTML(embed) {
-  if (embed.toLowerCase().indexOf('.mp4') >= 0 || embed.indexOf('workers.dev') >= 0 || embed.indexOf('mp4tourl') >= 0) {
+  if (embed.toLowerCase().indexOf('.mp4') >= 0 || embed.indexOf('workers.dev') >= 0 || embed.indexOf('r2.dev') >= 0) {
     return '<video id="mainVideoPlayer" src="'+embed+'" crossorigin="anonymous" controls playsinline preload="auto" onerror="handleVideoError(this)" style="width:100%;height:100%;object-fit:contain;background:#000;touch-action:manipulation;"></video>';
   }
   return '<iframe src="'+embed+'" tabindex="0" allowfullscreen allow="autoplay; encrypted-media; fullscreen" scrolling="no" frameborder="0" style="width:100%;height:100%;border:none;touch-action:manipulation;" '+
@@ -1261,7 +1261,7 @@ function loadVideo() {
   if (!disclaimerAccepted) { 
       showDisclaimer(embed); 
   } else { 
-      if (embed.toLowerCase().indexOf('.mp4') >= 0 || embed.indexOf('workers.dev') >= 0 || embed.indexOf('mp4tourl') >= 0) {
+      if (embed.toLowerCase().indexOf('.mp4') >= 0 || embed.indexOf('workers.dev') >= 0 || embed.indexOf('r2.dev') >= 0) {
           showPreRollAd(embed);
       } else {
           content.innerHTML = makePlayerHTML(embed);
@@ -1466,4 +1466,4 @@ function initApp() {
 setTimeout(initApp, 500);
 </script>
 </body>
-        </html>
+  </html>
