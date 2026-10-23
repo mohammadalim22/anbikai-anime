@@ -473,6 +473,7 @@ var heroTimer = null;
 var searchState = { query: '', results: [] };
 
 var currentView = 'home';
+var pendingHome = false;
 
 var watchAnime = null;
 var watchEpsCount = 0;
@@ -756,19 +757,18 @@ function showHomeView(){ document.getElementById('homeView').style.display='bloc
 function showWatchView(){ document.getElementById('homeView').style.display='none'; document.getElementById('watchPage').classList.add('active'); }
 
 function goHome(){
-  if (currentView === 'home' && !document.getElementById('searchBar').classList.contains('active')) {
-    window.scrollTo({top: 0, behavior: 'smooth'});
+  if (currentView === 'home' && !pendingHome) {
+    setActiveBtn('homeBtn');
+    document.getElementById('searchBar').classList.remove('active');
+    hideAnimeModal();
+    showHomeView();
+    input.value = '';
+    searchState = { query: '', results: [] };
+    loadTop();
     return;
   }
-  currentView = 'home';
-  setActiveBtn('homeBtn');
-  document.getElementById('searchBar').classList.remove('active');
-  hideAnimeModal();
-  showHomeView();
-  input.value = '';
-  searchState = { query: '', results: [] };
-  try { history.pushState({view: 'home'}, '', location.pathname + location.search); } catch(e) {}
-  loadTop();
+  pendingHome = true;
+  history.back();
 }
 
 function hideAnimeModal(){ var overlay = document.getElementById('animeModalOverlay'); if(overlay) overlay.classList.remove('active'); document.body.style.overflow = ''; }
@@ -792,9 +792,7 @@ function loadTop() {
         renderHero(mapped); 
         renderAnime(mapped, false); 
     }
-  }).catch(function(){ 
-      // Already rendered fallback
-  });
+  }).catch(function(){ });
 }
 
 function renderHero(list) {
