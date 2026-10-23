@@ -491,8 +491,13 @@ var loadTimeout = null;
 var ANILIST_URL = 'https://graphql.anilist.co';
 var QUERY = 'query ($search: String, $genre: String, $sort: [MediaSort], $perPage: Int) { Page(page: 1, perPage: $perPage) { media(type: ANIME, search: $search, genre: $genre, sort: $sort, isAdult: false) { id title { romaji english } description(asHtml: false) coverImage { extraLarge large } bannerImage episodes nextAiringEpisode { episode } averageScore format startDate { year } genres trailer { id site } } } }';
 
-// 🚨 এখানে তোমার নতুন Cloudflare Workers এর লিংক বসানো হয়েছে
 var VIDEO_DATA = {
+  21: {
+    sub: [{ name: "Server 1", embed: "https://f.mdabdulalim56006.workers.dev/One_Piece_english_Ep_908.mp4" }],
+    dub: [{ name: "Server 1", embed: "https://f.mdabdulalim56006.workers.dev/One_Piece_english_Ep_908.mp4" }],
+    hindi: { "Season 1": { 1: [{ name: "Server 1", embed: "https://f.mdabdulalim56006.workers.dev/One_Piece_english_Ep_908.mp4" }] } },
+    bangla: []
+  },
   11061: { hindi: { "Season 1": { 1: [{ name: "Server 1", embed: "https://f.mdabdulalim56006.workers.dev/Hunter_x_Hunter_Hindi_1080P_S01_E01.mp4" }] } } },
   178788: { 
     sub: [{ name: "Server 1", embed: "https://f.mdabdulalim56006.workers.dev/Demon_Slayer_Movie_Infinity_Castle_Hindi_1080P.mp4" }], 
