@@ -326,7 +326,6 @@
             <div class="preroll-content">
                 <div class="preroll-text">Your video will play after <span id="adCountdown">5</span>s</div>
                 <div class="ad-box">
-                    <!-- Adsterra 300x250 Ad injected statically to avoid blocking -->
                     <div id="prerollAdContainer" style="width:300px; height:250px;"></div>
                 </div>
                 <button class="skip-btn" id="skipAdBtn" onclick="closePreRollAndPlay()">Skip Ad & Play ▶</button>
@@ -492,14 +491,15 @@ var loadTimeout = null;
 var ANILIST_URL = 'https://graphql.anilist.co';
 var QUERY = 'query ($search: String, $genre: String, $sort: [MediaSort], $perPage: Int) { Page(page: 1, perPage: $perPage) { media(type: ANIME, search: $search, genre: $genre, sort: $sort, isAdult: false) { id title { romaji english } description(asHtml: false) coverImage { extraLarge large } bannerImage episodes nextAiringEpisode { episode } averageScore format startDate { year } genres trailer { id site } } } }';
 
+// 🚨 এখানে তোমার নতুন Cloudflare Workers এর লিংক বসানো হয়েছে
 var VIDEO_DATA = {
-  11061: { hindi: { "Season 1": { 1: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/Hunter_x_Hunter_%5BHindi%5D_1080P_S01_E01.mp4" }] } } },
+  11061: { hindi: { "Season 1": { 1: [{ name: "Server 1", embed: "https://f.mdabdulalim56006.workers.dev/Hunter_x_Hunter_Hindi_1080P_S01_E01.mp4" }] } } },
   178788: { 
-    sub: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/Demon_Slayer_-Kimetsu_no_Yaiba-_The_Movie_Infinity_Castle_%5BHindi%5D_1080P.mp4" }], 
-    dub: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/Demon_Slayer_-Kimetsu_no_Yaiba-_The_Movie_Infinity_Castle_%5BHindi%5D_1080P.mp4" }], 
+    sub: [{ name: "Server 1", embed: "https://f.mdabdulalim56006.workers.dev/Demon_Slayer_Movie_Infinity_Castle_Hindi_1080P.mp4" }], 
+    dub: [{ name: "Server 1", embed: "https://f.mdabdulalim56006.workers.dev/Demon_Slayer_Movie_Infinity_Castle_Hindi_1080P.mp4" }], 
     hindi: { 
       "Season 1": { 
-        1: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/Demon_Slayer_-Kimetsu_no_Yaiba-_The_Movie_Infinity_Castle_%5BHindi%5D_1080P.mp4" }] 
+        1: [{ name: "Server 1", embed: "https://f.mdabdulalim56006.workers.dev/Demon_Slayer_Movie_Infinity_Castle_Hindi_1080P.mp4" }] 
       } 
     }, 
     bangla: [] 
@@ -509,7 +509,7 @@ var VIDEO_DATA = {
     dub: [{ name: "Server 1", embed: "https://streamtape.com/e/1D9jP7qp26f6kl" }], 
     hindi: { 
       "Season 1": { 
-        1: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/Demon_Slayer_-Kimetsu_no_Yaiba-_The_Movie_Infinity_Castle_%5BHindi%5D_1080P.mp4" }] 
+        1: [{ name: "Server 1", embed: "https://f.mdabdulalim56006.workers.dev/Demon_Slayer_Movie_Infinity_Castle_Hindi_1080P.mp4" }] 
       } 
     }, 
     bangla: [] 
@@ -519,43 +519,43 @@ var VIDEO_DATA = {
     dub: [{ name: "Server 1", embed: "https://streamtape.com/e/1D9jP7qp26f6kl" }], 
     hindi: { 
       "Season 1": { 
-        1: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/Demon_Slayer_-Kimetsu_no_Yaiba-_The_Movie_Infinity_Castle_%5BHindi%5D_1080P.mp4" }] 
+        1: [{ name: "Server 1", embed: "https://f.mdabdulalim56006.workers.dev/Demon_Slayer_Movie_Infinity_Castle_Hindi_1080P.mp4" }] 
       } 
     }, 
     bangla: [] 
   },
   178025: { hindi: { "Season 1": { 1: [{ name: "Server 1", embed: "https://voe.sx/e/0oxeecg5nvqs" }] } } },
-  16498: { hindi: { "Season 1": { 1: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/Attack_on_Titan_%5BHindi%5D_480P_S01_E01.mp4" }] } } },
+  16498: { hindi: { "Season 1": { 1: [{ name: "Server 1", embed: "https://f.mdabdulalim56006.workers.dev/Attack_on_Titan_Hindi_480P_S01_E01.mp4" }] } } },
   1535: { hindi: { "Season 1": { 1: [{ name: "Server 1", embed: "https://playmogo.com/e/cbzujgmk5ttv" }] } } },
   97940: { sub: [{ name: "Server 1", embed: "https://streamtape.com/e/JKKxw2xeQ0sj0R0/" }], dub: [{ name: "Server 1", embed: "https://streamtape.com/e/JKKxw2xeQ0sj0R0/" }], hindi: [{ name: "Server 1", embed: "https://streamtape.com/e/JKKxw2xeQ0sj0R0/" }], bangla: [{ name: "Server 1", embed: "https://streamtape.com/e/JKKxw2xeQ0sj0R0/" }] },
   1735: {
     sub: [{ name: "Server 1", embed: "https://streamtape.com/e/PW4m8D2oGeI0ORJ/" }],
     dub: {
       "Season 1": {
-        1: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/Naruto_Shippuden_%5BEnglish%5D_720P_S01_E01.mp4" }],
-        2: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/Naruto_Shippuden_%5BEnglish%5D_720P_S01_E02.mp4" }],
-        3: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/Naruto_Shippuden_%5BEnglish%5D_720P_S01_E03.mp4" }],
-        4: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/Naruto_Shippuden_%5BEnglish%5D_720P_S01_E04.mp4" }],
-        5: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/Naruto_Shippuden_%5BEnglish%5D_720P_S01_E05.mp4" }],
-        6: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/Naruto_Shippuden_%5BEnglish%5D_720P_S01_E06.mp4" }],
-        7: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/Naruto_Shippuden_%5BEnglish%5D_720P_S01_E07.mp4" }],
-        8: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/Naruto_Shippuden_%5BEnglish%5D_720P_S01_E08.mp4" }],
-        9: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/Naruto_Shippuden_%5BEnglish%5D_720P_S01_E09.mp4" }],
-        10: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/Naruto_Shippuden_%5BEnglish%5D_720P_S01_E10.mp4" }]
+        1: [{ name: "Server 1", embed: "https://f.mdabdulalim56006.workers.dev/Naruto_Shippuden_English_720P_S01_E01.mp4" }],
+        2: [{ name: "Server 1", embed: "https://f.mdabdulalim56006.workers.dev/Naruto_Shippuden_English_720P_S01_E02.mp4" }],
+        3: [{ name: "Server 1", embed: "https://f.mdabdulalim56006.workers.dev/Naruto_Shippuden_English_720P_S01_E03.mp4" }],
+        4: [{ name: "Server 1", embed: "https://f.mdabdulalim56006.workers.dev/Naruto_Shippuden_English_720P_S01_E04.mp4" }],
+        5: [{ name: "Server 1", embed: "https://f.mdabdulalim56006.workers.dev/Naruto_Shippuden_English_720P_S01_E05.mp4" }],
+        6: [{ name: "Server 1", embed: "https://f.mdabdulalim56006.workers.dev/Naruto_Shippuden_English_720P_S01_E06.mp4" }],
+        7: [{ name: "Server 1", embed: "https://f.mdabdulalim56006.workers.dev/Naruto_Shippuden_English_720P_S01_E07.mp4" }],
+        8: [{ name: "Server 1", embed: "https://f.mdabdulalim56006.workers.dev/Naruto_Shippuden_English_720P_S01_E08.mp4" }],
+        9: [{ name: "Server 1", embed: "https://f.mdabdulalim56006.workers.dev/Naruto_Shippuden_English_720P_S01_E09.mp4" }],
+        10: [{ name: "Server 1", embed: "https://f.mdabdulalim56006.workers.dev/Naruto_Shippuden_English_720P_S01_E10.mp4" }]
       }
     },
     hindi: {
       "Season 1": {
-        1: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/Naruto_Shippuden_%5BHindi%5D_480P_S01_E01.mp4" }],
-        2: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/Naruto_Shippuden_%5BHindi%5D_480P_S01_E02.mp4" }],
-        3: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/Naruto_Shippuden_%5BHindi%5D_720P_S01_E03.mp4" }],
-        4: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/Naruto_Shippuden_%5BHindi%5D_720P_S01_E04.mp4" }],
-        5: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/Naruto_Shippuden_%5BHindi%5D_720P_S01_E05.mp4" }],
-        6: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/Naruto_Shippuden_%5BHindi%5D_720P_S01_E06.mp4" }],
-        7: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/Naruto_Shippuden_%5BHindi%5D_720P_S01_E07.mp4" }],
-        8: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/Naruto_Shippuden_%5BHindi%5D_720P_S01_E08.mp4" }],
-        9: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/Naruto_Shippuden_%5BHindi%5D_720P_S01_E09.mp4" }],
-        10: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/Naruto_Shippuden_%5BHindi%5D_720P_S01_E10.mp4" }]
+        1: [{ name: "Server 1", embed: "https://f.mdabdulalim56006.workers.dev/Naruto_Shippuden_Hindi_480P_S01_E01.mp4" }],
+        2: [{ name: "Server 1", embed: "https://f.mdabdulalim56006.workers.dev/Naruto_Shippuden_Hindi_480P_S01_E02.mp4" }],
+        3: [{ name: "Server 1", embed: "https://f.mdabdulalim56006.workers.dev/Naruto_Shippuden_Hindi_720P_S01_E03.mp4" }],
+        4: [{ name: "Server 1", embed: "https://f.mdabdulalim56006.workers.dev/Naruto_Shippuden_Hindi_720P_S01_E04.mp4" }],
+        5: [{ name: "Server 1", embed: "https://f.mdabdulalim56006.workers.dev/Naruto_Shippuden_Hindi_720P_S01_E05.mp4" }],
+        6: [{ name: "Server 1", embed: "https://f.mdabdulalim56006.workers.dev/Naruto_Shippuden_Hindi_720P_S01_E06.mp4" }],
+        7: [{ name: "Server 1", embed: "https://f.mdabdulalim56006.workers.dev/Naruto_Shippuden_Hindi_720P_S01_E07.mp4" }],
+        8: [{ name: "Server 1", embed: "https://f.mdabdulalim56006.workers.dev/Naruto_Shippuden_Hindi_720P_S01_E08.mp4" }],
+        9: [{ name: "Server 1", embed: "https://f.mdabdulalim56006.workers.dev/Naruto_Shippuden_Hindi_720P_S01_E09.mp4" }],
+        10: [{ name: "Server 1", embed: "https://f.mdabdulalim56006.workers.dev/Naruto_Shippuden_Hindi_720P_S01_E10.mp4" }]
       }
     },
     bangla: [{ name: "Server 1", embed: "https://streamtape.com/e/eoYOmAJ6LoTZjM/" }]
@@ -1053,7 +1053,7 @@ function acceptDisclaimer(){
     if(pendingVideoEmbed){
         var embed = pendingVideoEmbed;
         pendingVideoEmbed=null;
-        if (embed.toLowerCase().indexOf('.mp4') >= 0 || embed.indexOf('r2.dev') >= 0) {
+        if (embed.toLowerCase().indexOf('.mp4') >= 0 || embed.indexOf('workers.dev') >= 0) {
             showPreRollAd(embed);
         } else {
             var content = document.getElementById('playerContent');
@@ -1066,12 +1066,12 @@ function handleVideoError(videoElement) {
     if (loadTimeout) clearTimeout(loadTimeout);
     var content = document.getElementById('playerContent');
     if (content) {
-        content.innerHTML = '<div class="player-empty" style="color:var(--accent);flex-direction:column;gap:10px;"><div>⚠️ Video Not Loading</div><div style="font-size:0.75rem;color:var(--muted);line-height:1.5;">This video may have CORS issues or the link is broken. Please check Cloudflare R2 settings or try another server.</div></div>';
+        content.innerHTML = '<div class="player-empty" style="color:var(--accent);flex-direction:column;gap:10px;"><div>⚠️ Video Not Loading</div><div style="font-size:0.75rem;color:var(--muted);line-height:1.5;">This video may have CORS issues or the link is broken. Please check your Backblaze filenames or try another server.</div></div>';
     }
 }
 
 function makePlayerHTML(embed) {
-  if (embed.toLowerCase().indexOf('.mp4') >= 0 || embed.indexOf('r2.dev') >= 0) {
+  if (embed.toLowerCase().indexOf('.mp4') >= 0 || embed.indexOf('workers.dev') >= 0) {
     return '<video id="mainVideoPlayer" src="'+embed+'" crossorigin="anonymous" controls playsinline preload="auto" onerror="handleVideoError(this)" style="width:100%;height:100%;object-fit:contain;background:#000;touch-action:manipulation;"></video>';
   }
   return '<iframe src="'+embed+'" tabindex="0" allowfullscreen allow="autoplay; encrypted-media; fullscreen" scrolling="no" frameborder="0" style="width:100%;height:100%;border:none;touch-action:manipulation;" '+
@@ -1256,7 +1256,7 @@ function loadVideo() {
   if (!disclaimerAccepted) { 
       showDisclaimer(embed); 
   } else { 
-      if (embed.toLowerCase().indexOf('.mp4') >= 0 || embed.indexOf('r2.dev') >= 0) {
+      if (embed.toLowerCase().indexOf('.mp4') >= 0 || embed.indexOf('workers.dev') >= 0) {
           showPreRollAd(embed);
       } else {
           content.innerHTML = makePlayerHTML(embed);
