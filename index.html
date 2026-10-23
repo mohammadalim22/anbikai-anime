@@ -424,11 +424,28 @@ var VIDEO_DATA = {
       }
     }
   },
-  // উদাহরণ: One Piece (id: 21) - তুই নিজে লিংক বসাবি
+  // উদাহরণ: One Piece (id: 21)
   21: {
     hindi: {
       "Season 1": {
         1: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/One_Piece_%5BEnglish%5D_360P_S01_E918.mp4" }]
+      }
+    }
+  },
+  // Naruto Shippuden (id: 1735) - তোমার দেওয়া ১০টি লিংক এখানে বসানো হলো
+  1735: {
+    hindi: {
+      "Season 1": {
+        1: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/Naruto_Shippuden_%5BHindi%5D_480P_S01_E01.mp4" }],
+        2: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/Naruto_Shippuden_%5BHindi%5D_480P_S01_E02.mp4" }],
+        3: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/Naruto_Shippuden_%5BHindi%5D_720P_S01_E03.mp4" }],
+        4: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/Naruto_Shippuden_%5BHindi%5D_720P_S01_E04.mp4" }],
+        5: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/Naruto_Shippuden_%5BHindi%5D_720P_S01_E05.mp4" }],
+        6: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/Naruto_Shippuden_%5BHindi%5D_720P_S01_E06.mp4" }],
+        7: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/Naruto_Shippuden_%5BHindi%5D_720P_S01_E07.mp4" }],
+        8: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/Naruto_Shippuden_%5BHindi%5D_720P_S01_E08.mp4" }],
+        9: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/Naruto_Shippuden_%5BHindi%5D_720P_S01_E09.mp4" }],
+        10: [{ name: "Server 1", embed: "https://pub-b3b8e974b48a4470bcaf08e042ed655e.r2.dev/Naruto_Shippuden_%5BHindi%5D_720P_S01_E10.mp4" }]
       }
     }
   }
@@ -505,7 +522,8 @@ var fallbackAnime = [
   { mal_id: 178025, title: "Blue Box", score: 7.9, type: "TV", episodes: 25, img: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx178025-0p1g2w3b4x5c.jpg", banner: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/178025.jpg", synopsis: "Taiki Inomata is a student on the badminton team.", genres: ["Romance", "Sports", "Drama"], trailer: "", year: 2024 },
   { mal_id: 16498, title: "Attack on Titan", score: 8.5, type: "TV", episodes: 25, img: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx16498-bqvzRjWp05Yj.jpg", banner: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/16498.jpg", synopsis: "Several hundred years ago, humans were nearly exterminated by titans.", genres: ["Action","Drama","Fantasy"], trailer: "https://www.youtube.com/embed/LHtdKWJdif4", year: 2013 },
   { mal_id: 1535, title: "Death Note", score: 8.6, type: "TV", episodes: 37, img: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx1535-b5y5Y1jN0F0e.jpg", banner: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/1535.jpg", synopsis: "A shinigami, as a god of death, can kill any person.", genres: ["Mystery","Psychological","Supernatural","Thriller"], trailer: "https://www.youtube.com/embed/NlJZ-YgAt-c", year: 2006 },
-  { mal_id: 151807, title: "Solo Leveling", score: 8.3, type: "TV", episodes: 12, img: "https://cdn.myanimelist.net/images/anime/1779/141555.jpg", banner: "https://cdn.myanimelist.net/images/anime/1779/141555.jpg", synopsis: "In a world of hunters and monsters, the weakest hunter Sung Jinwoo gains a mysterious power.", genres: ["Action","Adventure","Fantasy"], trailer: "https://www.youtube.com/embed/I6MQB0ELRsA", year: 2024 } 
+  { mal_id: 151807, title: "Solo Leveling", score: 8.3, type: "TV", episodes: 12, img: "https://cdn.myanimelist.net/images/anime/1779/141555.jpg", banner: "https://cdn.myanimelist.net/images/anime/1779/141555.jpg", synopsis: "In a world of hunters and monsters, the weakest hunter Sung Jinwoo gains a mysterious power.", genres: ["Action","Adventure","Fantasy"], trailer: "https://www.youtube.com/embed/I6MQB0ELRsA", year: 2024 },
+  { mal_id: 1735, title: "Naruto Shippuden", score: 8.2, type: "TV", episodes: 500, img: "https://cdn.myanimelist.net/images/anime/5/17407.jpg", banner: "https://cdn.myanimelist.net/images/anime/5/17407.jpg", synopsis: "Naruto returns to Konoha after two years of training with Jiraiya, ready to face the Akatsuki.", genres: ["Action","Adventure","Martial Arts"], trailer: "", year: 2007 }
 ];
 
 function fetchWithTimeout(url, opt, ms) { opt = opt || {}; ms = ms || 8000; return new Promise(function(res, rej) { var c = new AbortController(); opt.signal = c.signal; var t = setTimeout(function(){ c.abort(); rej(new Error('timeout')); }, ms); fetch(url, opt).then(function(r){ clearTimeout(t); if(!r.ok) rej(new Error('fail')); else res(r); }).catch(function(e){ clearTimeout(t); rej(e); }); }); }
@@ -673,7 +691,7 @@ function handleVideoError(videoEl) {
       <div class="player-empty">
         <div style="font-size:1.1rem; color:var(--accent);">⚠️ Video load fail</div>
         <div style="font-size:0.8rem; color:var(--muted); max-width:280px; line-height:1.5;">
-          Link broken হলে অথবা R2 CORS সেট না থাকলে এমন হয়।
+          Link broken hole otoba R2 CORS set na thakle emon hoy.
         </div>
         <button onclick="loadVideo()" style="margin-top:8px;padding:10px 18px;background:var(--orange);color:white;border:none;border-radius:8px;font-weight:800;cursor:pointer;">
           🔄 Try Again
