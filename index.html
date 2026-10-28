@@ -725,7 +725,6 @@ function startWatching() {
 function pickFirstAvailableLang(id) { var langs = ['sub','dub','hindi','bangla']; for (var i=0;i<langs.length;i++) if (hasAnyVideos(id, langs[i])) return langs[i]; return 'sub'; }
 function renderBreadcrumb() { document.getElementById('breadcrumb').innerHTML = '<a href="#" onclick="goHome();return false;">🏠 Home</a><span class="sep">/</span><a href="#" onclick="goHome();return false;">'+(watchAnime.type||'TV')+'</a><span class="sep">/</span><span class="current">'+watchAnime.title+'</span>'; }
 
-/* 🚨 আপডেট করা সিজন ট্যাব ফাংশন 🚨 */
 function renderSeasonTabs() {
   var tabs = document.getElementById('seasonTabs'); 
   if (!tabs) return; 
@@ -755,7 +754,6 @@ function switchSeason(s) {
   renderSeasonTabs(); renderEpisodeGrid(); renderServerTabs(); loadVideo();
 }
 
-/* 🚨 আপডেট করা ল্যাঙ্গুয়েজ ট্যাব ফাংশন 🚨 */
 function renderLangTabs() { 
   var tabs = document.getElementById('langTabs'); 
   var langs = ['sub','dub','hindi','bangla']; 
@@ -780,7 +778,6 @@ function switchLang(l) {
   renderSeasonTabs(); renderLangTabs(); renderServerTabs(); renderEpisodeGrid(); loadVideo();
 }
 
-/* 🚨 আপডেট করা সার্ভার এবং ডাউনলোড বাটন ফাংশন 🚨 */
 function renderServerTabs() {
   var row = document.getElementById('serverTabs'); 
   var servers = getServersForEpisode(watchAnime.mal_id, watchCurrentLang, watchCurrentSeason, watchCurrentEp); 
@@ -895,4 +892,4 @@ setTimeout(initApp, 500);
 setTimeout(showWelcome, 1500);
 </script>
 </body>
-  </html>
+      </html>
