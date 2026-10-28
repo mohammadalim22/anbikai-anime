@@ -97,26 +97,35 @@
   .player video { width: 100%; height: 100%; display: block; background: #000; touch-action: manipulation !important; }
   .player-empty { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 0.85rem; text-align: center; padding: 20px; flex-direction: column; gap: 12px; }
   .player-controls { display: flex; justify-content: center; gap: 14px; padding: 16px; background: var(--card); border-radius: 14px; margin-bottom: 16px; border: 1px solid var(--border); }
-  .ctrl-btn { background: var(--card2); border: 1px solid var(--border); color: var(--text); font-size: 1.15rem; cursor: pointer; width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+  
+  /* 🚨 প্লেয়ার কন্ট্রোল আপডেট করা হলো 🚨 */
+  .ctrl-btn { background: var(--card2); border: 1px solid var(--border); color: var(--text); font-size: 1.2rem; cursor: pointer; width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
   .ctrl-btn:active { transform: scale(0.92); background: var(--orange); color: white; border-color: var(--orange); }
-  .ctrl-btn.play { background: var(--orange); border-color: var(--orange); color: white; font-size: 1.3rem; }
+  .ctrl-btn.play { background: #ff6633; border-color: #ff6633; color: white; font-size: 1.5rem; width: 60px; }
+
+  /* 🚨 সিজন ট্যাব আপডেট 🚨 */
   .season-tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
-  .season-tab { background: var(--card2); border: 1.5px solid var(--border); color: var(--text); padding: 9px 18px; border-radius: 999px; cursor: pointer; font-size: 0.85rem; font-weight: 800; }
+  .season-tab { background: var(--card2); border: 1.5px solid var(--border); color: var(--text); padding: 10px 22px; border-radius: 999px; cursor: pointer; font-size: 0.9rem; font-weight: 800; }
   .season-tab:active { transform: scale(0.96); }
-  .season-tab.active { background: var(--accent2); color: white; border-color: var(--accent2); }
+  .season-tab.active { background: #22c55e; color: white; border-color: #22c55e; }
+
+  /* 🚨 ল্যাঙ্গুয়েজ ট্যাব আপডেট 🚨 */
   .lang-tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
-  .lang-tab { background: transparent; border: 1.5px solid var(--border); color: var(--muted); padding: 9px 18px; border-radius: 999px; cursor: pointer; font-size: 0.85rem; font-weight: 800; display: flex; align-items: center; gap: 7px; }
+  .lang-tab { background: var(--card); border: 1.5px solid var(--border); color: var(--muted); padding: 10px 20px; border-radius: 999px; cursor: pointer; font-size: 0.85rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
   .lang-tab:active { transform: scale(0.96); }
-  .lang-tab.active { background: var(--bg2); color: var(--text); border-color: var(--text); }
-  .lang-tab .cc-icon { background: #444; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 0.62rem; font-weight: 900; }
-  .lang-tab.active .cc-icon { background: var(--orange); }
+  .lang-tab.active { background: var(--bg2); color: var(--text); border-color: #ffffff; border-width: 2px; }
+  .lang-tab .cc-icon { background: #444; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 0.65rem; font-weight: 900; }
+  .lang-tab.active .cc-icon { background: #ff6633; }
+
+  /* 🚨 সার্ভার এবং ডাউনলোড বাটন আপডেট 🚨 */
   .server-row { display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
-  .server-tab { background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 11px 22px; border-radius: 10px; cursor: pointer; font-size: 0.9rem; font-weight: 800; }
+  .server-tab { background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 12px 26px; border-radius: 10px; cursor: pointer; font-size: 0.95rem; font-weight: 800; }
   .server-tab:active { transform: scale(0.96); }
-  .server-tab.active { background: var(--accent2); color: white; border-color: var(--accent2); }
-  .dl-icon-btn { background: linear-gradient(135deg, #ff6633, #ff4d6d); border: none; color: white; width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 1.5rem; font-weight: 900; box-shadow: 0 4px 12px rgba(255,102,51,0.4); line-height: 1; }
+  .server-tab.active { background: #22c55e; color: white; border-color: #22c55e; }
+  .dl-icon-btn { background: linear-gradient(135deg, #ff6633, #ff4d6d); border: none; color: white; width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 1.5rem; font-weight: 900; box-shadow: 0 4px 15px rgba(255,102,51,0.4); line-height: 1; }
   .dl-icon-btn:active { transform: scale(0.92); }
   .dl-icon-btn svg { width: 22px; height: 22px; fill: white; }
+
   .watching-info { text-align: center; margin-bottom: 24px; padding: 0 16px; }
   .watching-info .ep { font-size: 0.95rem; margin-bottom: 8px; }
   .watching-info .ep b { color: var(--text); font-weight: 900; }
@@ -456,6 +465,8 @@ var WATCH_LINKS = {};
 
 function platformLabel(p) { var m={crunchyroll:"Crunchyroll",netflix:"Netflix",hulu:"Hulu",prime:"Prime Video",youtube:"YouTube",muse:"Muse Asia"}; return m[p]||p; }
 function platformIcon(p) { var m={crunchyroll:"🟠",netflix:"🔴",hulu:"🟢",prime:"🔵",youtube:"▶️",muse:"🟣"}; return m[p]||"▶"; }
+
+/* 🚨 আপডেট করা ল্যাঙ্গুয়েজ আইকন এবং লেবেল 🚨 */
 function langIcon(l) { var m = { sub: '<span class="cc-icon">CC</span>', dub: '🎤', hindi: '🇮🇳', bangla: '🇧🇩' }; return m[l] || ''; }
 function langLabel(l) { var m = { sub: "Soft Sub", dub: "Dub", hindi: "Hindi", bangla: "Bangla" }; return m[l] || l; }
 
@@ -657,30 +668,11 @@ function toggleWelcomeCheck(e){ if(e && e.target && e.target.tagName!=='INPUT' &
 function closeWelcome(){ var cb=document.getElementById('dontShowAgain'); if(cb.checked) localStorage.setItem('anbikai_welcome_off','yes'); document.getElementById('welcomeModal').classList.remove('active'); }
 function skipWelcome(){ localStorage.setItem('anbikai_welcome_off','yes'); document.getElementById('welcomeModal').classList.remove('active'); }
 
-/* ========== গুরুত্বপূর্ণ ফিক্স: makePlayerHTML (CORS ছাড়া) ========== */
 function makePlayerHTML(embed) {
   if (!embed) return '<div class="player-empty">Video link paoa gelo na</div>';
-
-  // mp4 / r2 / workers.dev হলে native video player
-  if (embed.toLowerCase().indexOf('.mp4') >= 0 || 
-      embed.indexOf('workers.dev') >= 0 || 
-      embed.indexOf('r2.dev') >= 0) {
-    
-    return `
-      <video 
-        id="mainVideoPlayer" 
-        src="${embed}" 
-        controls 
-        playsinline 
-        preload="auto" 
-        controlslist="nodownload"
-        onerror="handleVideoError(this)"
-        style="width:100%;height:100%;object-fit:contain;background:#000;">
-      </video>
-    `;
+  if (embed.toLowerCase().indexOf('.mp4') >= 0 || embed.indexOf('workers.dev') >= 0 || embed.indexOf('r2.dev') >= 0) {
+    return `<video id="mainVideoPlayer" src="${embed}" controls playsinline preload="auto" controlslist="nodownload" onerror="handleVideoError(this)" style="width:100%;height:100%;object-fit:contain;background:#000;"></video>`;
   }
-
-  // অন্যথায় iframe
   return `<iframe src="${embed}" allowfullscreen allow="autoplay; encrypted-media; fullscreen" scrolling="no" frameborder="0" style="width:100%;height:100%;border:none;"></iframe>`;
 }
 
@@ -733,11 +725,27 @@ function startWatching() {
 function pickFirstAvailableLang(id) { var langs = ['sub','dub','hindi','bangla']; for (var i=0;i<langs.length;i++) if (hasAnyVideos(id, langs[i])) return langs[i]; return 'sub'; }
 function renderBreadcrumb() { document.getElementById('breadcrumb').innerHTML = '<a href="#" onclick="goHome();return false;">🏠 Home</a><span class="sep">/</span><a href="#" onclick="goHome();return false;">'+(watchAnime.type||'TV')+'</a><span class="sep">/</span><span class="current">'+watchAnime.title+'</span>'; }
 
+/* 🚨 আপডেট করা সিজন ট্যাব ফাংশন 🚨 */
 function renderSeasonTabs() {
-  var tabs = document.getElementById('seasonTabs'); if (!tabs) return; var data = VIDEO_DATA[watchAnime.mal_id] || {}; var langData = data[watchCurrentLang];
-  if (!langData || Array.isArray(langData) || !langData['Season 1']) { tabs.innerHTML = ''; tabs.style.display = 'none'; return; }
-  tabs.style.display = 'flex'; var html = ''; var seasons = Object.keys(langData).filter(function(k) { return k.indexOf('Season') === 0; });
-  seasons.forEach(function(s) { var seasonNum = s.replace('Season ', ''); var active = (watchCurrentSeason == seasonNum) ? ' active' : ''; html += '<button class="season-tab' + active + '" onclick="switchSeason(\'' + seasonNum + '\')">' + s + '</button>'; }); tabs.innerHTML = html;
+  var tabs = document.getElementById('seasonTabs'); 
+  if (!tabs) return; 
+  var data = VIDEO_DATA[watchAnime.mal_id] || {}; 
+  var langData = data[watchCurrentLang];
+  
+  if (!langData || Array.isArray(langData) || !langData['Season 1']) { 
+    tabs.innerHTML = ''; tabs.style.display = 'none'; return; 
+  }
+  
+  tabs.style.display = 'flex'; 
+  var html = ''; 
+  var seasons = Object.keys(langData).filter(function(k) { return k.indexOf('Season') === 0; });
+  
+  seasons.forEach(function(s) { 
+    var seasonNum = s.replace('Season ', ''); 
+    var active = (watchCurrentSeason == seasonNum) ? ' active' : ''; 
+    html += '<button class="season-tab' + active + '" onclick="switchSeason(\'' + seasonNum + '\')">' + s + '</button>'; 
+  }); 
+  tabs.innerHTML = html;
 }
 
 function switchSeason(s) {
@@ -747,7 +755,23 @@ function switchSeason(s) {
   renderSeasonTabs(); renderEpisodeGrid(); renderServerTabs(); loadVideo();
 }
 
-function renderLangTabs() { var tabs = document.getElementById('langTabs'); var langs = ['sub','dub','hindi','bangla']; var html = ''; for (var i=0;i<langs.length;i++) { var l = langs[i]; var available = hasAnyVideos(watchAnime.mal_id, l); var activeClass = (watchCurrentLang===l) ? ' active' : ''; var disabledAttr = available ? '' : ' disabled style="opacity:0.35;cursor:not-allowed;"'; var clickAttr = available ? ' onclick="switchLang(\''+l+'\')"' : ''; html += '<button class="lang-tab'+activeClass+'"'+clickAttr+disabledAttr+'>'+langIcon(l)+' <span>'+langLabel(l)+'</span></button>'; } tabs.innerHTML = html; }
+/* 🚨 আপডেট করা ল্যাঙ্গুয়েজ ট্যাব ফাংশন 🚨 */
+function renderLangTabs() { 
+  var tabs = document.getElementById('langTabs'); 
+  var langs = ['sub','dub','hindi','bangla']; 
+  var html = ''; 
+  
+  for (var i=0;i<langs.length;i++) { 
+    var l = langs[i]; 
+    var available = hasAnyVideos(watchAnime.mal_id, l); 
+    var activeClass = (watchCurrentLang===l) ? ' active' : ''; 
+    var disabledAttr = available ? '' : ' disabled style="opacity:0.35;cursor:not-allowed;"'; 
+    var clickAttr = available ? ' onclick="switchLang(\''+l+'\')"' : ''; 
+    
+    html += '<button class="lang-tab'+activeClass+'"'+clickAttr+disabledAttr+'>'+langIcon(l)+' <span>'+langLabel(l)+'</span></button>'; 
+  } 
+  tabs.innerHTML = html; 
+}
 
 function switchLang(l) {
   watchCurrentLang = l; watchCurrentServer = 0; watchCurrentSeason = 1;
@@ -756,12 +780,29 @@ function switchLang(l) {
   renderSeasonTabs(); renderLangTabs(); renderServerTabs(); renderEpisodeGrid(); loadVideo();
 }
 
+/* 🚨 আপডেট করা সার্ভার এবং ডাউনলোড বাটন ফাংশন 🚨 */
 function renderServerTabs() {
-  var row = document.getElementById('serverTabs'); var servers = getServersForEpisode(watchAnime.mal_id, watchCurrentLang, watchCurrentSeason, watchCurrentEp); var html = '';
-  if (servers.length === 0) { html = '<div style="color:var(--muted);font-size:0.85rem;padding:10px;">Episode '+watchCurrentEp+' — ei language e paoa gelo na.</div>'; row.innerHTML = html; return; }
-  for (var i=0;i<servers.length;i++) { html += '<button class="server-tab'+(watchCurrentServer===i?' active':'')+'" onclick="switchServer('+i+')">'+servers[i].name+'</button>'; }
-  var current = servers[watchCurrentServer] || servers[0]; var dlUrl = getDownloadUrl(current.embed);
-  if (dlUrl) { html += '<a class="dl-icon-btn" href="'+dlUrl+'" target="_blank" title="Download"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 3a1 1 0 0 1 1 1v9.586l3.293-3.293a1 1 0 1 1 1.414 1.414l-5 5a1 1 0 0 1-1.414 0l-5-5a1 1 0 1 1 1.414-1.414L11 13.586V4a1 1 0 0 1 1-1zM5 19a1 1 0 0 1 1-1h12a1 1 0 1 1 0 2H6a1 1 0 0 1-1-1z"/></svg></a>'; }
+  var row = document.getElementById('serverTabs'); 
+  var servers = getServersForEpisode(watchAnime.mal_id, watchCurrentLang, watchCurrentSeason, watchCurrentEp); 
+  var html = '';
+  
+  if (servers.length === 0) { 
+    html = '<div style="color:var(--muted);font-size:0.85rem;padding:10px;">Episode '+watchCurrentEp+' — ei language e paoa gelo na.</div>'; 
+    row.innerHTML = html; 
+    return; 
+  }
+  
+  for (var i=0;i<servers.length;i++) { 
+    html += '<button class="server-tab'+(watchCurrentServer===i?' active':'')+'" onclick="switchServer('+i+')">'+servers[i].name+'</button>'; 
+  }
+  
+  var current = servers[watchCurrentServer] || servers[0]; 
+  var dlUrl = getDownloadUrl(current.embed);
+  
+  if (dlUrl) { 
+    html += '<a class="dl-icon-btn" href="'+dlUrl+'" target="_blank" title="Download"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width:22px;height:22px;fill:white;"><path d="M12 3a1 1 0 0 1 1 1v9.586l3.293-3.293a1 1 0 1 1 1.414 1.414l-5 5a1 1 0 0 1-1.414 0l-5-5a1 1 0 1 1 1.414-1.414L11 13.586V4a1 1 0 0 1 1-1zM5 19a1 1 0 0 1 1-1h12a1 1 0 1 1 0 2H6a1 1 0 0 1-1-1z"/></svg></a>'; 
+  }
+  
   row.innerHTML = html;
 }
 
@@ -770,23 +811,23 @@ function switchServer(i) { watchCurrentServer = i; renderServerTabs(); loadVideo
 function loadVideo() {
   var servers = getServersForEpisode(watchAnime.mal_id, watchCurrentLang, watchCurrentSeason, watchCurrentEp); 
   var player = document.getElementById('watchPlayer');
-  
+
   if (!servers.length) { 
     player.innerHTML = '<div class="player-empty">Ei language e Episode '+watchCurrentEp+' er video paoa gelo na.</div>'; 
     document.getElementById('watchingEpText').textContent = 'Episode '+watchCurrentEp; 
     return; 
   }
-  
+
   var s = servers[watchCurrentServer] || servers[0]; 
   var embed = s.embed;
-  
+
   if (!disclaimerAccepted) { 
     showDisclaimer(embed); 
     player.innerHTML = '<div class="player-empty">Loading...</div>'; 
   } else { 
     player.innerHTML = makePlayerHTML(embed); 
   }
-  
+
   document.getElementById('watchingEpText').textContent = 'Episode '+watchCurrentEp; 
   if (watchAnime) { 
     addToHistory(watchAnime, 'Episode '+watchCurrentEp+' ('+langLabel(watchCurrentLang)+')'); 
@@ -854,4 +895,4 @@ setTimeout(initApp, 500);
 setTimeout(showWelcome, 1500);
 </script>
 </body>
-</html>
+  </html>
